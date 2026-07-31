@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .header-content h1 {
+            color: #007bff;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        .header-content img {
+            width: 100px;
+            height: auto;
+            border-radius: 8px;
+            margin-left: 20px;
+        }
+        .hero-image {
+            width: 100%;
+            max-height: 650px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-content">
+            <h1>Bienvenidos a nuestra planificación</h1>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIxzt4m8Gs0-83ei8LZkKoJ-ESOIjF_SYiPQ&s" alt="Imagen 1">
+        </div>
+
+        <img src="https://scontent.feze9-1.fna.fbcdn.net/v/t39.30808-6/313423030_499375202216577_5812370798185213024_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=scNPTiKrheYQ7kNvgEzrIJw&_nc_ht=scontent.feze9-1.fna&oh=00_AYC7IpMsPifWlnk9sbtcCTE4mVWsAoBVzOFdys7dSujq_A&oe=66E17BF4" alt="Imagen 2" class="hero-image">
+
+        <p>
+            Queremos saber qué te gustaría estudiar. 
+            La idea de este proyecto es poder identificar las necesidades de la sociedad en el entorno del centro, 
+            para poder brindar las herramientas profesionales y, a través de las capacitaciones pedagógicas y técnico-profesionales del centro, ayudar a las personas.
+        </p>
+
+        <a href="{% url 'votacion' %}" class="btn btn-primary">Participa en la Votación</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de Inscripciones</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .graph-container {
+            width: 100%; /* Ocupa el 100% del ancho de la pantalla */
+            background-color: #f8f9fa; /* Fondo suave */
+            padding: 20px; /* Espaciado interno */
+            border-radius: 8px; /* Bordes redondeados */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+        .course-list {
+            margin-top: 20px; /* Espacio superior para la lista de cursos */
+        }
+        .category {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .curso-item {
+            margin-left: 15px; /* Indentación para los cursos */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Estadísticas de Inscripciones</h1>
+        
+        <div class="graph-container text-center">
+            {% if data %}
+                <img src="data:image/png;base64,{{ data }}" alt="Gráfico de Inscripciones" class="img-fluid">
+            {% else %}
+                <p>No hay datos disponibles para mostrar el gráfico.</p>
+            {% endif %}
+        </div>
+
+        <div class="course-list">
+            <h3>Lista de Cursos por Categoría</h3>
+            {% for categoria, curso_list in cursos.items %}
+                <div class="category">{{ categoria }}</div>
+                <ul>
+                    {% for curso, rango in curso_list %}
+                        <li class="curso-item">{{ curso }} - Rango de Edad: {{ rango }}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

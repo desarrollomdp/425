@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            padding: 15px;
+        }
+        .btn {
+            font-size: 18px;
+            padding: 15px;
+            width: 100%;
+        }
+        .card {
+            margin-bottom: 15px;
+            cursor: pointer; /* Cambiar el cursor al pasar por la tarjeta */
+            user-select: none; /* Evitar selección de texto accidental */
+        }
+        .card:hover {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Efecto visual al pasar sobre la tarjeta */
+        }
+        .form-check-input {
+            pointer-events: none; /* Evita que el checkbox reciba clics directamente, se hace desde la tarjeta */
+        }
+        .card-img-top {
+    width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
+    height: 200px; /* Establece una altura fija para todas las imágenes */
+    object-fit: cover; /* Asegura que la imagen mantenga su proporción sin deformarse */
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Votación de Cursos 2025</h1>
+
+        <!-- Si el formulario tiene errores, los mostramos en un mensaje de alerta -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Por favor corrige los errores debajo.
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.nombre.label_tag }}
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <div class="text-danger">{{ form.nombre.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.apellido.label_tag }}
+                {{ form.apellido }}
+                {% if form.apellido.errors %}
+                    <div class="text-danger">{{ form.apellido.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.celular.label_tag }}
+                {{ form.celular }}
+                {% if form.celular.errors %}
+                    <div class="text-danger">{{ form.celular.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.edad.label_tag }}
+                {{ form.edad }}
+                {% if form.edad.errors %}
+                    <div class="text-danger">{{ form.edad.errors }}</div>
+                {% endif %}
+            </div>
+
+            <h4>Cursos Disponibles</h4>
+
+            <div class="accordion" id="cursosAccordion">
+                {% for categoria in categorias %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ categoria.id }}">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ categoria.id }}" aria-expanded="true" aria-controls="collapse{{ categoria.id }}">
+                                {{ categoria.nombre }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ categoria.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ categoria.id }}" data-bs-parent="#cursosAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    {% for curso in categoria.curso_set.all %}
+                                        <div class="col-md-4 mb-3">
+                                            <!-- Hacer que toda la tarjeta sea clicable -->
+                                            <div class="card" onclick="toggleCheckbox('curso{{ curso.id }}')">
+                                                <img src="{{ curso.imagen_url }}" class="card-img-top" alt="{{ curso.titulo }}">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ curso.nombre }}</h5>
+                                                    <p class="card-text">{{ curso.descripcion }}</p>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="cursos" id="curso{{ curso.id }}" value="{{ curso.id }}">
+                                                        <label class="form-check-label" for="curso{{ curso.id }}">
+                                                            Seleccionar
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Enviar Inscripción</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hacer que toda la tarjeta sea clicable para seleccionar/deseleccionar el curso
+        function toggleCheckbox(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            checkbox.checked = !checkbox.checked; // Alterna el estado de seleccionado
+
+            limitSelection(checkbox); // Llamar a la función para validar la selección de cursos
+        }
+
+        function limitSelection(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="cursos"]');
+            const checkedCheckboxes = Array.from(checkboxes).filter(i => i.checked);
+
+            if (checkedCheckboxes.length > 2) {
+                alert('Solo puedes seleccionar hasta 2 cursos.');
+                checkbox.checked = false; // Desmarcar el checkbox que se acaba de seleccionar
+            }
+        }
+    </script>
+</body>
+</html>
