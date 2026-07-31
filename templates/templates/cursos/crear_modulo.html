@@ -1,0 +1,19 @@
+{% extends "cuentas/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="title">Crear Módulo</h2>
+  <form method="post" class="module-form">
+    {% csrf_token %}
+    <div class="form-fields">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Crear Módulo</button>
+      <a href="{% url 'user_profile' %}" class="btn-volver">Volver al perfil</a>
+    </div>
+  </form>
+</div>
+
+
+{% endblock %}

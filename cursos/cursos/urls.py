@@ -1,0 +1,51 @@
+# cursos/urls.py
+from django.urls import path
+from . import views
+from .views import crear_estudiante_pen, eliminar_estudiante_pen, eliminar_estudiante_pen_curso, inscribir_curso_pen, ver_estudiantes_pen
+urlpatterns = [
+    path('crear/', views.crear_curso, name='crear_curso'),
+    path('modulos/crear/', views.crear_modulo, name='crear_modulo'),
+    path('modulos/detalle/<int:modulo_id>/', views.detalle_modulo, name='detalle_modulo'),
+    path('cursos/lista/', views.lista_cursos, name='lista_cursos'),
+    path('inscribirse/', views.registro_curso, name='inscribirse_curso'),
+    path('asistencias/<int:curso_id>/', views.ver_asistencia, name='ver_asistencia'),
+    path('obtener_asistencias/',views.obtener_asistencias,name='obtener_asistencias'),
+    path('crear_clase/<int:curso_id>/', views.crear_clase, name='crear_clase'),
+    path('ver_clases/<int:curso_id>/', views.ver_clases, name='ver_clases'),
+    path('clase/crear_asistencia/<int:clase_id>/', views.crear_asistencia, name='crear_asistencia'),
+    path('clase/<int:clase_id>/editar_asistencia/', views.editar_asistencia, name='editar_asistencia'),
+    path('clase/<int:clase_id>/', views.detalle_clase, name='detalle_clase'),
+    path('clase/', views.felicidades, name='felicidades'),
+    path('curso/<int:curso_id>/eliminar/', views.eliminar_curso, name='eliminar_curso'),
+    path('modulos/eliminar/<int:modulo_id>/', views.eliminar_modulo, name='eliminar_modulo'),
+    path('modulos/', views.listar_modulos, name='listar_modulos'),
+    path('gestionar_notas/<int:modulo_id>/', views.gestionar_notas, name='gestionar_notas'),
+    path('ver_notas/', views.ver_nota, name='ver_notas'),
+    path('escritorio-instructores/', views.escritorio_instructores_vista, name='escritorio_instructores'),
+    path('obtener_cursos_json/', views.obtener_cursos_json, name='obtener_cursos_json'),
+    path('obtener_modulos_por_curso/<int:curso_id>/', views.obtener_modulos_por_curso_json, name='obtener_modulos_por_curso'),
+    path('curso/<int:curso_id>/modulos/json/', views.obtener_modulos_por_curso_json, name='obtener_modulos_por_curso'),
+    path('curso/<int:curso_id>/estudiantes/json/', views.obtener_estudiantes_curso_json, name='obtener_estudiantes_curso'),
+    path('obtener-datos-curso/<int:curso_id>/', views.obtener_datos_curso, name='obtener_datos_curso'),
+    path('curso/<int:curso_id>/notas/', views.ver_notas_instructor, name='ver_notas_instructor'),
+    path('obtener_clases/<int:curso_id>/', views.obtener_clases, name='obtener_clases'),
+    path('eliminar_clase/<int:curso_id>/<int:clase_id>/', views.eliminar_clase, name='eliminar_clase'),
+    path('error-inscripcion/', views.error_inscripcion, name='error_inscripcion'),
+    path('obtener_email/', views.obtener_email_json, name='obtener_email'),
+    path("curso/<int:curso_id>/editar/", views.editar_curso, name="editar_curso"),
+    path('curso/<int:curso_id>/eliminar_estudiante/<int:estudiante_id>/', views.eliminar_estudiante, name='eliminar_estudiante'),
+    path('modulo/<int:modulo_id>/editar/', views.editar_modulo, name='editar_modulo'),
+    path('crear-estudiante-pen/', crear_estudiante_pen, name='crear_estudiante_pen'),
+    path('ver-estudiantes-pen/', ver_estudiantes_pen, name='ver_estudiantes_pen'),
+    path('inscribir-curso-pen/<int:estudiante_id>/', inscribir_curso_pen, name='inscribir_curso_pen'),
+    path('curso/<int:curso_id>/eliminar_estudiante_pen/<str:dni>/', eliminar_estudiante_pen, name='eliminar_estudiante_pen'),
+    path('curso/<int:curso_id>/eliminar_estudiante_pen_curso/<str:dni>/', eliminar_estudiante_pen_curso, name='eliminar_estudiante_pen_curso'),
+    path('mis_inscripciones/', views.mis_inscripciones, name='mis_inscripciones'),
+    path('ver_inscripcion/<int:inscripcion_id>/', views.ver_inscripcion, name='ver_inscripcion'),
+    path('editar_inscripcion/<int:inscripcion_id>/', views.registro_curso, name='editar_inscripcion'),
+    path('inscripciones/', views.inscripciones_view, name='inscripciones_view'),
+    path('promedio_asistencias/<int:curso_id>/', views.promedio_asistencias, name='promedio_asistencias'),
+     
+]
+
+

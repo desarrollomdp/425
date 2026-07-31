@@ -1,0 +1,526 @@
+{% extends 'cuentas/base.html' %}
+{% load i18n %}
+{%load static%}
+{% block slider %}{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex flex-col lg:block">
+
+    <!-- Sidebar / Sidebar Mobile -->
+    <aside id="sidebar"
+        class="w-full lg:w-80 bg-white border-b lg:border-r border-slate-200 lg:fixed lg:top-20 lg:bottom-0 lg:left-0 z-40 overflow-y-auto">
+        <div class="p-6 space-y-8">
+
+            <!-- Quick Branding (Mobile only often) -->
+            <div class="flex items-center gap-3 mb-8">
+                <div
+                    class="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+                    <i class="fas fa-user-shield text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-slate-800">CFP Admin</h2>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Directivos</span>
+                </div>
+            </div>
+
+            <!-- Stats in Sidebar (Android Style Cards) -->
+            <div class="grid grid-cols-1 gap-4">
+                <div
+                    class="bg-red-50 p-6 rounded-[2rem] border border-red-100 flex items-center gap-4 group hover:bg-white hover:shadow-xl hover:shadow-red-500/10 transition-all cursor-default">
+                    <div
+                        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-red-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-red-400">Mensajes</p>
+                        <h4 class="text-2xl font-black text-slate-800" id="counter-mensajes">0</h4>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-blue-50 p-6 rounded-[2rem] border border-blue-100 flex items-center gap-4 group hover:bg-white hover:shadow-xl hover:shadow-primary/10 transition-all cursor-default">
+                    <div
+                        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-primary/60">Cursos</p>
+                        <h4 class="text-2xl font-black text-slate-800" id="counter-cursos">{{cantidad_estudiantes}}</h4>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-green-50 p-6 rounded-[2rem] border border-green-100 flex items-center gap-4 group hover:bg-white hover:shadow-xl hover:shadow-green-500/10 transition-all cursor-default">
+                    <div
+                        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-green-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-green-400">Alumnos</p>
+                        <h4 class="text-2xl font-black text-slate-800" id="counter-estudiantes">{{cantidad_estudiantes}}
+                        </h4>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 flex items-center gap-4 group hover:bg-white hover:shadow-xl hover:shadow-purple-500/10 transition-all cursor-default">
+                    <div
+                        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-purple-500 shadow-sm group-hover:scale-110 transition-transform">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-purple-400">Inscripciones 2026
+                        </p>
+                        <h4 class="text-2xl font-black text-slate-800">{{ inscripciones_2026 }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="space-y-4 pt-6">
+                <h5 class="text-xs font-black uppercase tracking-widest text-slate-400 px-2">Menú Principal</h5>
+                <nav class="space-y-1">
+                    <a href="javascript:void(0)" onclick="abrirModalTodosUsuarios()"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i class="fas fa-users text-primary opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Usuarios</span>
+                    </a>
+                    <a href="{% url 'gestionar_sliders' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i class="fas fa-images text-primary opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Sliders</span>
+                    </a>
+                    <a href="{% url 'anuncios:anuncios_dashboard' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-chart-line text-indigo-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Métricas KPIs</span>
+                    </a>
+                    <a href="{% url 'anuncios:anuncios_list' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-bullhorn text-orange-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Anuncios</span>
+                    </a>
+                    <a href="{% url 'sala_general' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-comments text-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Mensajes</span>
+                    </a>
+                    <a href="{% url 'ver_entregas' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-file-contract text-yellow-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Entregas</span>
+                    </a>
+                    <a href="{% url 'crear_post' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-plus-circle text-green-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Crear Post</span>
+                    </a>
+                    <a href="{% url 'mapa_conceptual_directivo' %}"
+                        class="flex items-center gap-3 p-4 text-slate-600 font-bold hover:bg-slate-50 rounded-2xl transition-all group active:scale-95">
+                        <i
+                            class="fas fa-project-diagram text-indigo-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                        <span>Mapa Conceptual</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Mensajes Recientes -->
+            <div class="pt-6 border-t border-slate-100">
+                <div class="flex items-center justify-between px-2 mb-4">
+                    <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Mensajes Recientes</h5>
+                    <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden"
+                        id="badge-total-mensajes">0</span>
+                </div>
+                <div id="sidebar-messages-list" class="space-y-3">
+                    <!-- Mensajes inyectados via JS -->
+                    <div class="text-center py-4">
+                        <div
+                            class="w-6 h-6 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mx-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="mainContent" class="flex-grow p-6 lg:p-12 lg:ml-80 overflow-x-hidden">
+
+        <!-- Header / Filters -->
+        <div class="mb-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div>
+                <h1 class="text-3xl lg:text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">
+                    Administración</h1>
+                <p class="text-lg text-slate-500 font-medium">Gestioná toda la oferta académica desde un solo lugar.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                <div
+                    class="px-4 py-2 bg-slate-50 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500">
+                    <i class="fas fa-clock mr-2 text-primary"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="bg-white rounded-[2.5rem] p-8 lg:p-10 mb-10 border border-slate-100 shadow-xl shadow-slate-200/50">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="space-y-2">
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-400">Ciclo
+                        Lectivo</label>
+                    <select id="filtro-anio"
+                        class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none">
+                        <option value="todos">Todos</option>
+                        <option value="2026" selected>2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-400">Buscar
+                        Curso</label>
+                    <div class="relative group">
+                        <i
+                            class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-primary transition-colors"></i>
+                        <input type="text" id="busqueda-nombre"
+                            class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 pl-14 pr-6 font-bold text-slate-700 transition-all outline-none"
+                            placeholder="Nombre del curso...">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-400">Estado</label>
+                    <select id="filtro-estado"
+                        class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none">
+                        <option value="todos">Todos los estados</option>
+                        <option value="cursando">En curso</option>
+                        <option value="finalizado">Finalizado</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-black uppercase tracking-widest text-slate-400">Ubicación</label>
+                    <select id="filtro-lugar"
+                        class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none">
+                        <option value="todos">Todos los lugares</option>
+                        <option value="sede">Sede Central</option>
+                        <option value="subsede">Subsede</option>
+                        <option value="anexo">Anexo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="relative min-h-[400px]">
+            <!-- Loading Indicator -->
+            <div id="loading-indicator"
+                class="hidden absolute inset-0 z-50 bg-slate-50/80 backdrop-blur-sm flex items-center justify-center rounded-3xl">
+                <div class="text-center space-y-6 max-w-sm px-6">
+                    <div class="relative w-32 h-32 mx-auto">
+                        <div class="absolute inset-0 border-8 border-slate-200 rounded-full"></div>
+                        <div id="loading-spinner-border"
+                            class="absolute inset-0 border-8 border-primary rounded-full border-t-transparent animate-spin">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center font-black text-primary text-xl"
+                            id="progress-text">0%</div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300"
+                            style="width: 0%"></div>
+                    </div>
+
+                    <div>
+                        <h5 class="text-2xl font-black text-slate-800">Cargando Sistema...</h5>
+                        <p class="text-slate-500 font-medium leading-relaxed mt-2" id="loading-status">Validando
+                            credenciales...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Container -->
+            <div id="dynamic-content"
+                class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 animate-fade-in hidden">
+                <!-- Inyeccion AJAX aquí CP -->
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<!-- Modal para Ver Alumnos/Clases -->
+<div id="modalAlumnos" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+        onclick="document.getElementById('modalAlumnos').classList.add('hidden')"></div>
+
+    <div
+        class="relative w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] animate-zoom-in overflow-hidden">
+
+        <!-- Header Sticky -->
+        <div class="flex justify-between items-center p-6 border-b border-slate-100 bg-white shrink-0 z-10">
+            <h5 class="text-2xl font-black text-slate-800 flex items-center gap-3">
+                <span class="w-2 h-8 bg-indigo-500 rounded-full"></span>
+                Lista de Estudiantes
+            </h5>
+            <button type="button"
+                class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all"
+                onclick="document.getElementById('modalAlumnos').classList.add('hidden')">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Body Scrollable -->
+        <div id="modalAlumnosBody" class="overflow-y-auto p-6 scroll-smooth custom-scrollbar">
+            <!-- Contenido dinámico cargado por JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Chat -->
+<div id="modalChat" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="cerrarModalChat()"></div>
+
+    <div
+        class="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl flex flex-col h-[600px] max-h-[90vh] animate-zoom-in overflow-hidden">
+
+        <!-- Header Chat -->
+        <div class="flex justify-between items-center p-4 border-b border-slate-100 bg-white shrink-0 z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden"
+                    id="chat-header-avatar">
+                    <i class="fas fa-user text-slate-400"></i>
+                </div>
+                <div>
+                    <h5 class="text-sm font-black text-slate-800 leading-tight" id="chat-header-name">Usuario</h5>
+                    <span class="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En línea
+                    </span>
+                </div>
+            </div>
+            <button type="button"
+                class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-xl transition-all"
+                onclick="cerrarModalChat()">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Body Iframe -->
+        <div class="flex-grow bg-slate-50 relative">
+            <div id="chat-loader" class="absolute inset-0 flex items-center justify-center bg-slate-50 z-20">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-8 h-8 border-4 border-slate-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                    <p class="text-xs font-bold text-slate-400">Cargando conversación...</p>
+                </div>
+            </div>
+            <iframe id="chat-iframe" src="" class="w-full h-full border-0"
+                onload="document.getElementById('chat-loader').classList.add('hidden')"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Todos los Usuarios -->
+<div id="modalTodosUsuarios" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="cerrarModalTodosUsuarios()">
+    </div>
+    <div
+        class="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] animate-zoom-in overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-white shrink-0 z-10">
+            <div class="flex justify-between items-center mb-4">
+                <h5 class="text-2xl font-black text-slate-800 flex items-center gap-3">
+                    <span class="w-2 h-8 bg-primary rounded-full"></span>
+                    Todos los Usuarios
+                </h5>
+                <button type="button" onclick="cerrarModalTodosUsuarios()"
+                    class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-100 rounded-xl transition-all">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="relative group">
+                <i
+                    class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-hover:text-primary transition-colors"></i>
+                <input type="text" id="busqueda-usuarios-modal"
+                    class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 pl-14 pr-6 font-bold text-slate-700 transition-all outline-none"
+                    placeholder="Buscar por nombre o DNI...">
+            </div>
+        </div>
+        <div id="modalTodosUsuariosBody" class="overflow-y-auto p-6 scroll-smooth custom-scrollbar">
+            <!-- Contenido dinámico cargado por JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Transiciones y Animaciones */
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes zoom-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-zoom-in {
+        animation: zoom-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* Estilos para el spinner de progreso */
+    #loading-spinner-border {
+        border-top-color: transparent !important;
+    }
+
+    /* Ocultar scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Custom Styles para la inyeccion de AJAX y DataTables */
+    .dataTables_wrapper {
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    table.dataTable {
+        border-collapse: separate !important;
+        border-spacing: 0 12px !important;
+    }
+
+    table.dataTable thead th {
+        border-bottom: none !important;
+        background-color: transparent !important;
+        color: #94a3b8 !important;
+        /* slate-400 */
+        font-size: 0.75rem !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        padding: 0 24px !important;
+    }
+
+    table.dataTable tbody tr {
+        background-color: #f8fafc !important;
+        /* slate-50 */
+        border-radius: 1rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.2s !important;
+    }
+
+    table.dataTable tbody tr:hover {
+        background-color: #f1f5f9 !important;
+        /* slate-100 */
+        transform: scale(1.005) !important;
+    }
+
+    table.dataTable tbody td {
+        padding: 20px 24px !important;
+        border: none !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        /* slate-800 */
+    }
+
+    table.dataTable tbody td:first-child {
+        border-radius: 1rem 0 0 1rem !important;
+    }
+
+    table.dataTable tbody td:last-child {
+        border-radius: 0 1rem 1rem 0 !important;
+    }
+</style>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'js/escritorio_directivo.js' %}?v=3"></script>
+
+<script>
+    // Mobile Overlay Toggle (Si existiera boton mobile en el base)
+    // El base ya maneja su propio menu movil, pero el dashboard tiene su propia sidebar.
+
+    // Update Time
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const timeElement = document.getElementById('currentTime');
+        if (timeElement) {
+            timeElement.textContent = timeString;
+        }
+    }
+
+    updateTime();
+    setInterval(updateTime, 10000); // Mas frecuente para el segundero si se quiere, o cada min.
+
+    // Reubicar modales si es necesario
+    $(document).ready(function () {
+        // Observador de progreso para el indicador de carga
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar'); // Si se usa bar
+
+        // Simular progreso de carga si el JS original no lo maneja exacto
+        let progress = 0;
+        const interval = setInterval(() => {
+            if (progress < 95) {
+                progress += Math.random() * 10;
+                if (progress > 95) progress = 95;
+                if (progressText) progressText.innerText = Math.round(progress) + '%';
+            }
+        }, 300);
+
+        // Cuando el contenido dinamico tenga hijos, ocultamos carga
+        const observer = new MutationObserver((mutations) => {
+            if ($('#dynamic-content').children().length > 0) {
+                clearInterval(interval);
+                if (progressText) progressText.innerText = '100%';
+                setTimeout(() => {
+                    $('#loading-indicator').fadeOut(400);
+                }, 500);
+                observer.disconnect();
+            }
+        });
+
+        const target = document.getElementById('dynamic-content');
+        if (target) {
+            observer.observe(target, { childList: true });
+        }
+    });
+
+    // Función para abrir el modal desde los botones inyectados por el JS externo
+    window.abrirModalAlumnos = function () {
+        $('#modalAlumnos').removeClass('hidden');
+    }
+
+    // El JS externo (escritorio_directivo.js) probablemente use selectores de Bootstrap 
+    // así que los hemos mapeado o mantenido los IDs necesarios.
+</script>
+{% endblock content %}

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <style>
+        .main-color { fill: #0d6efd; }
+        .secondary-color { fill: #6c757d; }
+    </style>
+    <g>
+        <!-- Fondo circular -->
+        <circle cx="250" cy="250" r="240" fill="#f8f9fa"/>
+        
+        <!-- Cara triste simplificada -->
+        <g transform="translate(100,100) scale(0.6)">
+            <!-- Ojos -->
+            <circle cx="150" cy="180" r="30" class="main-color"/>
+            <circle cx="350" cy="180" r="30" class="main-color"/>
+            
+            <!-- Boca triste -->
+            <path d="M150,350 Q250,250 350,350" stroke="#0d6efd" stroke-width="20" fill="none"/>
+        </g>
+        
+        <!-- Texto decorativo -->
+        <text x="250" y="450" text-anchor="middle" font-family="Arial" font-size="24" class="secondary-color">
+            Página no encontrada
+        </text>
+    </g>
+</svg>

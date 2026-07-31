@@ -1,0 +1,597 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+{% block slider%}{% endblock slider%}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 pb-20">
+
+    <div class="relative bg-white pt-16 pb-16 px-6 overflow-hidden border-b border-slate-100">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl -z-10">
+        </div>
+
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10 animate-fade-in">
+            <div class="relative group">
+                <div
+                    class="w-36 h-36 rounded-[3.5rem] bg-white p-1.5 shadow-2xl shadow-slate-200 border border-slate-50 transition-transform duration-500 group-hover:scale-105">
+                    <div
+                        class="w-full h-full rounded-[3.1rem] overflow-hidden bg-slate-50 flex items-center justify-center">
+                        {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover">
+                        {% else %}
+                        <div
+                            class="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                            <i class="fas fa-user text-slate-300 text-6xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button type="button" onclick="openModal('editarPerfilModal')"
+                    class="absolute bottom-1 right-1 w-12 h-12 bg-white text-primary rounded-2xl flex items-center justify-center shadow-xl hover:bg-primary hover:text-white transition-all active:scale-90 border border-slate-100 group/edit cursor-pointer">
+                    <i class="fas fa-pen text-sm transition-transform group-hover/edit:rotate-12"></i>
+                </button>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">{{ user.first_name }}
+                    {{ user.last_name|default:"" }}</h2>
+                <p class="text-slate-400 font-bold text-sm mt-1">@{{ user.username }} • {{ user.email }}</p>
+                <div class="mt-4 flex items-center justify-center gap-2">
+                    <span
+                        class="inline-flex items-center px-4 py-1.5 bg-blue-50 text-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
+                        {{ user.profile.rol|title }}
+                    </span>
+                    {% if user.profile.dni %}
+                    <span
+                        class="inline-flex items-center px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-100">
+                        DNI {{ user.profile.dni }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto -mt-10 px-4">
+
+        <div
+            class="bg-white/80 backdrop-blur-xl p-2 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 mb-10 flex">
+            <button onclick="switchTab('escritorio')" id="tab-escritorio"
+                class="tab-btn flex-1 py-4 flex items-center justify-center gap-3 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all active:scale-95 text-primary bg-blue-50">
+                <i class="fas fa-th-large"></i> Escritorio
+            </button>
+            <button onclick="switchTab('cursos')" id="tab-cursos"
+                class="tab-btn flex-1 py-4 flex items-center justify-center gap-3 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all active:scale-95 text-slate-400">
+                <i class="fas fa-graduation-cap"></i> Cursos
+        </div>
+
+        <div class="animate-fade-in-up">
+
+            <div id="content-escritorio" class="tab-pane space-y-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    {% if user.profile.rol == 'alumno' %}
+                    <a href="{% url 'ver_notas' %}"
+                        class="group relative bg-white p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/40 border border-slate-50 transition-all hover:-translate-y-2 hover:shadow-2xl overflow-hidden block">
+                        <div
+                            class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110">
+                        </div>
+                        <i class="fas fa-award text-emerald-500 text-4xl mb-6 relative z-10"></i>
+                        <h6 class="text-slate-800 font-black text-sm uppercase tracking-wider relative z-10">Mis Notas
+                        </h6>
+                    </a>
+                    <a href="{% url 'sala_general' %}"
+                        class="group relative bg-white p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/40 border border-slate-50 transition-all hover:-translate-y-2 hover:shadow-2xl overflow-hidden block">
+                        <div
+                            class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110">
+                        </div>
+                        <i class="fas fa-users text-primary text-4xl mb-6 relative z-10"></i>
+                        <h6 class="text-slate-800 font-black text-sm uppercase tracking-wider relative z-10">Sala
+                            General</h6>
+                    </a>
+                    {% endif %}
+
+                    {% if user.profile.rol == 'directivo' or user.profile.rol == 'instructor' %}
+                    <a href="{% url 'escritorio_instructores' %}"
+                        class="group relative bg-white p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/40 border border-slate-50 transition-all hover:-translate-y-2 hover:shadow-2xl overflow-hidden block">
+                        <div
+                            class="absolute top-0 right-0 w-24 h-24 bg-rose-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110">
+                        </div>
+                        <i class="fas fa-chalkboard-teacher text-rose-500 text-4xl mb-6 relative z-10"></i>
+                        <h6 class="text-slate-800 font-black text-sm uppercase tracking-wider relative z-10">Instructor
+                        </h6>
+                    </a>
+                    {% endif %}
+
+                    {% if user.profile.rol == 'directivo' %}
+                    <a href="{% url 'escritorio_directivo' %}"
+                        class="group relative bg-white p-8 rounded-[2.5rem] shadow-lg shadow-slate-200/40 border border-slate-50 transition-all hover:-translate-y-2 hover:shadow-2xl overflow-hidden block">
+                        <div
+                            class="absolute top-0 right-0 w-24 h-24 bg-slate-100 rounded-bl-[4rem] -mr-8 -mt-8 transition-transform group-hover:scale-110">
+                        </div>
+                        <i class="fas fa-shield-alt text-slate-800 text-4xl mb-6 relative z-10"></i>
+                        <h6 class="text-slate-800 font-black text-sm uppercase tracking-wider relative z-10">Admin</h6>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div
+                    class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+                    <div class="p-8 lg:p-10">
+                        <h5 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+                            <i class="fas fa-shield-alt text-primary/40 translate-y-0.5"></i> Seguridad y Datos
+                        </h5>
+
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-6 p-6 rounded-3xl hover:bg-slate-50 transition-all group">
+                                <div
+                                    class="w-14 h-14 bg-slate-50 group-hover:bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-all shadow-sm">
+                                    <i class="fas fa-id-card text-xl"></i>
+                                </div>
+                                <div class="flex-grow">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">DNI /
+                                        Documento</p>
+                                    <p class="text-lg font-bold text-slate-700 mt-0.5">
+                                        {{ user.profile.dni|default:"No informado" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-6 p-6 rounded-3xl hover:bg-slate-50 transition-all group">
+                                <div
+                                    class="w-14 h-14 bg-slate-50 group-hover:bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-all shadow-sm">
+                                    <i class="fas fa-phone-alt text-xl"></i>
+                                </div>
+                                <div class="flex-grow">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Teléfono
+                                        móvil</p>
+                                    <p class="text-lg font-bold text-slate-700 mt-0.5">
+                                        {{ user.profile.telefono|default:"No informado" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-6 p-6 rounded-3xl hover:bg-slate-50 transition-all group">
+                                <div
+                                    class="w-14 h-14 bg-slate-50 group-hover:bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary transition-all shadow-sm">
+                                    <i class="fas fa-calendar-alt text-xl"></i>
+                                </div>
+                                <div class="flex-grow">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Fecha de
+                                        Nacimiento</p>
+                                    <p class="text-lg font-bold text-slate-700 mt-0.5">
+                                        {{ user.profile.fecha_nacimiento|default:"No informada" }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 pt-8 border-t border-slate-50 flex justify-center">
+                            <button type="button" onclick="openModal('editarPerfilModal')"
+                                class="flex items-center gap-3 px-8 py-4 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-primary hover:text-white transition-all active:scale-95 text-xs uppercase tracking-widest group">
+                                <i class="fas fa-pen transition-transform group-hover:rotate-12"></i> Editar Perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-cursos" class="tab-pane hidden space-y-10">
+                <div>
+                    <h5 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-4">
+                        <span
+                            class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-primary shadow-sm"><i
+                                class="fas fa-play"></i></span>
+                        Cursando Actualmente
+                    </h5>
+
+                    {% if inscripciones %}
+                    <div class="flex gap-6 overflow-x-auto pb-8 no-scrollbar -mx-4 px-4">
+                        {% for inscripcion in inscripciones %}
+                        <div
+                            class="flex-none w-80 bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden group">
+                            <div class="h-2 bg-primary"></div>
+                            <div class="p-8">
+                                <span
+                                    class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">
+                                    {% if inscripcion.curso.cursando %}Activo{% else %}Inactivo{% endif %}
+                                </span>
+                                <h5
+                                    class="mt-4 text-xl font-black text-slate-800 leading-tight group-hover:text-primary transition-colors">
+                                    {{ inscripcion.curso.nombre }}
+                                </h5>
+
+                                <div class="mt-8 space-y-2">
+                                    <div
+                                        class="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span>Progreso</span>
+                                        <span>{{ inscripcion.progreso }}%</span>
+                                    </div>
+                                    <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-primary to-indigo-600 rounded-full"
+                                            style="width: {{ inscripcion.progreso }}%"></div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onclick="cargarAsistencia({{ inscripcion.curso.id }}); openModal('asistenciaModal')"
+                                    class="mt-8 w-full py-4 bg-slate-50 text-slate-500 font-black rounded-2xl border border-slate-100 hover:bg-white hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    <i class="fas fa-calendar-check text-primary"></i> Asistencia
+                                </button>
+
+                                <a href="{% url 'editar_inscripcion' inscripcion.id %}"
+                                    class="mt-4 w-full py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                    <i class="fas fa-edit"></i> Editar Inscripción
+                                </a>
+
+                                <div class="mt-4 flex flex-col gap-2">
+                                    <div
+                                        class="flex items-center justify-between px-4 py-3 bg-slate-50/50 rounded-2xl border border-slate-100 group/status">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-lg {% if inscripcion.pago_contribucion %}bg-emerald-100 text-emerald-600{% else %}bg-slate-200 text-slate-400{% endif %} flex items-center justify-center text-xs">
+                                                <i class="fas fa-hand-holding-usd"></i>
+                                            </div>
+                                            <span
+                                                class="text-[10px] font-black uppercase tracking-widest text-slate-500">Contribución</span>
+                                        </div>
+                                        <span
+                                            class="text-[10px] font-black uppercase tracking-widest {% if inscripcion.pago_contribucion %}text-emerald-600{% else %}text-slate-400{% endif %}">
+                                            {% if inscripcion.pago_contribucion %}Pagado{% else %}Pendiente{% endif %}
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        class="flex items-center justify-between px-4 py-3 bg-slate-50/50 rounded-2xl border border-slate-100 group/status">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-lg {% if inscripcion.entrega_certificado %}bg-blue-100 text-primary{% else %}bg-slate-200 text-slate-400{% endif %} flex items-center justify-center text-xs">
+                                                <i class="fas fa-file-alt"></i>
+                                            </div>
+                                            <span
+                                                class="text-[10px] font-black uppercase tracking-widest text-slate-500">Planilla</span>
+                                        </div>
+                                        <span
+                                            class="text-[10px] font-black uppercase tracking-widest {% if inscripcion.entrega_certificado %}text-primary{% else %}text-slate-400{% endif %}">
+                                            {% if inscripcion.entrega_certificado %}Entregada
+                                            {% else %}Pendiente
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div
+                        class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200 shadow-sm">
+                        <div
+                            class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-300">
+                            <i class="fas fa-book-open text-3xl"></i>
+                        </div>
+                        <p class="font-bold text-slate-400 mb-8">No estás inscripto en ningún curso activo.</p>
+                        <a href="{% url 'lista_cursos' %}"
+                            class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95">
+                            Explorar Cursos <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div id="editarPerfilModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+        onclick="closeModal('editarPerfilModal')"></div>
+
+    <div class="flex min-h-full items-center justify-center p-4 pb-24 md:pb-4">
+
+        <div
+            class="relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all w-full max-w-2xl max-h-[80vh] md:max-h-[90vh] overflow-y-auto no-scrollbar">
+
+            <div class="bg-slate-50 p-6 border-b border-slate-100 relative text-center sticky top-0 z-10">
+                <h5 class="text-xl font-black text-slate-800">Actualizar Perfil</h5>
+                <button type="button" onclick="closeModal('editarPerfilModal')"
+                    class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-8 pb-40">
+                <form method="POST" enctype="multipart/form-data" class="space-y-8">
+                    {% csrf_token %}
+
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="relative group">
+                            <div
+                                class="w-32 h-32 rounded-[2.5rem] bg-slate-50 p-1 border-4 border-white shadow-xl overflow-hidden">
+                                {% if user.profile.avatar %}
+                                <img src="{{ user.profile.avatar.url }}" id="avatar-preview"
+                                    class="w-full h-full object-cover">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}"
+                                    id="avatar-preview" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+                            <label for="id_avatar"
+                                class="absolute -bottom-2 -right-2 w-11 h-11 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg cursor-pointer hover:rotate-12 transition-all border-4 border-white">
+                                <i class="fas fa-camera text-sm"></i>
+                            </label>
+                            <input type="file" name="avatar" id="id_avatar" accept="image/*" class="hidden"
+                                onchange="previewImage(this)">
+                        </div>
+                        <p class="mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Toca la cámara
+                            para cambiar</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Nombre</label>
+                            <input type="text" name="first_name"
+                                value="{{ form.first_name.value|default:user.first_name }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Apellido</label>
+                            <input type="text" name="last_name"
+                                value="{{ form.last_name.value|default:user.last_name }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Email</label>
+                            <input type="email" name="email" value="{{ form.email.value|default:user.email }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">DNI</label>
+                            <input type="text" name="dni" value="{{ form.dni.value|default:'' }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Teléfono</label>
+                            <input type="text" name="telefono" value="{{ form.telefono.value|default:'' }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Fecha de
+                                Nacimiento</label>
+                            <input type="date" name="fecha_nacimiento"
+                                value="{{ form.fecha_nacimiento.value|date:'Y-m-d'|default:'' }}"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-3 px-5 font-bold text-slate-700 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="mt-10 flex justify-end">
+                        <button type="submit"
+                            class="w-full md:w-auto px-10 py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-widest text-xs">
+                            Guardar Cambios
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="asistenciaModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+        onclick="closeModal('asistenciaModal')"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div
+            class="relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="bg-slate-50 p-6 border-b border-slate-100 relative text-center sticky top-0 z-10">
+                <h5 class="text-xl font-black text-slate-800">Reporte de Asistencia</h5>
+                <button type="button" onclick="closeModal('asistenciaModal')"
+                    class="absolute top-6 right-6 text-slate-400 hover:text-rose-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-8">
+                <div class="grid grid-cols-3 gap-4 mb-10">
+                    <div class="bg-blue-50/50 p-6 rounded-[2rem] text-center">
+                        <h3 class="text-3xl font-black text-primary mb-1" id="presentes">-</h3>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-blue-400">Presentes</p>
+                    </div>
+                    <div class="bg-rose-50/50 p-6 rounded-[2rem] text-center">
+                        <h3 class="text-3xl font-black text-rose-500 mb-1" id="ausentes">-</h3>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-rose-400">Ausentes</p>
+                    </div>
+                    <div class="bg-emerald-50/50 p-6 rounded-[2rem] text-center">
+                        <h3 class="text-3xl font-black text-emerald-600 mb-1" id="porcentaje">-%</h3>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-400">Total</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h6 class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Detalle de Clases
+                    </h6>
+                    <div id="lista_asistencia" class="space-y-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Lógica de TABS
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('text-primary', 'bg-blue-50');
+            btn.classList.add('text-slate-400');
+        });
+        const activeBtn = document.getElementById('tab-' + tabId);
+        activeBtn.classList.add('text-primary', 'bg-blue-50');
+        activeBtn.classList.remove('text-slate-400');
+
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.add('hidden');
+        });
+        document.getElementById('content-' + tabId).classList.remove('hidden');
+    }
+
+    // 2. Lógica de MODAL
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // 3. Previsualización de Avatar
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('avatar-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 4. Lógica de Asistencia (CORREGIDA)
+    function cargarAsistencia(cursoId) {
+        const lista = document.getElementById("lista_asistencia");
+
+        // Loader
+        lista.innerHTML = `
+            <div class="animate-pulse space-y-3">
+                <div class="h-16 bg-slate-100 rounded-2xl"></div>
+                <div class="h-16 bg-slate-100 rounded-2xl"></div>
+                <div class="h-16 bg-slate-100 rounded-2xl"></div>
+            </div>`;
+
+        fetch(`/reportes/asistencia/curso/${cursoId}/`)
+            .then(response => response.json())
+            .then(data => {
+                // 1. Actualizar Contadores
+                document.getElementById("presentes").innerText = data.presentes ?? 0;
+                document.getElementById("ausentes").innerText = data.ausentes ?? 0;
+                document.getElementById("porcentaje").innerText = (data.porcentaje ?? 0) + "%";
+
+                // 2. Limpiar Lista
+                lista.innerHTML = "";
+
+                // Leemos 'data.detalle' directamente del JSON que me mostraste
+                const clases = data.detalle || [];
+
+                if (clases.length === 0) {
+                    lista.innerHTML = `
+                        <div class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <i class="fas fa-clipboard-list text-slate-300 text-3xl mb-2"></i>
+                            <p class="font-bold text-slate-400">No hay registros de asistencia aún.</p>
+                        </div>`;
+                    return;
+                }
+
+                // 3. Renderizar filas
+                clases.forEach(item => {
+                    const row = document.createElement("div");
+                    row.className = "flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 transition-all group mb-2";
+
+                    // Estilos según estado
+                    let badgeStyles = 'bg-slate-200 text-slate-500';
+                    let icono = '<i class="fas fa-question-circle mr-1"></i>';
+
+                    const estadoLower = (item.estado || "").toLowerCase();
+
+                    if (estadoLower === 'presente') {
+                        badgeStyles = 'bg-emerald-100 text-emerald-600';
+                        icono = '<i class="fas fa-check-circle mr-1"></i>';
+                    } else if (estadoLower === 'ausente') {
+                        badgeStyles = 'bg-rose-100 text-rose-600';
+                        icono = '<i class="fas fa-times-circle mr-1"></i>';
+                    } else if (estadoLower === 'sin registrar' || estadoLower === 'pendiente') {
+                        badgeStyles = 'bg-amber-100 text-amber-600';
+                        icono = '<i class="fas fa-clock mr-1"></i>';
+                    }
+
+                    row.innerHTML = `
+                        <div>
+                            <p class="text-sm font-black text-slate-700 leading-tight">${item.clase}</p>
+                            <div class="flex items-center mt-1">
+                                <i class="fas fa-calendar-alt text-slate-300 text-[10px] mr-1"></i>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${item.fecha}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1.5 ${badgeStyles} text-[10px] font-black uppercase tracking-widest rounded-lg transition-transform group-hover:scale-105 flex items-center">
+                            ${icono} ${item.estado}
+                        </span>
+                    `;
+                    lista.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                lista.innerHTML = `<div class="p-4 bg-rose-50 text-rose-500 rounded-xl font-bold text-center text-sm">Error al cargar datos.</div>`;
+            });
+    }
+</script>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-out forwards;
+    }
+
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+</style>
+
+{% endblock %}

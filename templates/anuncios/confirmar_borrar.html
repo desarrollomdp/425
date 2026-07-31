@@ -1,0 +1,27 @@
+{% extends 'cuentas/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+    <div
+        class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 max-w-md w-full text-center space-y-6">
+        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-500 text-2xl">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+
+        <div>
+            <h2 class="text-2xl font-black text-slate-900">¿Eliminar Anuncio?</h2>
+            <p class="text-slate-500 font-medium mt-2">Estás a punto de eliminar "<strong>{{ object.titulo }}</strong>".
+                Esta acción no se puede deshacer.</p>
+        </div>
+
+        <form method="post" class="flex gap-3 justify-center">
+            {% csrf_token %}
+            <a href="{% url 'anuncios:anuncios_list' %}"
+                class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-colors w-full">Cancelar</a>
+            <button type="submit"
+                class="bg-red-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-red-500/30 hover:bg-red-600 transition-all w-full">Sí,
+                Eliminar</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

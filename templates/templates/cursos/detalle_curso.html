@@ -1,0 +1,53 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Título del curso -->
+    <h1 class="text-center mb-4">Detalles del Curso</h1>
+
+    <!-- Información del Curso -->
+    <section class="mb-5">
+        <h2 class="mb-3">Información del Curso</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Nombre del curso:</strong> {{ curso.nombre }}</li>
+            <li class="list-group-item"><strong>Descripción:</strong> {{ curso.descripcion }}</li>
+            <li class="list-group-item"><strong>Instructor:</strong> {{ curso.instructor.get_full_name }}</li>
+            <li class="list-group-item"><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</li>
+            <li class="list-group-item"><strong>Fecha fin:</strong> {{ curso.fecha_fin }}</li>
+        </ul>
+    </section>
+
+    <!-- Módulos asociados -->
+    <section class="mb-5">
+        <h2 class="mb-3">Módulos Asociados</h2>
+        {% if curso.modulos.exists %}
+            <ul class="list-group">
+                {% for modulo in curso.modulos.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ modulo.nombre }}</span>
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'detalle_modulo' modulo.id %}">Ver detalles</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No hay módulos asociados a este curso.</p>
+        {% endif %}
+    </section>
+
+    <!-- Opciones del curso -->
+    <section class="mb-5">
+        <h2 class="mb-3">Opciones del Curso</h2>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="{% url 'ver_clases' curso_id=curso.id %}">Ver Clases</a>
+            <a class="btn btn-success" href="{% url 'crear_clase' curso_id=curso.id %}">Crear Clase</a>
+            <a class="btn btn-warning" href="{% url 'editar_curso' curso.id %}">Editar Curso</a>
+            <a class="btn btn-info" href="{% url 'ver_estudiantes' curso.id %}">Ver Estudiantes</a>
+        </div>
+    </section>
+
+    <!-- Botón para volver al perfil -->
+    <section class="text-center">
+        <a href="{% url 'user_profile' %}" class="btn btn-secondary">Volver al Perfil</a>
+    </section>
+</div>
+{% endblock %}

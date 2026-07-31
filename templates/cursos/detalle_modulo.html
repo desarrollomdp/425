@@ -1,0 +1,161 @@
+{% extends 'cuentas/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Header con botón volver -->
+        <div class="flex items-center justify-between mb-8">
+            <a href="{% url 'escritorio_instructores' %}"
+                class="group flex items-center gap-2 text-slate-500 hover:text-primary transition-colors">
+                <div
+                    class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </div>
+                <span class="font-bold text-sm">Volver al Escritorio</span>
+            </a>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 overflow-hidden border border-slate-100">
+            <!-- Encabezado del Módulo -->
+            <div class="bg-slate-900 p-8 md:p-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-primary/20 rounded-full -ml-16 -mb-16 blur-xl"></div>
+
+                <div class="relative z-10">
+                    <span
+                        class="inline-block px-3 py-1 bg-white/10 backdrop-blur-md text-white/90 text-[10px] font-black uppercase tracking-widest rounded-full mb-4 border border-white/10">
+                        Detalle del Módulo
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-black text-white mb-4">{{ modulo.nombre }}</h1>
+                    <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                        <p class="text-slate-300 font-medium leading-relaxed">{{ modulo.descripcion }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 md:p-10 space-y-10">
+
+                <!-- Sección Cursos Asociados -->
+                <div>
+                    <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                        <span
+                            class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                            <i class="fas fa-layer-group"></i>
+                        </span>
+                        Cursos Asociados
+                    </h2>
+
+                    {% if cursos_asociados %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for curso in cursos_asociados %}
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                                {{ curso.nombre|first }}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-700 text-sm">{{ curso.nombre }}</h3>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Curso Regular</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div
+                        class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center text-slate-400 text-sm font-medium italic">
+                        No hay cursos asociados a este módulo.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sección Estudiantes -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Estudiantes Regulares -->
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-user-graduate"></i>
+                            </span>
+                            Estudiantes Regulares
+                        </h2>
+
+                        {% if estudiantes_regulares %}
+                        <div
+                            class="bg-white border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
+                            {% for estudiante in estudiantes_regulares %}
+                            <div class="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold">
+                                    {{ estudiante.first_name|first }}{{ estudiante.last_name|first }}
+                                </div>
+                                <span class="text-sm font-bold text-slate-600">{{ estudiante.get_full_name }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div
+                            class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center text-slate-400 text-sm font-medium italic">
+                            No hay estudiantes regulares inscritos.
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Estudiantes PEN -->
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                            <span
+                                class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                                <i class="fas fa-user-tag"></i>
+                            </span>
+                            Estudiantes PEN
+                        </h2>
+
+                        {% if estudiantes_pen %}
+                        <div
+                            class="bg-white border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
+                            {% for estudiante in estudiantes_pen %}
+                            <div class="p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center text-xs font-bold">
+                                    {{ estudiante.nombre|first }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-slate-600">{{ estudiante.nombre }}</span>
+                                    <span class="text-[10px] text-slate-400 font-mono">DNI: {{ estudiante.dni }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div
+                            class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-center text-slate-400 text-sm font-medium italic">
+                            No hay estudiantes PEN inscritos.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="pt-10 border-t border-slate-100 flex justify-end">
+                    {% if user == modulo.instructor or user.is_staff %}
+                    <a href="{% url 'gestionar_notas' modulo_id=modulo.id %}"
+                        class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/30 hover:bg-blue-700 hover:shadow-2xl hover:shadow-primary/40 transform hover:-translate-y-1 transition-all">
+                        <i class="fas fa-edit"></i>
+                        Gestionar Calificaciones
+                    </a>
+                    {% elif user.is_authenticated %}
+                    <a href="{% url 'ver_notas' %}"
+                        class="inline-flex items-center gap-3 px-8 py-4 bg-cyan-500 text-white font-bold rounded-xl shadow-xl shadow-cyan-500/30 hover:bg-cyan-600 hover:shadow-2xl hover:shadow-cyan-500/40 transform hover:-translate-y-1 transition-all">
+                        <i class="fas fa-list-alt"></i>
+                        Ver Mis Notas
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

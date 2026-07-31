@@ -1,0 +1,44 @@
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Clases del Curso: {{ curso.nombre }}</h1>
+
+    <!-- Sección de clases del curso -->
+    <div class="accordion mb-4" id="accordionClases">
+        <h2 class="mb-3">Lista de Clases</h2>
+        {% if clases.exists %}
+            {% for clase in clases %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingClase{{ clase.id }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClase{{ clase.id }}" aria-expanded="false" aria-controls="collapseClase{{ clase.id }}">
+                        {{ clase.nombre }}
+                    </button>
+                </h2>
+                <div id="collapseClase{{ clase.id }}" class="accordion-collapse collapse" aria-labelledby="headingClase{{ clase.id }}" data-bs-parent="#accordionClases">
+                    <div class="accordion-body">
+                        <p><strong>Detalles:</strong> Información adicional sobre la clase.</p>
+                        <div class="d-flex justify-content-between">
+                            <!-- Botón para ver los detalles de la clase -->
+                            <a href="{% url 'detalle_clase' clase.id %}" class="btn btn-primary">Ver Detalles</a>
+                            <!-- Botón para eliminar la clase -->
+                            <form action="{% url 'eliminar_clase' curso.id clase.id %}" method="post"> 
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                No hay clases disponibles para este curso.
+            </div>
+        {% endif %}
+    </div>
+            
+
+
+    
+</div>
+{% endblock %}

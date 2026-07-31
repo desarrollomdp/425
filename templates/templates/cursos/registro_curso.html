@@ -1,0 +1,6 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p><strong>Email:</strong> {{ email }}</p>
+    {{ form.as_p }}
+    <button type="submit">Pre-Inscribirse</button>
+</form>

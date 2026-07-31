@@ -1,0 +1,132 @@
+{% extends 'cuentas/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 p-6 lg:p-12 flex items-center justify-center">
+    <div class="w-full max-w-2xl">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-black text-slate-900">
+                {% if form.instance.pk %}Editar Anuncio{% else %}Nuevo Anuncio{% endif %}
+            </h1>
+            <p class="text-slate-500 font-medium">Completa los detalles del anuncio.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data"
+            class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 space-y-6">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium">
+                Corrija los errores abajo indicados.
+                {{ form.errors }}
+            </div>
+            {% endif %}
+
+            <!-- Título -->
+            <div class="space-y-1">
+                <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Título</label>
+                {{ form.titulo }}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Imagen Desktop -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Imagen PC
+                        (Desktop)</label>
+                    <div class="relative group">
+                        {{ form.imagen_desktop|add_class:"w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer" }}
+                    </div>
+                    <p class="text-[10px] text-slate-400 ml-1">Formato ideal: 1920x400px o similar wide.</p>
+                </div>
+
+                <!-- Imagen Movil -->
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Imagen
+                        Móvil</label>
+                    {{ form.imagen_movil|add_class:"w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:uppercase file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer" }}
+                    <p class="text-[10px] text-slate-400 ml-1">Opcional. Se usa en pantallas chicas.</p>
+                </div>
+            </div>
+
+            <!-- Texto Promocional & URL -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Texto Promo
+                        (Accesibilidad)</label>
+                    {{ form.texto_promocional }}
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">URL de
+                        Destino</label>
+                    {{ form.url_destino }}
+                </div>
+            </div>
+
+            <!-- WhatsApp Section -->
+            <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 space-y-4">
+                <h5 class="flex items-center gap-2 text-emerald-700 font-black text-sm uppercase tracking-widest">
+                    <i class="fab fa-whatsapp text-lg"></i> Configuración WhatsApp
+                </h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1">
+                        <label
+                            class="block text-xs font-black uppercase text-emerald-600/60 tracking-widest ml-1">Número
+                            (10 dígitos)</label>
+                        {{ form.whatsapp }}
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-emerald-600/60 tracking-widest ml-1">Mensaje
+                        Predefinido</label>
+                    {{ form.mensaje_predefinido|add_class:"w-full bg-white border border-emerald-200 rounded-xl p-3 text-sm focus:border-emerald-500 focus:ring-0 outline-none" }}
+                    <p class="text-[10px] text-emerald-600/60 ml-1">Este mensaje aparecerá escrito cuando el usuario
+                        abra el chat.</p>
+                </div>
+            </div>
+
+            <!-- Fechas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Fecha
+                        Inicio</label>
+                    {{ form.fecha_inicio }}
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Fecha
+                        Fin</label>
+                    {{ form.fecha_fin }}
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Prioridad
+                        (Orden)</label>
+                    {{ form.prioridad }}
+                </div>
+            </div>
+
+            <!-- Checks -->
+            <div class="flex items-center gap-6 pt-2">
+                <div class="flex items-center gap-3">
+                    {{ form.activo }}
+                    <label for="{{ form.activo.id_for_label }}"
+                        class="text-sm font-bold text-slate-700 select-none cursor-pointer">Activo</label>
+                </div>
+                <div class="flex items-center gap-3">
+                    {{ form.mostrar_una_vez_por_dia }}
+                    <label for="{{ form.mostrar_una_vez_por_dia.id_for_label }}"
+                        class="text-sm font-bold text-slate-700 select-none cursor-pointer">Solo 1 vez/día</label>
+                </div>
+            </div>
+
+
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                <a href="{% url 'anuncios:anuncios_list' %}"
+                    class="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-colors">Cancelar</a>
+                <button type="submit"
+                    class="bg-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all transform active:scale-95">
+                    {% if form.instance.pk %}Guardar Cambios{% else %}Crear Anuncio{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

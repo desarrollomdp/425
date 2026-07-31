@@ -1,0 +1,315 @@
+{% extends '../cuentas/base.html' %}
+{% block slider %}
+{% endblock slider %}
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                    <span class="p-3 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                        <i class="fas fa-file-contract text-xl"></i>
+                    </span>
+                    Detalle de Inscripción
+                </h1>
+                <p class="mt-2 text-slate-500 font-medium ml-1">
+                    Curso: <span class="text-indigo-600 font-bold">{{ inscripcion.curso.nombre }}</span>
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span
+                    class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold shadow-sm flex items-center gap-2">
+                    <i class="fas fa-user-circle text-slate-400 text-lg"></i>
+                    {{ inscripcion.usuario.get_full_name }}
+                </span>
+                <button onclick="window.close()"
+                    class="px-5 py-2.5 rounded-xl bg-slate-800 text-white font-bold hover:bg-slate-700 hover:shadow-lg transition-all flex items-center gap-2">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Columna Izquierda: Datos Personales -->
+            <div class="lg:col-span-5 space-y-6">
+                <div
+                    class="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/40 border border-slate-100 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110">
+                    </div>
+
+                    <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3 relative z-10">
+                        <i class="fas fa-id-card text-indigo-500"></i>
+                        Datos del Estudiante
+                    </h2>
+
+                    <div class="space-y-5 relative z-10">
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                            <div
+                                class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm border border-slate-100 flex-shrink-0">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Nombre
+                                    Completo</p>
+                                <p class="text-sm font-bold text-slate-700">{{ inscripcion.nombre }}
+                                    {{ inscripcion.apellido }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div
+                                class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">DNI</p>
+                                <p class="text-sm font-bold text-slate-700 font-mono">{{ inscripcion.dni_numero }}</p>
+                            </div>
+                            <div
+                                class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                                    Nacimiento</p>
+                                <p class="text-sm font-bold text-slate-700">
+                                    {{ inscripcion.fecha_nacimiento|date:"d/m/Y" }}</p>
+                            </div>
+                        </div>
+
+                        <div
+                            class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Contacto</p>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                                    <i class="fas fa-envelope text-slate-400 w-5"></i> {{ inscripcion.email }}
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                                    <i class="fas fa-phone text-slate-400 w-5"></i> {{ inscripcion.telefono }}
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                                    <i class="fas fa-map-marker-alt text-slate-400 w-5"></i> {{ inscripcion.direccion }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-100 transition-colors flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Estudios
+                                    Alcanzados</p>
+                                <p class="text-sm font-bold text-slate-700">
+                                    {{ inscripcion.get_estudios_maximos_display|title }}</p>
+                            </div>
+                            <div
+                                class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-amber-500 shadow-sm border border-slate-100">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado Administrativo -->
+                <div
+                    class="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/40 border border-slate-100 relative overflow-hidden">
+                    <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                        <i class="fas fa-tasks text-emerald-500"></i>
+                        Estado Administrativo
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Cooperadora -->
+                        <div
+                            class="flex items-center justify-between p-4 rounded-2xl {{ inscripcion.pago_contribucion|yesno:'bg-emerald-50/50 border-emerald-100,bg-rose-50/50 border-rose-100' }} border transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full {{ inscripcion.pago_contribucion|yesno:'bg-emerald-100 text-emerald-600,bg-rose-100 text-rose-600' }} flex items-center justify-center text-lg">
+                                    <i class="fas {{ inscripcion.pago_contribucion|yesno:'fa-check,fa-times' }}"></i>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-xs font-black uppercase tracking-wide {{ inscripcion.pago_contribucion|yesno:'text-emerald-800,text-rose-800' }}">
+                                        Cooperadora</p>
+                                    <p
+                                        class="text-xs font-medium {{ inscripcion.pago_contribucion|yesno:'text-emerald-600,text-rose-600' }}">
+                                        {{ inscripcion.pago_contribucion|yesno:'Pago Realizado,Pendiente de Pago' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documentación Física -->
+                        <div
+                            class="flex items-center justify-between p-4 rounded-2xl {{ inscripcion.inscripcion_fisica|yesno:'bg-emerald-50/50 border-emerald-100,bg-amber-50/50 border-amber-100' }} border transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-full {{ inscripcion.inscripcion_fisica|yesno:'bg-emerald-100 text-emerald-600,bg-amber-100 text-amber-600' }} flex items-center justify-center text-lg">
+                                    <i
+                                        class="fas {{ inscripcion.inscripcion_fisica|yesno:'fa-file-contract,fa-exclamation' }}"></i>
+                                </div>
+                                <div>
+                                    <p
+                                        class="text-xs font-black uppercase tracking-wide {{ inscripcion.inscripcion_fisica|yesno:'text-emerald-800,text-amber-800' }}">
+                                        Documentación Física</p>
+                                    <p
+                                        class="text-xs font-medium {{ inscripcion.inscripcion_fisica|yesno:'text-emerald-600,text-amber-600' }}">
+                                        {{ inscripcion.inscripcion_fisica|yesno:'Entregada,Pendiente' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Documentación -->
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/40 border border-slate-100 h-full">
+                    <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+                        <i class="fas fa-folder-open text-amber-500"></i>
+                        Documentación Digital Adjunta
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                        <!-- DNI Frente -->
+                        <div
+                            class="group relative bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-id-card text-indigo-500"></i>
+                                    <span class="text-xs font-black uppercase tracking-wide text-slate-600">DNI
+                                        Frente</span>
+                                </div>
+                                {% if inscripcion.dni_frente %}
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                {% else %}
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                                {% endif %}
+                            </div>
+                            <div class="p-6 flex items-center justify-center h-48 bg-slate-50/50">
+                                {% if inscripcion.dni_frente %}
+                                <a href="{{ inscripcion.dni_frente.url }}" target="_blank" class="block w-full h-full">
+                                    <img src="{{ inscripcion.dni_frente.url }}"
+                                        class="w-full h-full object-contain transform group-hover:scale-105 transition-transform"
+                                        alt="DNI Frente">
+                                </a>
+                                {% else %}
+                                <div class="text-center">
+                                    <i class="fas fa-image text-slate-200 text-4xl mb-2"></i>
+                                    <p class="text-xs font-bold text-slate-400">No adjunto</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- DNI Reverso -->
+                        <div
+                            class="group relative bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-id-card text-indigo-500"></i>
+                                    <span class="text-xs font-black uppercase tracking-wide text-slate-600">DNI
+                                        Reverso</span>
+                                </div>
+                                {% if inscripcion.dni_dorso %}
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                {% else %}
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                                {% endif %}
+                            </div>
+                            <div class="p-6 flex items-center justify-center h-48 bg-slate-50/50">
+                                {% if inscripcion.dni_dorso %}
+                                <a href="{{ inscripcion.dni_dorso.url }}" target="_blank" class="block w-full h-full">
+                                    <img src="{{ inscripcion.dni_dorso.url }}"
+                                        class="w-full h-full object-contain transform group-hover:scale-105 transition-transform"
+                                        alt="DNI Reverso">
+                                </a>
+                                {% else %}
+                                <div class="text-center">
+                                    <i class="fas fa-image text-slate-200 text-4xl mb-2"></i>
+                                    <p class="text-xs font-bold text-slate-400">No adjunto</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- CUIL -->
+                        <div
+                            class="group relative bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-file-invoice text-emerald-500"></i>
+                                    <span class="text-xs font-black uppercase tracking-wide text-slate-600">CUIL</span>
+                                </div>
+                                {% if inscripcion.constancia_cuil %}
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                {% else %}
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                                {% endif %}
+                            </div>
+                            <div class="p-6 flex items-center justify-center h-48 bg-slate-50/50">
+                                {% if inscripcion.constancia_cuil %}
+                                <a href="{{ inscripcion.constancia_cuil.url }}" target="_blank"
+                                    class="block w-full h-full">
+                                    <div
+                                        class="w-full h-full flex flex-col items-center justify-center text-emerald-500 bg-emerald-50 rounded-xl border border-emerald-100">
+                                        <i class="fas fa-file-pdf text-4xl mb-2"></i>
+                                        <span class="text-xs font-bold">Ver Documento</span>
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div class="text-center">
+                                    <i class="fas fa-file-excel text-slate-200 text-4xl mb-2"></i>
+                                    <p class="text-xs font-bold text-slate-400">No adjunto</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Analítico -->
+                        <div
+                            class="group relative bg-slate-50 rounded-2xl border border-slate-100 hover:border-amber-200 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 overflow-hidden">
+                            <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-graduation-cap text-amber-500"></i>
+                                    <span
+                                        class="text-xs font-black uppercase tracking-wide text-slate-600">Analítico</span>
+                                </div>
+                                {% if inscripcion.analitico_1 %}
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                {% else %}
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                                {% endif %}
+                            </div>
+                            <div class="p-6 flex items-center justify-center h-48 bg-slate-50/50">
+                                {% if inscripcion.analitico_1 %}
+                                <a href="{{ inscripcion.analitico_1.url }}" target="_blank" class="block w-full h-full">
+                                    <img src="{{ inscripcion.analitico_1.url }}"
+                                        class="w-full h-full object-contain transform group-hover:scale-105 transition-transform"
+                                        alt="Analítico">
+                                </a>
+                                {% else %}
+                                <div class="text-center">
+                                    <i class="fas fa-image text-slate-200 text-4xl mb-2"></i>
+                                    <p class="text-xs font-bold text-slate-400">No adjunto</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% if not inscripcion.dni_frente and not inscripcion.constancia_cuil %}
+                    <div class="mt-8 p-6 rounded-2xl bg-slate-50 border border-slate-100 text-center">
+                        <div
+                            class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-slate-300 text-2xl">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <p class="text-slate-500 font-bold">No se han cargado documentos digitales.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

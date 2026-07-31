@@ -1,0 +1,175 @@
+{% extends './base.html' %}
+{% load static %}
+{% block title %}CFP 425- La Matanza{% endblock %}
+
+{% block content %}
+  <!-- Contenido principal -->
+  <div class="container marketing">
+    <div class="row">
+      <div class="container">
+        <div class="row"style="margin-top: 20px;">
+          <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card" >
+              <img src="{% static 'images/circulo3.svg' %}" width="45" height="45" alt="Inscribirse a un Curso">
+              <div class="card-body">
+                <h5 class="card-title">Lista de Cursos</h5>
+                <p class="card-text">Consulta todos los cursos disponibles y elige el que más te interese.</p>
+                <a href="{% url 'lista_cursos' %}" class="btn btn-primary">Ver Cursos</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card">
+              <img src="{% static 'images/circulo1.svg' %}" width="45" height="45" alt="Inscribirse a un Curso">
+              <div class="card-body">
+                <h5 class="card-title">Inscribirse a un Curso</h5>
+                <p class="card-text">Elige un curso y empieza a aprender con nosotros hoy mismo.</p>
+                <a href="{% url 'lista_cursos' %}" class="btn btn-primary">Inscribirse</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card">
+              <img src="{% static 'images/circulo2.svg' %}" width="45" height="45" alt="Iniciar Sesión">
+              <div class="card-body">
+                <h5 class="card-title">Iniciar Sesión</h5>
+                <p class="card-text">Accede a tu cuenta para gestionar tus cursos y más.<br></p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión &raquo;</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card">
+              <img src="{% static 'images/circulo2.svg' %}" width="45" height="45" alt="Iniciar Sesión">
+              <div class="card-body">
+                <h5 class="card-title">Registrate</h5>
+                <p class="card-text">Crea una cuenta para acceder a todos nuestros cursos y beneficios.</p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Registrarse &raquo;</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-5 mb-4 bg-body-tertiary rounded-3 bg-dark-subtle">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Cursos con Certificados Oficiales</h1>
+      <p class="col-md-8 fs-4">Nuestros cursos son totalmente gratuitos y al finalizar, recibirás un certificado oficial que avala tus conocimientos. ¡Aprovecha esta oportunidad única para aprender y crecer profesionalmente!</p>
+      <a href="cursos/cursos/lista" class="btn btn-primary btn-lg">Ver Cursos</a>
+
+    </div>
+  </div>
+
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Algunos de nuestros Cursos</h1>
+        <p class="lead text-body-secondary">Estos cursos estarán disponibles durante el ciclo 2025. Primero deberá preinscribirse, luego se le dará la confirmación de la inscripción. Todas las consultas se resuelven vía plataforma o presencial en el centro de formación profesional.</p>
+        <p>
+          <a href="#" class="btn btn-main my-2">Asistencia Online</a>
+          <a href="{% url 'contacto'%}" class="btn btn-secondary my-2">Asistencia Email</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+ 
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container" id="cursoss">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for curso in cursos_abiertos %}
+        <div class="col">
+          <div class="card shadow-sm">
+            
+            <div class="card-body">
+              <h5 class="card-title">{{ curso.nombre }}</h5>
+              <p class="card-text">{{ curso.descripcion|truncatechars:100 }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                
+              </div>
+              <div class="mt-2">
+                <small class="text-muted">
+                  <i class="fas fa-calendar-alt"></i>
+                  {{ curso.fecha_inicio|date:"d/m/Y" }} - {{ curso.fecha_fin|date:"d/m/Y" }}
+                </small><br>
+                <small class="text-muted">
+                  <i class="fas fa-clock"></i> {{ curso.horario_formateado }}
+                </small><br>
+                <small class="text-muted">
+                  <i class="fas fa-map-marker-alt"></i> {{ curso.get_lugar_display }}
+                </small><br>
+                <small class="text-muted">
+                  <i class="fas fa-calendar-week"></i> {{ curso.dias_cursada|join:", " }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="alert alert-warning text-center">
+            No hay cursos con inscripciones abiertas en este momento
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Sección de Contacto -->
+<section id="contacto" class="contacto-section">
+  <div class="container">
+    <h2>Contacto</h2>
+    <p class="contacto-description">Para cualquier consulta, no dudes en contactarnos a través de los siguientes medios:</p>
+
+    <div class="contacto-content" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+      <!-- Tarjeta WhatsApp -->
+      <div class="contacto-item tarjeta" style="width: 300px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center;">
+        <h3>WhatsApp</h3>
+        <a href="https://wa.me/541168598580" target="_blank" class="contacto-link" style="color: #25D366; font-size: 1.2rem;">
+          <i class="fab fa-whatsapp" style="font-size: 2rem;"></i> +54 9 11 6859-8580
+        </a>
+      </div>
+
+      <!-- Tarjeta Email -->
+      <div class="contacto-item tarjeta" style="width: 300px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; text-align: center;">
+        <h3>Email</h3>
+        <a href="mailto:contacto@jesam.com.ar" class="contacto-link" style="color: #333; font-size: 1.2rem;">
+          cfp425matanza@abc.gob.ar
+        </a>
+      </div>
+    </div>
+
+    <div class="contacto-info" >
+      <!-- Mapa de Google -->
+      <div class="contacto-item mapa" >
+        <h3 style="text-align: center; margin-top:20px;">Ubicación</h3>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3272.5195828291717!2d-58.69613138979048!3d-34.89340828767115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcdde6bff51e2d%3A0x8e0330453af659c!2sAsociaci%C3%B3n%20Civil%20Joven%20Lev%C3%A1ntate!5e0!3m2!1ses!2sar!4v1736401247973!5m2!1ses!2sar" 
+          width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{% endblock %}

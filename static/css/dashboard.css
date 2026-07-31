@@ -1,0 +1,94 @@
+/* Estilos para las tarjetas de acción */
+.action-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.action-card .card-body {
+    padding: 1.25rem;
+}
+
+.action-card i {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.action-card.bg-warning {
+    border-left: 5px solid #ff9800;
+}
+
+.action-card.bg-primary {
+    border-left: 5px solid #0d6efd;
+}
+
+.action-card.bg-success {
+    border-left: 5px solid #198754;
+}
+
+.action-card.bg-info {
+    border-left: 5px solid #0dcaf0;
+}
+
+.action-card .card-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.action-card small {
+    display: block;
+    line-height: 1.2;
+}
+
+#menu_alternativo{
+    width: 250px;
+    height: 120vh;
+    overflow: scroll;
+}
+
+/* Ajustes responsive */
+@media (min-width: 768px) {
+    .action-card .card-body {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #menu_alternativo{
+    width: 100%;
+    height: 120vh;
+    overflow: scroll;
+}
+}
+
+/* Animación al hacer hover */
+.action-card:hover i {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+
+

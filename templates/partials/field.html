@@ -1,0 +1,13 @@
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        {{ field.label }}
+        {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+    </label>
+    {{ field }}
+    {% if field.help_text %}
+    <p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>
+    {% endif %}
+    {% for error in field.errors %}
+    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+    {% endfor %}
+</div>

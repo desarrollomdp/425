@@ -1,0 +1,53 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+
+  <div class="card p-4 shadow-sm">
+    <h2 class="text-center mb-4 text-blue-600">
+      Gestionar notas de estudiantes en el módulo {{ modulo.nombre }}
+    </h2>
+
+    <!-- Formulario de notas para todos los estudiantes -->
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="student-list">
+        {% for estudiante in estudiantes %}
+          <div class="student-item mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p><strong>{{ estudiante.get_full_name }}</strong></p>
+                <p><small>Inscripto el: {{ estudiante.fecha_inscripcion }}</small></p>
+              </div>
+              <div class="position-relative">
+                <!-- Campo para ingresar la nota del estudiante -->
+                <label for="nota_{{ estudiante.id }}" class="form-label">Nota:</label>
+                <input type="number" name="nota_{{ estudiante.id }}" id="nota_{{ estudiante.id }}" class="form-control" placeholder="Ingrese la nota" value="{{ estudiante.nota|default:'' }}">
+                {% if estudiante.nota %}
+                  <span class="position-absolute top-0 end-0 text-success" title="Nota guardada">&#10004;</span>
+                {% endif %}
+              </div>
+            </div>
+            <!-- Si el estudiante tiene un error al ingresar la nota -->
+            {% if estudiante.errors %}
+              <div class="text-danger mt-2">{{ estudiante.errors }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Botón para guardar todas las notas -->
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary w-100 py-3">Guardar notas</button>
+      </div>
+    </form>
+
+    <!-- Enlace para volver al módulo -->
+    <div class="mt-3 text-center">
+      <a href="{% url 'detalle_modulo' modulo_id=modulo.id %}" class="btn btn-secondary w-100 py-3">Volver al módulo</a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

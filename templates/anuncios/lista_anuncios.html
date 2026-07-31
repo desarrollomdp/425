@@ -1,0 +1,113 @@
+{% extends 'cuentas/base.html' %}
+{% load i18n %}
+{% block slider %}{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 p-6 lg:p-12">
+
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-black text-slate-900">Gestión de Anuncios</h1>
+            <p class="text-slate-500 font-medium">Administra los anuncios visibles en el sitio.</p>
+        </div>
+        <div>
+            <a href="{% url 'anuncios:anuncios_create' %}"
+                class="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2">
+                <i class="fas fa-plus"></i> Nuevo Anuncio
+            </a>
+            <a href="{% url 'anuncios:anuncios_dashboard' %}"
+                class="ml-3 bg-white text-slate-600 px-6 py-3 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th
+                            class="p-4 text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-100">
+                            Título</th>
+                        <th
+                            class="p-4 text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-100">
+                            Fechas</th>
+                        <th
+                            class="p-4 text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-100">
+                            Prioridad</th>
+                        <th
+                            class="p-4 text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-100">
+                            Estado</th>
+                        <th
+                            class="p-4 text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-100 text-right">
+                            Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for anuncio in anuncios %}
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="p-4 font-bold text-slate-800">
+                            <div class="flex items-center gap-3">
+                                {% if anuncio.imagen_desktop %}
+                                <img src="{{ anuncio.imagen_desktop.url }}" class="w-10 h-10 rounded-lg object-cover"
+                                    alt="">
+                                {% else %}
+                                <div class="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-slate-400"></i>
+                                </div>
+                                {% endif %}
+                                <span>{{ anuncio.titulo }}</span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-sm text-slate-600">
+                            <div><i class="fas fa-calendar-alt text-slate-400 mr-2"></i>
+                                {{ anuncio.fecha_inicio|date:"d/m/Y H:i" }}</div>
+                            {% if anuncio.fecha_fin %}
+                            <div class="mt-1"><i class="fas fa-flag-checkered text-slate-400 mr-2"></i>
+                                {{ anuncio.fecha_fin|date:"d/m/Y H:i" }}</div>
+                            {% else %}
+                            <span class="text-xs font-bold text-slate-400 mt-1 block">Indefinido</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4 font-bold text-slate-600">{{ anuncio.prioridad }}</td>
+                        <td class="p-4">
+                            {% if anuncio.esta_vigente %}
+                            <span
+                                class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">Activo</span>
+                            {% else %}
+                            <span
+                                class="bg-slate-100 text-slate-400 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-4 text-right">
+                            <div
+                                class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a href="{% url 'anuncios:anuncios_update' anuncio.pk %}"
+                                    class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-500 rounded-lg hover:bg-blue-100 transition-colors">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a href="{% url 'anuncios:anuncios_delete' anuncio.pk %}"
+                                    class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400 font-medium">
+                            <div
+                                class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                                <i class="fas fa-bullhorn text-slate-300"></i>
+                            </div>
+                            No hay anuncios creados todavía.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

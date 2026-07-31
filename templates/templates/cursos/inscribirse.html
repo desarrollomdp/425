@@ -1,0 +1,154 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Formulario de Inscripción {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 text-primary">📝 Formulario de Inscripción</h1>
+        <p class="text-muted">Complete todos los campos requeridos (*)</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="curso" class="form-label">Curso</label>
+            {{ form.curso|add_class:"form-select" }}
+            <div class="invalid-feedback">Por favor seleccione un curso.</div>
+        </div>
+
+        <!-- Datos Personales -->
+        <fieldset class="border p-4 mb-4">
+            <legend class="float-none w-auto px-3 text-primary">👤 Datos Personales</legend>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="nombre" class="form-label">Nombre *</label>
+                    {{ form.nombre|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su nombre.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="apellido" class="form-label">Apellido *</label>
+                    {{ form.apellido|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su apellido.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento *</label>
+                    {{ form.fecha_nacimiento|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su fecha de nacimiento.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="dni_numero" class="form-label">Número de DNI *</label>
+                    {{ form.dni_numero|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su número de DNI.</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Contacto -->
+        <fieldset class="border p-4 mb-4">
+            <legend class="float-none w-auto px-3 text-primary">📞 Datos de Contacto</legend>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="telefono" class="form-label">Teléfono *</label>
+                    {{ form.telefono|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su número de teléfono.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email *</label>
+                    {{ form.email|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese un email válido.</div>
+                </div>
+                <div class="col-12">
+                    <label for="direccion" class="form-label">Dirección *</label>
+                    {{ form.direccion|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor ingrese su dirección.</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Localización -->
+        <fieldset class="border p-4 mb-4">
+            <legend class="float-none w-auto px-3 text-primary">📍 Localización</legend>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="partido" class="form-label">Partido *</label>
+                    {{ form.partido|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor seleccione un partido.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="localidad" class="form-label">Localidad *</label>
+                    {{ form.localidad|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor seleccione una localidad.</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Educación -->
+        <fieldset class="border p-4 mb-4">
+            <legend class="float-none w-auto px-3 text-primary">🎓 Nivel Educativo</legend>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="estudios_maximos" class="form-label">Máximo nivel alcanzado *</label>
+                    {{ form.estudios_maximos|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor seleccione su nivel educativo.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="analitico_primaria" class="form-label">Analítico de Secundaria o Primaria</label>
+                    {{ form.analitico_primaria|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6">
+                    <label for="analitico_primaria_dorso" class="form-label">Dorso del Analítico Secundaria o  Primaria</label>
+                    {{ form.analitico_primaria_dorso|add_class:"form-control" }}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Documentos -->
+        <fieldset class="border p-4 mb-4">
+            <legend class="float-none w-auto px-3 text-primary">📁 Documentación Obligatoria</legend>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="dni_frente" class="form-label">Frente de DNI *</label>
+                    {{ form.dni_frente|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor cargue el frente de su DNI.</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="dni_reverso" class="form-label">Reverso de DNI *</label>
+                    {{ form.dni_reverso|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor cargue el reverso de su DNI.</div>
+                </div>
+                <div class="col-md-4">
+                    <label for="constancia_cuil" class="form-label">Constancia CUIL *</label>
+                    {{ form.constancia_cuil|add_class:"form-control" }}
+                    <div class="invalid-feedback">Por favor cargue su constancia de CUIL.</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+                {% if es_edicion %}Actualizar{% else %}Registrar{% endif %} Inscripción
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Bootstrap validation
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

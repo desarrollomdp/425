@@ -1,0 +1,194 @@
+{% extends '../cuentas/base.html' %}
+
+{% block title %}Detalle de Clase - CFP 425{% endblock %}
+
+{% block slider %}{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 pb-20 pt-10 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Breadcrumb / Volver -->
+        <div class="mb-8 animate-fade-in">
+            <a href="{% url 'ver_clases' clase.curso.id %}"
+                class="inline-flex items-center gap-2 text-slate-400 hover:text-primary transition-colors group">
+                <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                <span class="text-xs font-black uppercase tracking-widest">Volver al Calendario</span>
+            </a>
+        </div>
+
+        <!-- Header Card: Información de la Clase -->
+        <div
+            class="bg-gradient-to-br from-indigo-600 via-primary to-blue-700 rounded-[3rem] shadow-2xl shadow-primary/20 overflow-hidden mb-10 animate-fade-in-up">
+            <div class="p-8 lg:p-12 text-white relative">
+                <div class="absolute top-0 right-0 p-12 opacity-10 scale-150 pointer-events-none">
+                    <i class="fas fa-chalkboard-teacher text-9xl"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span
+                            class="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest">
+                            Clase #{{ forloop.counter|default:"--" }}
+                        </span>
+                        <span
+                            class="px-4 py-1.5 bg-emerald-400/20 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-emerald-100 border border-emerald-400/30">
+                            {{ clase.fecha|date:"d M, Y" }}
+                        </span>
+                    </div>
+
+                    <h1 class="text-3xl lg:text-5xl font-black tracking-tight mb-4">{{ clase.nombre }}</h1>
+                    <p class="text-indigo-100 font-bold text-lg max-w-2xl leading-relaxed">{{ clase.descripcion }}</p>
+
+                    <div class="mt-8 pt-8 border-t border-white/10 flex flex-wrap gap-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-300">Curso</p>
+                                <p class="font-bold">{{ clase.curso.nombre }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Section -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between mb-8 px-4">
+                <h3 class="text-2xl font-black text-slate-800 flex items-center gap-4">
+                    <span
+                        class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm border border-slate-100">
+                        <i class="fas fa-user-check text-sm"></i>
+                    </span>
+                    Registro de Asistencia
+                </h3>
+            </div>
+
+            <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+                <div class="p-6 lg:p-8">
+                    {% if asistencias %}
+                    <div class="space-y-4">
+                        {% for asistencia in asistencias %}
+                        <div
+                            class="flex items-center justify-between p-5 bg-slate-50 hover:bg-slate-100/80 rounded-[2rem] transition-all group">
+                            <div class="flex items-center gap-5">
+                                <div
+                                    class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-primary shadow-sm border border-slate-100 transition-colors">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-slate-700 tracking-tight">
+                                        {{ asistencia.estudiante.first_name }} {{ asistencia.estudiante.last_name }}</p>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        Estudiante Regular</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                {% if asistencia.estado == 'presente' %}
+                                <span
+                                    class="px-6 py-2.5 bg-emerald-50 rounded-full text-emerald-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 border border-emerald-100">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                    Presente
+                                </span>
+                                {% elif asistencia.estado == 'media_falta' %}
+                                <span
+                                    class="px-6 py-2.5 bg-amber-50 rounded-full text-amber-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 border border-amber-100">
+                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+                                    Media Falta
+                                </span>
+                                {% else %}
+                                <span
+                                    class="px-6 py-2.5 bg-rose-50 rounded-full text-rose-600 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 border border-rose-100">
+                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                                    Ausente
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="py-20 text-center">
+                        <div
+                            class="w-20 h-20 bg-slate-50 rounded-[2.5rem] flex items-center justify-center text-slate-200 mx-auto mb-6">
+                            <i class="fas fa-clipboard-list text-4xl"></i>
+                        </div>
+                        <p class="text-slate-400 font-black uppercase tracking-widest text-xs">No hay asistencias
+                            registradas aún</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col md:flex-row gap-4 mt-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+            {% if not asistencias %}
+            <a href="{% url 'crear_asistencia' clase.id %}"
+                class="flex-1 flex items-center justify-center gap-3 py-5 bg-emerald-500 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-emerald-200 hover:shadow-2xl hover:bg-emerald-600 hover:-translate-y-1 transition-all active:scale-95">
+                <i class="fas fa-plus-circle text-lg"></i>
+                Cargar Asistencia
+            </a>
+            {% else %}
+            <a href="{% url 'editar_asistencia' clase.id %}"
+                class="flex-1 flex items-center justify-center gap-3 py-5 bg-indigo-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-200 hover:shadow-2xl hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95">
+                <i class="fas fa-edit text-lg"></i>
+                Editar Asistencia
+            </a>
+            {% endif %}
+
+            <a href="{% url 'escritorio_instructores' %}"
+                class="flex-1 flex items-center justify-center gap-3 py-5 bg-slate-800 text-white rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 hover:shadow-2xl hover:bg-slate-900 hover:-translate-y-1 transition-all active:scale-95">
+                <i class="fas fa-user-tie text-lg"></i>
+                Panel Instructor
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-out forwards;
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+{% endblock %}

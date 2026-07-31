@@ -1,0 +1,319 @@
+{% extends 'cuentas/base.html' %}
+{% load static %}
+{% block slider %}
+{# Bloque sobrescrito para no mostrar el slider #}
+{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
+
+    <!-- Sidebar / Sidebar Mobile -->
+    <aside
+        class="w-full lg:w-80 bg-white border-b lg:border-r border-slate-200 lg:h-screen lg:sticky lg:top-20 z-40 overflow-y-auto no-scrollbar">
+        <div class="p-6 space-y-8">
+
+            <!-- Acciones Rápidas -->
+            <div class="space-y-4">
+                <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Acciones Rápidas</h5>
+                <div class="grid grid-cols-2 lg:grid-cols-1 gap-3">
+                    <a href="{% url 'lista_cursos_modulos' %}"
+                        class="flex items-center justify-center lg:justify-start gap-3 p-4 bg-indigo-500 text-white rounded-2xl font-bold shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 transition-all active:scale-95 text-sm">
+                        <i class="fas fa-project-diagram"></i> Todos mis cursos y modulos
+                    </a>
+                    <a href="#" id="btn-crear-curso" data-action="crear-curso"
+                        class="flex items-center justify-center lg:justify-start gap-3 p-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 text-sm">
+                        <i class="fas fa-plus-circle"></i> Crear Curso
+                    </a>
+                    <a href="#" id="btn-crear-modulo" data-action="crear-modulo"
+                        class="flex items-center justify-center lg:justify-start gap-3 p-4 bg-green-500 text-white rounded-2xl font-bold shadow-lg shadow-green-500/20 hover:bg-green-600 transition-all active:scale-95 text-sm">
+                        <i class="fas fa-folder-plus"></i> Crear Módulo
+                    </a>
+                    <a href="{% url 'crear_entrega' %}" data-action="crear-entrega"
+                        class="flex items-center justify-center lg:justify-start gap-3 p-4 bg-yellow-400 text-white rounded-2xl font-bold shadow-lg shadow-yellow-400/20 hover:bg-yellow-500 transition-all active:scale-95 text-sm">
+                        <i class="fas fa-cloud-upload-alt"></i> Crear Entrega
+                    </a>
+                    <a href="{% url 'ver_entregas_usuario' %}" data-action="ver-entregas"
+                        class="flex items-center justify-center lg:justify-start gap-3 p-4 bg-cyan-500 text-white rounded-2xl font-bold shadow-lg shadow-cyan-500/20 hover:bg-cyan-600 transition-all active:scale-95 text-sm">
+                        <i class="fas fa-file-invoice"></i> Ver Entregas
+                    </a>
+                </div>
+                <a href="{% url 'estudio:panel_instructor_cursos_libres' %}"
+                    class="flex items-center justify-center gap-3 p-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-black transition-all active:scale-95 text-xs uppercase tracking-tight">
+                    <i class="fas fa-id-badge"></i> Panel Instructor Online
+                </a>
+            </div>
+
+            <!-- Listas dinámicas -->
+            <div class="space-y-4">
+                <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Tus Cursos</h5>
+                <ul id="lista-cursos" class="space-y-2">
+                    <!-- Aquí se cargan cursos por AJAX -->
+                    <div class="animate-pulse space-y-2">
+                        <div class="h-12 bg-slate-100 rounded-xl"></div>
+                        <div class="h-12 bg-slate-100 rounded-xl"></div>
+                    </div>
+                </ul>
+            </div>
+
+            <div id="seccion-modulos" class="space-y-4 hidden">
+                <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Módulos</h5>
+                <ul id="lista-modulos" class="space-y-2 border-l-2 border-slate-100 ml-2 pl-4">
+                    <!-- Aquí se cargan módulos por AJAX -->
+                </ul>
+            </div>
+
+            <!-- Opciones Dinámicas -->
+            <div class="pt-6 border-t border-slate-100 space-y-6">
+                <!-- Opciones de Curso -->
+                <div id="opciones-curso" class="hidden space-y-4">
+                    <h5 class="text-xs font-black uppercase tracking-widest text-primary">Gestión de Curso</h5>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button id="btn-ver-promedios" data-action="ver-promedios"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-percentage text-green-500 w-5"></i> Promedios Asistencia
+                        </button>
+                        <button id="btn-ver-estudiantes" data-action="ver-estudiantes"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-users text-primary w-5"></i> Ver Estudiantes
+                        </button>
+                        <button id="btn-detalles-curso" data-action="detalles-curso"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-info-circle text-slate-400 w-5"></i> Detalles
+                        </button>
+                        <button id="btn-editar-curso" data-action="editar-curso"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-edit text-yellow-500 w-5"></i> Editar Datos
+                        </button>
+                        <button id="btn-ver-inscripciones" data-action="ver-inscripciones"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-clipboard-list text-green-600 w-5"></i> Inscripciones
+                        </button>
+                        <button id="btn-ver-clases" data-action="ver-clases"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-calendar-check text-cyan-500 w-5"></i> Ver Clases
+                        </button>
+                        <button id="btn-crear-clase" data-action="crear-clase"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-plus-square text-slate-900 w-5"></i> Crear Clase
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Opciones de Módulo -->
+                <div id="opciones-modulo" class="hidden space-y-4">
+                    <h5 class="text-xs font-black uppercase tracking-widest text-green-600">Gestión de Módulo</h5>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button id="btn-ver-notas" data-action="ver-notas"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-star text-yellow-500 w-5"></i> Ver Notas
+                        </button>
+                        <button id="btn-gestionar-notas" data-action="gestionar-notas"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-user-edit text-primary w-5"></i> Gestionar Notas
+                        </button>
+                        <button id="btn-editar-modulo" data-action="editar-modulo"
+                            class="w-full flex items-center gap-3 p-3 text-slate-600 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-folder-open text-yellow-600 w-5"></i> Editar Módulo
+                        </button>
+                        <button id="btn-eliminar-modulo" data-action="eliminar-modulo"
+                            class="w-full flex items-center gap-3 p-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition-all text-sm">
+                            <i class="fas fa-trash-alt w-5"></i> Eliminar Módulo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="flex-grow p-6 lg:p-12 overflow-x-hidden">
+        <div id="mensajes"></div>
+
+        <div id="contenido-dinamico" class="space-y-8 animate-fade-in">
+            <!-- Placeholders para el contenido cargado por JS -->
+            <div id="datos-curso">
+                <div class="bg-white rounded-[2.5rem] p-12 text-center border border-slate-100 shadow-sm">
+                    <div
+                        class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                        <i class="fas fa-chalkboard-teacher text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-black text-slate-800 mb-2">Panel del Instructor</h2>
+                    <p class="text-slate-500 font-medium max-w-sm mx-auto">Seleccioná un curso del menú lateral para
+                        comenzar a gestionar alumnos, notas y asistencias.</p>
+                </div>
+            </div>
+
+            <div id="lista-estudiantes" class="hidden"></div>
+            <div id="lista-clases" class="hidden"></div>
+            <div id="notas-content" class="hidden"></div>
+        </div>
+    </main>
+
+</div>
+
+<!-- Modales (Estilizados con Tailwind) -->
+<div id="verClasesModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
+    role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div
+            class="relative w-full max-w-6xl bg-white rounded-[3rem] shadow-2xl overflow-hidden p-8 lg:p-12 animate-zoom-in">
+            <div id="verClasesModalContent"></div>
+            <button type="button" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600"
+                onclick="document.getElementById('verClasesModal').classList.add('hidden')">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="crearClaseModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-lg bg-white rounded-[3rem] shadow-2xl overflow-hidden p-10 animate-zoom-in">
+            <div id="crearClaseModalContent"></div>
+            <button type="button" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600"
+                onclick="this.closest('#crearClaseModal').classList.add('hidden')">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="editarModuloModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-lg bg-white rounded-[3rem] shadow-2xl overflow-hidden p-10 animate-zoom-in">
+            <div id="editarModuloContent"></div>
+            <button type="button" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600"
+                onclick="this.closest('#editarModuloModal').classList.add('hidden')">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="editarCursoModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-lg bg-white rounded-[3rem] shadow-2xl overflow-hidden p-10 animate-zoom-in">
+            <div id="editarCursoModalContent"></div>
+            <button type="button" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600"
+                onclick="this.closest('#editarCursoModal').classList.add('hidden')">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver Notas -->
+<div id="verNotasModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div
+            class="relative w-full max-w-6xl bg-white rounded-[3rem] shadow-2xl overflow-hidden p-8 lg:p-12 animate-zoom-in">
+            <h3 class="text-3xl font-black text-slate-800 mb-8 flex items-center gap-4">
+                <span class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500">
+                    <i class="fas fa-star"></i>
+                </span>
+                Notas de Estudiantes
+            </h3>
+            <div id="verNotasModalContent" class="min-h-[300px]">
+                <div class="flex items-center justify-center p-12">
+                    <i class="fas fa-circle-notch fa-spin text-4xl text-primary"></i>
+                </div>
+            </div>
+            <button type="button" class="absolute top-8 right-8 text-slate-400 hover:text-slate-600"
+                onclick="document.getElementById('verNotasModal').classList.add('hidden')">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmación de Eliminación -->
+<div id="confirmarEliminar" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div
+            class="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden p-10 animate-zoom-in text-center">
+            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">¿Estás seguro?</h3>
+            <p class="text-slate-500 font-medium mb-8">Vas a eliminar el curso <strong id="cursoNombre"
+                    class="text-slate-900"></strong>. Esta acción no se puede deshacer.</p>
+
+            <div class="flex gap-4">
+                <button type="button"
+                    class="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all"
+                    onclick="document.getElementById('confirmarEliminar').classList.add('hidden')">Cancelar</button>
+                <form id="eliminarCursoForm" method="POST" class="flex-1">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="w-full py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all active:scale-95">Eliminar
+                        Ahora</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</main>
+
+</div>
+
+<style>
+    /* Animaciones */
+    @keyframes zoom-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-zoom-in {
+        animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.5s ease-out forwards;
+    }
+
+    /* Custom Scrollbar for sidebars */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+<!-- Scripts al final -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'js/cursos.js' %}?v=3"></script>
+
+
+{% endblock content %}

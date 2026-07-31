@@ -1,0 +1,172 @@
+{% if anuncio_activo %}
+<style>
+    /* --- ESTILOS DEL MODAL (Igual al original) --- */
+    .anuncio-marquee {
+        background: linear-gradient(90deg, #2563eb, #1d4ed8);
+        padding: 8px 16px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .anuncio-marquee button {
+        background: none;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 4px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        text-decoration: underline;
+    }
+
+    .anuncio-marquee button:hover {
+        transform: scale(1.05);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .anuncio-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .75);
+        display: none;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+
+    .anuncio-modal-frame {
+        position: relative;
+        width: min(1080px, 90vw);
+        aspect-ratio: 1080 / 1920;
+        max-height: 90vh;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+    }
+
+    .anuncio-modal-frame picture,
+    .anuncio-modal-frame img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        background: #000;
+    }
+
+    .anuncio-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        cursor: pointer;
+        background: rgba(0, 0, 0, .55);
+        color: #fff;
+        font-size: 20px;
+        line-height: 1;
+        z-index: 50;
+    }
+
+    .anuncio-close:hover {
+        background: rgba(0, 0, 0, .75);
+    }
+
+    @media (max-width: 768px) {
+        .anuncio-modal-frame {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            max-height: 90vh;
+            aspect-ratio: auto;
+        }
+    }
+</style>
+
+{% if anuncio_activo.texto_promocional %}
+<div class="anuncio-marquee" role="region" aria-live="polite">
+    <button id="anuncioAbrirDesdeTexto" title="Ver anuncio">
+        {{ anuncio_activo.texto_promocional }}
+    </button>
+</div>
+{% endif %}
+
+<div id="anuncioBackdrop" class="anuncio-modal-backdrop" aria-hidden="true">
+    <div class="anuncio-modal-frame" role="dialog" aria-modal="true" aria-label="Anuncio Informativo">
+        <button id="anuncioCerrar" class="anuncio-close" aria-label="Cerrar">&times;</button>
+
+        <div style="display:block; width:100%; height:100%; cursor: default;">
+            <picture>
+                {% if anuncio_activo.imagen_movil %}
+                <source media="(max-width: 768px)" srcset="{{ anuncio_activo.imagen_movil.url }}">
+                {% endif %}
+                <img src="{{ anuncio_activo.imagen_desktop.url }}" alt="{{ anuncio_activo.titulo }}">
+            </picture>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    
+    console.groupEnd();
+
+    (function () {
+        const anuncioId = "{{ anuncio_activo.id }}";
+        const urlImp = "{% url 'anuncios:anuncio_impresion' anuncio_activo.id %}";
+
+        const $backdrop = document.getElementById("anuncioBackdrop");
+        const $cerrar = document.getElementById("anuncioCerrar");
+        const $abrirTexto = document.getElementById("anuncioAbrirDesdeTexto");
+
+        function enviarBeacon(url) {
+            try {
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
+                    navigator.sendBeacon(url, blob);
+                } else {
+                    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => { });
+                }
+            } catch (e) { }
+        }
+
+        function abrir() {
+            if (!$backdrop) return;
+            $backdrop.style.display = "flex";
+            $backdrop.setAttribute("aria-hidden", "false");
+            enviarBeacon(urlImp);
+        }
+
+        function cerrar() {
+            if (!$backdrop) return;
+            $backdrop.style.display = "none";
+            $backdrop.setAttribute("aria-hidden", "true");
+        }
+
+        // El backend controla el límite de visualizaciones (máximo 3 veces)
+        // Si el anuncio se muestra en el template, es porque el usuario tiene views disponibles
+        setTimeout(() => abrir(), 500); // Mostrar después de 500ms
+
+        // Eventos
+        if ($cerrar) $cerrar.addEventListener("click", cerrar);
+        if ($backdrop) $backdrop.addEventListener("click", (ev) => { if (ev.target === $backdrop) cerrar(); });
+
+        if ($abrirTexto) {
+            $abrirTexto.addEventListener("click", (e) => {
+                e.preventDefault();
+                abrir();
+            });
+        }
+    })();
+</script>
+</script>
+
+{% else %}
+<script>console.warn("❌ Fragmento Simple cargado sin anuncio activo.");</script>
+{% endif %}

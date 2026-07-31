@@ -1,0 +1,715 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+{% load file_utils %}
+
+{% block slider %}
+{# Bloque sobrescrito para no mostrar el slider #}
+{% endblock slider %}
+
+{% block head %}
+<!-- Bootstrap Icons para íconos -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+    /* Scrollbar personalizado */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8;
+    }
+
+    /* Placeholder para documentos */
+    .doc-placeholder {
+        background: linear-gradient(45deg, #f8fafc 25%, #e2e8f0 25%, #e2e8f0 50%, #f8fafc 50%, #f8fafc 75%, #e2e8f0 75%);
+        background-size: 10px 10px;
+    }
+
+    /* Animación flotante */
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    .float-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="flex flex-col h-screen">
+    <!-- Header con búsqueda -->
+    <div class="bg-primary text-white p-4 shadow-md">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl md:text-3xl font-bold flex items-center gap-2">
+                        <i class="bi bi-people-fill"></i>
+                        Inscripciones
+                    </h2>
+                    <span class="bg-white text-primary font-bold px-3 py-1 rounded-full text-lg"
+                        id="inscripcionesCount">
+                        {{ inscripciones.count }}
+                    </span>
+                </div>
+
+                <!-- Barra de búsqueda -->
+                <div class="relative flex-1 md:max-w-md">
+                    <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput"
+                        class="w-full pl-12 pr-4 py-2.5 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-white/60 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
+                        placeholder="Buscar por nombre, DNI, email o teléfono...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Scrollable -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar bg-gray-50">
+        <div class="max-w-7xl mx-auto p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="inscripcionesList">
+                {% for inscripcion in inscripciones %}
+                <div class="inscripcion-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-1 relative overflow-hidden"
+                    data-nombre="{{ inscripcion.nombre|lower }}" data-apellido="{{ inscripcion.apellido|lower }}"
+                    data-dni="{{ inscripcion.dni_numero }}" data-email="{{ inscripcion.email|lower }}"
+                    data-telefono="{{ inscripcion.telefono }}">
+
+                    <!-- Badge de Estado -->
+                    <div class="absolute top-3 right-3 z-10">
+                        {% if inscripcion.inscripcion_fisica %}
+                        <span
+                            class="bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">Física
+                            Entregada</span>
+                        {% else %}
+                        <span
+                            class="bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md">Pendiente</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Header -->
+                    <div class="bg-gray-50 px-4 py-3 flex justify-between items-center border-b border-gray-100">
+                        <div class="flex items-center gap-2">
+                            <span class="text-primary font-bold text-sm">#{{ inscripcion.id }}</span>
+                            <span class="bg-gray-600 text-white text-xs font-semibold px-2 py-1 rounded">
+                                {{ inscripcion.curso|truncatewords:3 }}</span>
+                        </div>
+                        <div class="relative group">
+                            <button
+                                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+                                <i class="bi bi-three-dots-vertical text-gray-600"></i>
+                            </button>
+                            <!-- Dropdown (simple, se puede mejorar con JS) -->
+                            <div
+                                class="absolute right-0 top-10 w-48 bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg">
+                                    <i class="bi bi-pencil mr-2"></i>Editar
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="bi bi-printer mr-2"></i>Imprimir
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg">
+                                    <i class="bi bi-trash mr-2"></i>Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <!-- Datos Personales -->
+                        <div class="mb-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div
+                                    class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                    <i class="bi bi-person-fill text-primary text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h5 class="font-bold text-gray-900 text-base truncate">{{ inscripcion.nombre }}
+                                        {{ inscripcion.apellido }}</h5>
+                                    <p class="text-sm text-gray-500">DNI: {{ inscripcion.dni_numero }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Información de contacto -->
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="bi bi-envelope text-gray-400"></i>
+                                    <a href="mailto:{{ inscripcion.email }}"
+                                        class="truncate hover:text-primary transition-colors">
+                                        {{ inscripcion.email }}</a>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="bi bi-telephone text-gray-400"></i>
+                                    <a href="tel:{{ inscripcion.telefono }}"
+                                        class="hover:text-primary transition-colors">{{ inscripcion.telefono }}</a>
+                                </div>
+                                <div class="flex items-start gap-2 text-gray-600">
+                                    <i class="bi bi-geo-alt text-gray-400 mt-0.5"></i>
+                                    <span class="flex-1">{{ inscripcion.direccion }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-600">
+                                    <i class="bi bi-calendar text-gray-400"></i>
+                                    <span>{{ inscripcion.fecha_nacimiento|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación (Colapsable) -->
+                        {% if inscripcion.partido or inscripcion.localidad %}
+                        <details class="group mb-3 border-t border-gray-100 pt-3">
+                            <summary
+                                class="flex items-center justify-between cursor-pointer text-sm font-semibold text-gray-700 hover:text-primary transition-colors">
+                                <span><i class="bi bi-geo mr-2"></i>Ubicación</span>
+                                <i class="bi bi-chevron-down group-open:rotate-180 transition-transform"></i>
+                            </summary>
+                            <div class="mt-2 space-y-1.5 text-sm pl-6">
+                                {% if inscripcion.partido %}
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Partido:</span>
+                                    <span class="text-gray-800">{{ inscripcion.partido }}</span>
+                                </div>
+                                {% endif %}
+                                {% if inscripcion.localidad %}
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Localidad:</span>
+                                    <span class="text-gray-800">{{ inscripcion.localidad }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </details>
+                        {% endif %}
+
+                        <!-- Información Académica (Colapsable) -->
+                        <details class="group mb-3 border-t border-gray-100 pt-3">
+                            <summary
+                                class="flex items-center justify-between cursor-pointer text-sm font-semibold text-gray-700 hover:text-primary transition-colors">
+                                <span><i class="bi bi-mortarboard mr-2"></i>Estudios</span>
+                                <i class="bi bi-chevron-down group-open:rotate-180 transition-transform"></i>
+                            </summary>
+                            <div class="mt-2 space-y-1.5 text-sm pl-6">
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Nivel:</span>
+                                    <span class="text-gray-800 capitalize">{{ inscripcion.estudios_maximos }}</span>
+                                </div>
+                                {% if inscripcion.estudia_otro_lado %}
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Estudia:</span>
+                                    <span class="text-gray-800">Sí</span>
+                                </div>
+                                {% if inscripcion.horario_estudio %}
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Horarios:</span>
+                                    <span class="text-gray-800">{{ inscripcion.horario_estudio }}</span>
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </details>
+
+                        <!-- Información Laboral (Colapsable) -->
+                        {% if inscripcion.trabaja %}
+                        <details class="group mb-3 border-t border-gray-100 pt-3">
+                            <summary
+                                class="flex items-center justify-between cursor-pointer text-sm font-semibold text-gray-700 hover:text-primary transition-colors">
+                                <span><i class="bi bi-briefcase mr-2"></i>Trabajo</span>
+                                <i class="bi bi-chevron-down group-open:rotate-180 transition-transform"></i>
+                            </summary>
+                            <div class="mt-2 space-y-1.5 text-sm pl-6">
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Trabaja:</span>
+                                    <span class="text-gray-800">Sí</span>
+                                </div>
+                                {% if inscripcion.horario_trabajo %}
+                                <div class="flex gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[80px]">Horarios:</span>
+                                    <span class="text-gray-800">{{ inscripcion.horario_trabajo }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </details>
+                        {% endif %}
+
+                        <!-- Estado Administrativo (Colapsable) -->
+                        <details class="group mb-3 border-t border-gray-100 pt-3">
+                            <summary
+                                class="flex items-center justify-between cursor-pointer text-sm font-semibold text-gray-700 hover:text-primary transition-colors">
+                                <span><i class="bi bi-clipboard-check mr-2"></i>Estado</span>
+                                <i class="bi bi-chevron-down group-open:rotate-180 transition-transform"></i>
+                            </summary>
+                            <div class="mt-2 space-y-1.5 text-sm pl-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[100px]">Contribución:</span>
+                                    {% if inscripcion.pago_contribucion %}
+                                    <span
+                                        class="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded">Pagado</span>
+                                    {% else %}
+                                    <span
+                                        class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">Pendiente</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[100px]">Certificado:</span>
+                                    {% if inscripcion.entrega_certificado %}
+                                    <span
+                                        class="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded">Entregado</span>
+                                    {% else %}
+                                    <span
+                                        class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">Pendiente</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-gray-600 min-w-[100px]">Inscripción:</span>
+                                    {% if inscripcion.inscripcion_fisica %}
+                                    <span
+                                        class="bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded">Entregada</span>
+                                    {% else %}
+                                    <span
+                                        class="bg-yellow-500 text-white text-xs font-bold px-2 py-0.5 rounded">Pendiente</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Documentación -->
+                        <div class="border-t border-gray-100 pt-3 mt-3">
+                            <h6 class="text-sm font-semibold text-gray-700 mb-3">
+                                <i class="bi bi-files mr-2"></i>Documentación
+                            </h6>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- DNI Frente -->
+                                {% if inscripcion.dni_frente %}
+                                {% with url=inscripcion.dni_frente|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'DNI Frente')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="DNI Frente" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Frente</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Frente</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Frente</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- DNI Dorso -->
+                                {% if inscripcion.dni_dorso %}
+                                {% with url=inscripcion.dni_dorso|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'DNI Dorso')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="DNI Dorso" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Dorso</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Dorso</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">DNI Dorso</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Constancia CUIL -->
+                                {% if inscripcion.constancia_cuil %}
+                                {% with url=inscripcion.constancia_cuil|safe_file_url %}
+                                {% if url %}
+                                <div class="col-span-2 bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'Constancia CUIL')">
+                                    <div class="aspect-video">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="Constancia CUIL" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Constancia CUIL</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="col-span-2 bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-video">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-pdf text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Constancia CUIL</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="col-span-2 bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-video">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-pdf text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Constancia CUIL</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Analíticos -->
+                                {% if inscripcion.analitico_1 %}
+                                {% with url=inscripcion.analitico_1|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'Analítico 1')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="Analítico 1" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 1</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 1</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 1</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if inscripcion.analitico_2 %}
+                                {% with url=inscripcion.analitico_2|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'Analítico 2')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="Analítico 2" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 2</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 2</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 2</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if inscripcion.analitico_3 %}
+                                {% with url=inscripcion.analitico_3|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'Analítico 3')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="Analítico 3" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 3</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 3</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 3</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if inscripcion.analitico_4 %}
+                                {% with url=inscripcion.analitico_4|safe_file_url %}
+                                {% if url %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden group cursor-pointer"
+                                    onclick="openImageModal('{{ url }}', 'Analítico 4')">
+                                    <div class="aspect-square">
+                                        <img src="{{ url }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            alt="Analítico 4" loading="lazy">
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 4</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 4</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                {% else %}
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="aspect-square">
+                                        <div class="w-full h-full doc-placeholder flex items-center justify-center">
+                                            <i class="bi bi-file-earmark-image text-4xl text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white px-2 py-1 border-t border-gray-100">
+                                        <p class="text-xs text-gray-600 text-center truncate">Analítico 4</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full flex items-center justify-center py-20">
+                    <div class="text-center">
+                        <div class="float-animation">
+                            <i class="bi bi-clipboard-x text-gray-300 text-6xl"></i>
+                        </div>
+                        <h3 class="mt-6 text-2xl font-bold text-gray-400">No hay inscripciones</h3>
+                        <p class="text-gray-400 mt-2">No se encontraron inscripciones</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Mensaje cuando no hay resultados de búsqueda -->
+            <div id="noResults" class="hidden text-center py-20">
+                <div class="float-animation">
+                    <i class="bi bi-search text-gray-300 text-6xl"></i>
+                </div>
+                <h3 class="mt-6 text-2xl font-bold text-gray-400">No se encontraron resultados</h3>
+                <p class="text-gray-400 mt-2">Intenta con otros términos de búsqueda</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para imágenes -->
+<div id="imageModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="fixed inset-0 bg-black/90 backdrop-blur-sm"></div>
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="relative w-full max-w-5xl">
+            <div
+                class="bg-black/80 backdrop-blur-md rounded-t-2xl border-b border-white/10 px-6 py-4 flex justify-between items-center">
+                <h5 id="imageModalLabel" class="text-white text-xl font-semibold">Vista de documento</h5>
+                <button onclick="closeImageModal()"
+                    class="text-white hover:text-gray-300 transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10">
+                    <i class="bi bi-x-lg text-2xl"></i>
+                </button>
+            </div>
+            <div class="bg-black/50 backdrop-blur-md rounded-b-2xl p-6 flex items-center justify-center">
+                <img src="" id="modalImage" class="max-h-[80vh] w-auto rounded-lg shadow-2xl" alt="Documento ampliado">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Funcionalidad del modal de imágenes
+    function openImageModal(imageUrl, imageTitle) {
+        if (!imageUrl) return;
+
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('imageModalLabel');
+
+        modalImage.src = imageUrl;
+        modalTitle.textContent = imageTitle || 'Vista de documento';
+        modal.classList.remove('hidden');
+
+        // Prevenir scroll del body
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+        }
+    });
+
+    // Cerrar modal al hacer clic fuera de la imagen
+    document.getElementById('imageModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeImageModal();
+        }
+    });
+
+    // Funcionalidad de búsqueda
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const inscripcionCards = document.querySelectorAll('.inscripcion-card');
+        const noResults = document.getElementById('noResults');
+        const inscripcionesCount = document.getElementById('inscripcionesCount');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            inscripcionCards.forEach(card => {
+                const nombre = card.dataset.nombre || '';
+                const apellido = card.dataset.apellido || '';
+                const dni = card.dataset.dni || '';
+                const email = card.dataset.email || '';
+                const telefono = card.dataset.telefono || '';
+
+                // Buscar en todos los campos
+                const matches = nombre.includes(searchTerm) ||
+                    apellido.includes(searchTerm) ||
+                    dni.includes(searchTerm) ||
+                    email.includes(searchTerm) ||
+                    telefono.includes(searchTerm) ||
+                    (nombre + ' ' + apellido).includes(searchTerm) ||
+                    (apellido + ' ' + nombre).includes(searchTerm);
+
+                if (matches) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Actualizar contador
+            inscripcionesCount.textContent = visibleCount;
+
+            // Mostrar/ocultar mensaje de no resultados
+            if (visibleCount === 0 && searchTerm !== '') {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

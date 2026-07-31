@@ -1,0 +1,42 @@
+{% extends "../cuentas/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load allauth account %}
+{% load socialaccount %}
+
+{% block head_title %}
+    {% trans "Sign Up" %}
+{% endblock head_title %}
+
+{% block content %}
+<div class="container mt-5" id="signup-container">
+    <div class="heading text-center mb-4" id="heading-signup">
+        <h1 style="font-size:35px" id="signup-title">{% trans "Sign Up" %}</h1>
+    </div>
+
+    <div class="card shadow p-4" id="card-signup">
+        <p class="text-center" id="text-login">
+            {% trans "¿Ya tienes una cuenta? Por favor" %}
+            <a href="{{ login_url }}" class="text-primary" id="link-login">{% trans "Inicia sesión" %}</a>
+        </p>
+
+        {% if PASSKEY_SIGNUP_ENABLED %}
+            <hr>
+            <button class="btn btn-outline-secondary w-100 mb-2" onclick="window.location.href='{{ signup_by_passkey_url }}'" id="passkey-signup">
+                {% trans "Sign up using a passkey" %}
+            </button>
+        {% endif %}
+
+        {% if SOCIALACCOUNT_ENABLED %}
+            <hr>
+            <div class="text-center mt-3" id="social-signup">
+                <p id="social-signup-text">{% trans "Para registrarse tocar el boton 👇" %}</p>
+                <a href="{% provider_login_url 'google' %}" class="btn btn-light border d-flex align-items-center justify-content-center w-100" id="google-signup">
+                    <img src="{% static 'images/google.ico' %}" alt="Google Icon" class="me-2" style="width: 20px;">
+                    {% trans "Regístrate con Google" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

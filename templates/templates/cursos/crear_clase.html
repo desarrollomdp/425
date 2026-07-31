@@ -1,0 +1,45 @@
+{% extends '../cuentas/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-lg rounded-3 overflow-hidden">
+        <div class="card-header bg-primary text-white py-4">
+          <h1 class="h2 mb-0 text-center">
+            <i class="bi bi-journal-bookmark-fill me-2"></i>
+            Crear Nueva Clase
+          </h1>
+        </div>
+        
+        <div class="card-body p-4 p-md-5">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <!-- Mostrar el nombre del curso -->
+            <div class="mb-3">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Mostrar el nombre del curso -->
+                    <div class="mb-3">
+                        <label class="form-label">Curso</label>
+                        <input type="text" class="form-control" value="{{ curso.nombre }}" disabled>
+                    </div>
+
+                    <!-- Mantener el campo oculto con el ID del curso -->
+                    <input type="hidden" name="curso" value="{{ curso.id }}">
+                    
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary">Guardar Clase</button>
+                </form>
+            </div>
+          </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+        

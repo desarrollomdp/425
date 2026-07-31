@@ -1,0 +1,104 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6 py-12">
+  <div class="w-full max-w-md">
+    <div
+      class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-fade-in-up">
+      <!-- Header -->
+      <div class="bg-primary p-8 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-xl"></div>
+        <h2 class="text-2xl font-black relative z-10 flex items-center gap-3">
+          <i class="fas fa-user-edit"></i> Editar Perfil
+        </h2>
+        <p class="text-white/70 text-xs font-bold mt-1 uppercase tracking-widest relative z-10">Actualiza tus datos</p>
+      </div>
+
+      <!-- Form -->
+      <form method="POST" class="p-8 lg:p-10 space-y-6">
+        {% csrf_token %}
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Nombre</label>
+          {% render_field formulario.first_name class="w-full bg-slate-50 border-2 border-transparent
+          focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all
+          outline-none" placeholder="Tu nombre" %}
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Apellido</label>
+          {% render_field formulario.last_name class="w-full bg-slate-50 border-2 border-transparent
+          focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all
+          outline-none" placeholder="Tu apellido" %}
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Correo Electrónico</label>
+          {% render_field formulario.email class="w-full bg-slate-50 border-2 border-transparent focus:border-primary
+          focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none"
+          placeholder="correo@ejemplo.com" %}
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Contraseña</label>
+          <div class="relative">
+            <input type="password" name="password" id="id_password" value="{{ formulario.password.value }}"
+              class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none"
+              placeholder="Tu contraseña">
+            <button type="button" id="togglePassword"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-300 hover:text-primary transition-colors">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full py-5 bg-primary text-white font-black rounded-[2rem] shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 text-lg flex items-center justify-center gap-4 mt-8 group">
+          <i class="fas fa-check-circle group-hover:scale-110 transition-transform"></i> Guardar Cambios
+        </button>
+
+        <div class="text-center pt-4">
+          <a href="{% url 'user_profile' %}"
+            class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">
+            <i class="fas fa-arrow-left mr-1"></i> Volver al perfil
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+</style>
+
+<script>
+  const btnToggle = document.querySelector('#togglePassword');
+  const inputPass = document.querySelector('#id_password');
+
+  btnToggle.addEventListener('click', function () {
+    const type = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
+    inputPass.setAttribute('type', type);
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+    this.classList.toggle('text-primary');
+  });
+</script>
+{% endblock %}

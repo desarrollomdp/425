@@ -1,0 +1,201 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}Sala de Chat{% endblock %}
+
+{% block content %}
+<div class="h-[calc(100vh-64px)] bg-slate-50 flex overflow-hidden">
+
+    <!-- Sidebar (Contact List) -->
+    <aside class="hidden md:flex flex-col w-80 bg-white border-r border-slate-100 shadow-sm relative z-20">
+        <div class="p-8 border-b border-slate-50">
+            <h5 class="text-xl font-black text-slate-800 flex items-center gap-3">
+                <span
+                    class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary shadow-sm"><i
+                        class="fas fa-users"></i></span>
+                Alumnos
+            </h5>
+            <p class="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Conversaciones Activas</p>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
+            {% for alumno in emisores %}
+            <a href="?usuario_id={{ alumno.id }}#usuario-{{ alumno.id }}"
+                class="flex items-center gap-4 p-4 rounded-3xl transition-all group {% if seleccionado and seleccionado.id == alumno.id %}bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]{% else %}hover:bg-slate-50 text-slate-600{% endif %}">
+                <div
+                    class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm transition-colors {% if seleccionado and seleccionado.id == alumno.id %}bg-white/20 text-white{% else %}bg-slate-100 text-primary group-hover:bg-white{% endif %}">
+                    {{ alumno.first_name|slice:":1" }}{{ alumno.last_name|slice:":1" }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h6 class="font-black text-sm truncate uppercase tracking-wide">{{ alumno.first_name }} {{
+                        alumno.last_name }}</h6>
+                    <p class="text-[9px] font-bold opacity-60 truncate">Último mensaje...</p>
+                </div>
+                {% if seleccionado and seleccionado.id == alumno.id %}
+                <i class="fas fa-chevron-right text-[10px] opacity-50"></i>
+                {% endif %}
+            </a>
+            {% empty %}
+            <div class="text-center py-20 opacity-30 select-none">
+                <i class="fas fa-user-friends text-4xl mb-4"></i>
+                <p class="font-black text-[10px] uppercase tracking-widest">No hay contactos</p>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <!-- Mobile Header/Selector (Only visible on small screens when no user selected) -->
+    {% if not seleccionado %}
+    <div class="md:hidden flex-1 overflow-y-auto p-6 space-y-4">
+        <h5 class="text-2xl font-black text-slate-800 mb-8">Selecciona un alumno</h5>
+        {% for alumno in emisores %}
+        <a href="?usuario_id={{ alumno.id }}"
+            class="flex items-center gap-4 p-5 bg-white rounded-[2rem] shadow-lg shadow-slate-200/50 border border-slate-100">
+            <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                {{ alumno.first_name|slice:":1" }}{{ alumno.last_name|slice:":1" }}
+            </div>
+            <div>
+                <h6 class="font-black text-slate-700">{{ alumno.first_name }} {{ alumno.last_name }}</h6>
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Ver conversación</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Chat Area -->
+    <main class="flex-1 flex flex-col min-w-0 {% if not seleccionado %}hidden md:flex{% endif %}">
+        {% if seleccionado %}
+        <!-- Chat Header -->
+        <div
+            class="flex-none bg-white border-b border-slate-100 px-8 py-5 flex items-center justify-between shadow-sm relative z-10">
+            <div class="flex items-center gap-5">
+                <a href="{% url 'sala_chat' 0 %}"
+                    class="md:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <div
+                    class="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center font-black shadow-lg shadow-primary/20">
+                    {{ seleccionado.first_name|slice:":1" }}{{ seleccionado.last_name|slice:":1" }}
+                </div>
+                <div>
+                    <h2 class="text-lg font-black text-slate-800 leading-tight">{{
+                        seleccionado.get_full_name|default:seleccionado.username }}</h2>
+                    <span
+                        class="px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[9px] font-black uppercase tracking-widest rounded-lg">En
+                        línea</span>
+                </div>
+            </div>
+            <div class="hidden lg:flex items-center gap-2">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-300 mr-2">{{ seleccionado.email
+                    }}</span>
+                <button class="w-10 h-10 rounded-2xl hover:bg-slate-50 text-slate-400 transition-all active:scale-90"><i
+                        class="fas fa-info-circle"></i></button>
+                <button class="w-10 h-10 rounded-2xl hover:bg-slate-50 text-slate-400 transition-all active:scale-90"><i
+                        class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Messages Box -->
+        <div class="flex-1 overflow-y-auto px-8 py-10 space-y-6 no-scrollbar bg-[#f8f9fa]" id="chat-history">
+            {% for mensaje in mensajes %}
+            {% if mensaje.emisor.id == seleccionado.id or mensaje.receptor.id == seleccionado.id %}
+            <div
+                class="flex {% if mensaje.emisor == request.user %}justify-end{% else %}justify-start{% endif %} animate-fade-in-up">
+                <div
+                    class="max-w-[75%] {% if mensaje.emisor == request.user %}bg-primary text-white rounded-t-[2rem] rounded-bl-[2rem] shadow-xl shadow-primary/20{% else %}bg-white text-slate-700 rounded-t-[2rem] rounded-br-[2rem] shadow-md border border-slate-100{% endif %} p-6 relative group transition-transform hover:scale-[1.01]">
+                    <p class="text-sm font-bold leading-relaxed whitespace-pre-wrap">{{ mensaje.contenido }}</p>
+                    <div
+                        class="mt-4 flex items-center {% if mensaje.emisor == request.user %}justify-end text-white/50{% else %}justify-start text-slate-400{% endif %} gap-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest">{{ mensaje.fecha|date:"H:i"
+                            }}</span>
+                        {% if mensaje.emisor == request.user %}
+                        <i class="fas fa-check-double text-[8px]"></i>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Input Box -->
+        <div class="flex-none p-8 bg-white border-t border-slate-100">
+            <form method="post" class="max-w-5xl mx-auto flex items-end gap-6"
+                action="?usuario_id={{ seleccionado.id }}#usuario-{{ seleccionado.id }}">
+                {% csrf_token %}
+                <div class="flex-1 relative">
+                    <textarea name="contenido" rows="1" placeholder="Responder a {{ seleccionado.first_name }}..."
+                        id="chat-input"
+                        class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-[2.5rem] py-5 px-8 font-bold text-slate-700 transition-all outline-none resize-none no-scrollbar shadow-inner text-lg"></textarea>
+                    <input type="hidden" name="receptor_id" value="{{ seleccionado.id }}">
+                </div>
+                <button type="submit"
+                    class="w-16 h-16 flex-none bg-primary text-white rounded-[1.8rem] flex items-center justify-center shadow-2xl shadow-primary/40 hover:bg-blue-700 hover:rotate-12 transition-all active:scale-90 group">
+                    <i
+                        class="fas fa-paper-plane text-xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="flex-1 flex flex-col items-center justify-center p-12 text-center select-none bg-slate-50/50">
+            <div
+                class="w-32 h-32 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 flex items-center justify-center text-slate-200 mb-8 border border-white">
+                <i class="fas fa-comments text-5xl"></i>
+            </div>
+            <h4 class="text-2xl font-black text-slate-800 mb-2">Sala de Comunicación</h4>
+            <p class="text-slate-400 font-bold max-w-xs">Selecciona un alumno de la lista para ver el historial y
+                enviarle mensajes.</p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const history = document.getElementById('chat-history');
+        if (history) {
+            history.scrollTop = history.scrollHeight;
+        }
+
+        const input = document.getElementById('chat-input');
+        if (input) {
+            input.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                if (this.scrollHeight > 150) this.style.overflowY = 'auto';
+            });
+            // Focus on load if selected
+            input.focus();
+        }
+    });
+</script>
+{% endblock %}

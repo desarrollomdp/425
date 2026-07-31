@@ -1,0 +1,202 @@
+{% extends "../cuentas/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load allauth account %}
+{% load socialaccount %}
+
+{% block title %}{% trans "Iniciar sesión" %}{% endblock %}
+{%block slider%}
+{% endblock slider%}
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6 py-12">
+  <div class="w-full max-w-lg">
+    <div
+      class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-fade-in-up">
+
+      <div class="bg-primary p-12 text-white relative overflow-hidden text-center">
+        <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mt-16 blur-xl"></div>
+        <div class="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mb-16 blur-xl"></div>
+
+        <div
+          class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-6 transform hover:rotate-6 transition-transform">
+          <i class="fas fa-user-lock text-3xl"></i>
+        </div>
+        <h2 class="text-3xl font-black tracking-tight relative z-10">{% trans "¡Hola de nuevo!" %}</h2>
+        <p class="text-white/70 text-[10px] font-black uppercase tracking-[0.2em] mt-2 relative z-10">
+          {% trans "Iniciá sesión para continuar" %}
+        </p>
+      </div>
+
+      <div class="p-10 md:p-14">
+        <form class="login space-y-6" method="POST" action="">
+          {% csrf_token %}
+
+          {% if messages %}
+          <div class="space-y-3">
+            {% for message in messages %}
+            <div
+              class="p-4 {% if message.tags == 'success' %}bg-emerald-50 text-emerald-600 border-emerald-100{% else %}bg-rose-50 text-rose-600 border-rose-100{% endif %} border rounded-2xl text-sm font-bold flex items-center gap-3">
+              <i
+                class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if form.errors %}
+          <div
+            class="p-4 bg-orange-50 border border-orange-100 rounded-2xl text-orange-600 text-sm font-bold flex items-center gap-3">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              {% if form.non_field_errors %}
+              {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+              {% else %}
+              <p>Verifica los campos ingresados.</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="space-y-2">
+            <label for="id_username_or_email"
+              class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">
+              Usuario o Email
+            </label>
+            <div class="relative group">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-user text-slate-300 group-focus-within:text-primary transition-colors"></i>
+              </div>
+              <input type="text" name="username_or_email" id="id_username_or_email" placeholder="nombre@ejemplo.com"
+                autocomplete="username" required
+                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 pl-12 pr-6 font-bold text-slate-700 transition-all outline-none shadow-sm placeholder-slate-300">
+            </div>
+            {% if form.username_or_email.errors %}
+            <p class="text-[10px] font-black text-rose-500 mt-1 ml-2 uppercase tracking-wide">
+              {{ form.username_or_email.errors.0 }}
+            </p>
+            {% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="id_password" class="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-2">
+              Contraseña
+            </label>
+            <div class="relative group">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-key text-slate-300 group-focus-within:text-primary transition-colors"></i>
+              </div>
+
+              <input type="password" name="password" id="id_password" placeholder="••••••••"
+                autocomplete="current-password" required
+                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 pl-12 pr-12 font-bold text-slate-700 transition-all outline-none shadow-sm placeholder-slate-300">
+
+              <button type="button" onclick="togglePassword()"
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary cursor-pointer focus:outline-none transition-colors"
+                title="Mostrar contraseña">
+                <i id="eye-icon" class="fas fa-eye text-lg"></i>
+              </button>
+            </div>
+
+            {% if form.password.errors %}
+            <p class="text-[10px] font-black text-rose-500 mt-1 ml-2 uppercase tracking-wide">{{ form.password.errors.0
+              }}</p>
+            {% endif %}
+          </div>
+
+          <div class="flex items-center justify-between mt-2">
+            <div class="flex items-center">
+              <input type="checkbox" name="remember" id="id_remember"
+                class="w-5 h-5 text-primary bg-slate-100 border-gray-300 rounded focus:ring-primary focus:ring-2">
+              <label for="id_remember" class="ml-2 text-sm font-bold text-slate-500 cursor-pointer select-none">
+                Recordarme
+              </label>
+            </div>
+
+            <a href="{% url 'account_reset_password' %}"
+              class="text-xs font-bold text-primary hover:text-blue-700 transition-colors underline-offset-4 hover:underline">
+              {% trans "¿Olvidaste tu contraseña?" %}
+            </a>
+          </div>
+
+          <div class="pt-4">
+            <button type="submit"
+              class="w-full py-5 bg-primary text-white font-black rounded-[2rem] shadow-xl shadow-blue-500/30 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all duration-300 active:scale-95 text-lg flex items-center justify-center gap-3 group">
+              {% trans "Ingresar" %}
+              <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+          </div>
+        </form>
+
+        {% if SOCIALACCOUNT_ENABLED %}
+        <div class="relative my-10">
+          <div class="absolute inset-0 flex items-center" aria-hidden="true">
+            <div class="w-full border-t border-slate-100"></div>
+          </div>
+          <div class="relative flex justify-center">
+            <span class="px-4 bg-white text-[10px] font-black uppercase tracking-[0.3em] text-slate-300">
+              {% trans "O entrá con" %}
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <a href="{% provider_login_url 'google' %}"
+            class="group/google flex items-center justify-center gap-4 w-full py-4 bg-white hover:bg-slate-50 rounded-2xl border-2 border-slate-100 hover:border-primary/20 transition-all duration-300 active:scale-95 shadow-sm">
+            <img src="{% static 'images/google.ico' %}" alt="Google"
+              class="w-5 h-5 grayscale group-hover/google:grayscale-0 transition-all duration-500">
+            <span class="font-bold text-slate-600 group-hover/google:text-slate-800">{% trans "Continuar con Google"
+              %}</span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="mt-10 text-center text-slate-400 font-medium text-sm">
+      {% trans "¿No tenés cuenta?" %}
+      <a href="{% url 'account_signup' %}" class="text-primary font-black hover:underline underline-offset-4 ml-1">
+        {% trans "Regístrate gratis" %}
+      </a>
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+</style>
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById('id_password');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    if (passwordInput.type === 'password') {
+      // Mostrar contraseña
+      passwordInput.type = 'text';
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash'); // Cambia al icono de "ojo tachado"
+    } else {
+      // Ocultar contraseña
+      passwordInput.type = 'password';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye'); // Vuelve al icono normal
+    }
+  }
+</script>
+{% endblock %}

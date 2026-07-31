@@ -1,0 +1,34 @@
+{% extends "cuentas/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center">
+    <div class="mb-8 transform hover:scale-105 transition-transform duration-500">
+        <img src="{% static 'images/404.svg' %}" alt="404 Error" class="w-full max-w-sm mx-auto drop-shadow-xl"
+            onerror="this.onerror=null; this.src='https://assets.website-files.com/5e51c674258ffe10d286d30a/5e535887d584910b3cd546da_404.svg'">
+    </div>
+
+    <h1 class="text-9xl font-black text-slate-200 leading-none mb-4 animate-pulse select-none">404</h1>
+
+    <div
+        class="bg-white p-8 rounded-3xl shadow-2xl shadow-slate-200 border border-slate-100 max-w-lg w-full relative -mt-16 z-10 mx-auto">
+        <h2 class="text-2xl font-black text-slate-800 mb-3">{% trans "¡Ups! Página no encontrada" %}</h2>
+        <p class="text-slate-500 mb-8 font-medium leading-relaxed">{% trans "Lo sentimos, la página que estás buscando
+            no existe, ha sido movida o el enlace está roto." %}</p>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onclick="history.back()"
+                class="px-6 py-3 rounded-xl border-2 border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-slate-900 hover:border-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                {% trans "Volver atrás" %}
+            </button>
+            <a href="{% url 'inicio' %}"
+                class="px-6 py-3 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:bg-blue-700 hover:shadow-primary/50 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-home"></i>
+                {% trans "Ir al inicio" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

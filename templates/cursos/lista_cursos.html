@@ -1,0 +1,225 @@
+{% extends 'cuentas/base.html' %}
+{% load static %}
+
+{% block head_title %}
+Lista de Cursos - CFP 425
+{% endblock head_title %}
+{%block slider%}
+{% endblock slider%}
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 py-12 lg:py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-4">Nuestras <span
+                    class="text-primary italic">Sedes Educativas</span></h1>
+            <p class="text-lg lg:text-xl text-slate-500 font-medium max-w-2xl mx-auto">Explorá la oferta académica del
+                CFP 425 por ciclo y ubicación.</p>
+        </header>
+
+        <!-- Filtros de Ciclo -->
+        <div class="flex justify-center mb-16 px-4">
+            <div class="bg-white p-2 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 flex gap-2">
+                <button type="button" class="px-8 py-3 text-sm font-black rounded-2xl transition-all active:scale-95
+                    {% if anio_activo == '2025' %}
+                        bg-slate-900 text-white shadow-lg shadow-slate-900/20
+                    {% else %}
+                        bg-transparent text-slate-500 hover:bg-slate-50
+                    {% endif %}" onclick="aplicarFiltro('anio', '2025')">
+                    Ciclo 2025
+                </button>
+                <button type="button" class="px-8 py-3 text-sm font-black rounded-2xl transition-all active:scale-95
+                    {% if anio_activo == '2026' %}
+                        bg-primary text-white shadow-lg shadow-primary/20
+                    {% else %}
+                        bg-transparent text-slate-500 hover:bg-slate-50
+                    {% endif %}" onclick="aplicarFiltro('anio', '2026')">
+                    Ciclo 2026
+                </button>
+            </div>
+        </div>
+
+        <!-- Sedes Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+            {% for key, ubicacion in ubicaciones.items %}
+            <div class="group relative cursor-pointer transform transition-all duration-500 hover:-translate-y-2"
+                onclick="aplicarFiltro('sede', '{{ key }}')">
+
+                <div
+                    class="bg-white rounded-[3rem] overflow-hidden shadow-xl shadow-slate-200/40 border-4 transition-all duration-500
+                    {% if sede_activa == key %} border-primary ring-8 ring-primary/5 {% else %} border-white {% endif %}">
+
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="{% static ubicacion.imagen %}"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                            alt="{{ ubicacion.nombre }}">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                    </div>
+
+                    <div class="p-8 text-center">
+                        <h3 class="text-2xl font-black text-slate-800 mb-2 group-hover:text-primary transition-colors">
+                            {{ ubicacion.nombre }}
+                        </h3>
+                        <div class="flex items-center justify-center text-slate-400 font-bold text-sm">
+                            <i class="fas fa-map-marker-alt text-primary/50 mr-2"></i>
+                            <span>{{ ubicacion.direccion }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if sede_activa == key %}
+                <div
+                    class="absolute -top-3 -right-3 bg-primary text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 animate-bounce transition-all">
+                    <i class="fas fa-check text-lg"></i>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cursos Section -->
+        <section class="animate-fade-in">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 border-b border-slate-200 pb-8">
+                <h2 class="text-3xl font-black text-slate-800 flex items-center gap-4 text-center md:text-left">
+                    <span class="w-3 h-10 bg-primary rounded-full"></span>
+                    Cursos {{ anio_activo }}
+                    {% if sede_activa %} <span class="text-primary/70">en {{ ubicaciones.sede_activa.nombre }}</span>
+                    {% endif %}
+                </h2>
+
+                {% if sede_activa or anio_activo != '2026' %}
+                <button
+                    class="px-6 py-3 text-red-500 bg-red-50 hover:bg-red-100 rounded-2xl transition-all text-sm font-black flex items-center gap-2 active:scale-95 shadow-sm"
+                    onclick="limpiarFiltros()">
+                    <i class="fas fa-trash-alt"></i> Restablecer Filtros
+                </button>
+                {% endif %}
+            </div>
+
+            {% if cursos %}
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {% for curso in cursos %}
+                <div
+                    class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full group">
+
+                    <div class="bg-slate-50 px-8 py-5 flex justify-between items-center border-b border-slate-100">
+                        <span
+                            class="bg-white text-primary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-slate-200 shadow-sm leading-none">
+                            {{ curso.get_lugar_display }}
+                        </span>
+                        <span class="text-slate-400 text-xs font-black flex items-center uppercase tracking-tight">
+                            <i class="far fa-calendar-alt mr-2 text-primary/40"></i> {{ curso.fecha_inicio|date:"Y" }}
+                        </span>
+                    </div>
+
+                    <div class="p-8 flex-grow">
+                        <h3
+                            class="text-2xl font-black text-slate-800 mb-6 leading-tight group-hover:text-primary transition-colors">
+                            {{ curso.nombre }}</h3>
+
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center gap-4 text-slate-600">
+                                <div
+                                    class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary/60 shadow-sm">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <span class="font-bold">{{ curso.instructor.get_full_name }}</span>
+                            </div>
+
+                            <div class="flex items-center gap-4 text-slate-600">
+                                <div
+                                    class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary/60 shadow-sm">
+                                    <i class="far fa-clock"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Horarios</span>
+                                    <span class="font-bold text-sm">{{ curso.horario_formateado }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-slate-400 font-medium leading-relaxed border-t border-slate-50 pt-6">
+                            {{ curso.descripcion|truncatechars:120 }}
+                        </p>
+                    </div>
+
+                    <div class="p-8 pt-0 mt-auto space-y-3">
+                        <a href="{% url 'detalles_curso' curso.id %}"
+                            class="block w-full py-4 bg-slate-100 text-slate-600 font-black text-center rounded-2xl hover:bg-slate-200 transition-all active:scale-95 border border-slate-200/50">
+                            <i class="fas fa-info-circle mr-2 opacity-70"></i> Ver Detalles
+                        </a>
+
+                        {% if curso.inscripcion_abierta %}
+                        <a href="{% url 'inscribirse_curso' %}?curso_id={{ curso.id }}"
+                            class="block w-full py-4 bg-primary text-white font-black text-center rounded-2xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95">
+                            <i class="fas fa-pencil-alt mr-2 opacity-70"></i> Pre-inscribirse
+                        </a>
+                        {% else %}
+                        <button
+                            class="block w-full py-4 bg-slate-50 text-slate-300 font-black text-center rounded-2xl cursor-not-allowed transition-all border border-slate-100"
+                            disabled>
+                            <i class="fas fa-lock mr-2 opacity-40"></i> Inscripción Cerrada
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div
+                class="bg-amber-50 border border-amber-100 rounded-[3rem] p-16 text-center max-w-2xl mx-auto shadow-xl shadow-amber-200/20">
+                <div
+                    class="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-lg shadow-amber-200/50">
+                    <i class="fas fa-search text-amber-500 text-4xl"></i>
+                </div>
+                <h4 class="text-3xl font-black text-slate-800 mb-4">No hay cursos disponibles</h4>
+                <p class="text-slate-500 font-medium leading-relaxed mb-10">
+                    Por el momento no tenemos cursos registrados para el <strong class="text-slate-900">Ciclo
+                        2026</strong> en esta sede.
+                </p>
+                <button
+                    class="px-10 py-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 hover:bg-blue-700 transition-all font-black"
+                    onclick="limpiarFiltros()">
+                    Ver Todo 2026
+                </button>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+
+<script>
+    function aplicarFiltro(tipo, valor) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set(tipo, valor);
+        window.location.search = urlParams.toString();
+    }
+
+    function limpiarFiltros() {
+        window.location.href = "{% url 'lista_cursos' %}?anio=2026";
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,144 @@
+{% extends '../cuentas/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Nueva Clase - CFP 425{% endblock %}
+
+{% block slider %}{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 pb-20 pt-10 px-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-10 animate-fade-in text-center">
+      <h1 class="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight">Crear Nueva Clase</h1>
+      <p class="text-slate-500 font-bold mt-2">Registra el contenido y los detalles de un nuevo encuentro educativo.</p>
+    </div>
+
+    <form method="post" class="space-y-8 animate-fade-in-up">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="bg-rose-50 border border-rose-100 rounded-[2rem] p-6 mb-8 text-rose-600">
+        {% for error in form.non_field_errors %}
+        <p class="flex items-center gap-3 font-bold text-sm">
+          <i class="fas fa-exclamation-circle"></i> {{ error }}
+        </p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Sección: Información del Curso (Read-only) -->
+      <div
+        class="bg-gradient-to-br from-primary to-blue-700 rounded-[3rem] shadow-xl shadow-primary/20 p-1 lg:p-1.5 overflow-hidden">
+        <div class="bg-white rounded-[2.8rem] p-8 lg:p-10 flex items-center justify-between">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Curso Vinculado</p>
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">{{ curso.nombre }}</h2>
+          </div>
+          <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
+            <i class="fas fa-graduation-cap text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mantener el campo oculto con el ID del curso -->
+      <input type="hidden" name="curso" value="{{ curso.id }}">
+
+      <!-- Sección: Detalles de la Clase -->
+      <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+        <div class="p-8 lg:p-12">
+          <h5 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
+            <span class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 shadow-sm">
+              <i class="fas fa-calendar-alt"></i>
+            </span>
+            Información de la Clase
+          </h5>
+
+          <div class="space-y-8">
+            {% for field in form %}
+            {% if field.name != 'curso' %}
+            <div class="relative">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">
+                {{ field.label }}
+              </label>
+
+              {% if field.field.widget.input_type == 'select' %}
+              <div class="relative">
+                {% render_field field class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5
+                font-bold text-slate-700 focus:bg-white focus:border-amber-400 focus:outline-none transition-all
+                appearance-none cursor-pointer" %}
+                <i
+                  class="fas fa-chevron-down absolute right-8 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"></i>
+              </div>
+              {% elif field.field.widget.input_type == 'checkbox' %}
+              <label
+                class="flex items-center gap-4 px-8 py-5 bg-slate-50 border-2 border-slate-50 rounded-[2rem] cursor-pointer group transition-all hover:bg-slate-100">
+                {% render_field field class="w-6 h-6 rounded-lg border-2 border-slate-200 text-primary focus:ring-primary/20 transition-all cursor-pointer" %}
+                <span class="font-bold text-slate-600 group-hover:text-slate-800">{{ field.label }}</span>
+              </label>
+              {% else %}
+              {% render_field field class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-amber-400 focus:outline-none transition-all placeholder:text-slate-300" %}
+              {% endif %}
+
+              {% if field.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ field.errors.0 }}</p>
+              {% endif %}
+
+              {% if field.help_text %}
+              <p class="text-[10px] text-slate-400 font-bold mt-2 ml-6">{{ field.help_text }}</p>
+              {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-4 pt-10">
+        <a href="{% url 'ver_clases' curso.id %}"
+          class="flex-1 py-5 rounded-[2rem] bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest text-center hover:bg-slate-200 transition-all active:scale-95">
+          Cancelar
+        </a>
+        <button type="submit"
+          class="flex-[2] py-5 rounded-[2rem] bg-amber-500 text-white font-black text-xs uppercase tracking-widest text-center shadow-xl shadow-amber-200 hover:shadow-2xl hover:bg-amber-600 hover:-translate-y-1 transition-all active:scale-95">
+          <i class="fas fa-save mr-2"></i> Guardar Clase
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+</style>
+{% endblock %}

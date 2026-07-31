@@ -1,0 +1,501 @@
+{% if anuncio_activo %}
+
+<style>
+  /* Estilo para la franja de anuncio */
+
+  .anuncio-marquee {
+
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+
+    padding: 8px 16px;
+
+    width: 100%;
+
+    text-align: center;
+
+  }
+
+
+
+  .anuncio-marquee button {
+
+    background: none;
+
+    border: none;
+
+    color: white;
+
+    font-weight: 600;
+
+    padding: 4px 12px;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+
+    font-size: 0.95rem;
+
+    text-decoration: underline;
+
+  }
+
+
+
+  .anuncio-marquee button:hover {
+
+    transform: scale(1.05);
+
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+
+  }
+
+
+
+  /* BACKDROP */
+
+  .anuncio-modal-backdrop {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, .75);
+
+    display: none;
+
+    z-index: 9999;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 16px;
+
+  }
+
+
+
+  /* CONTENEDOR DEL MODAL (marco) */
+
+  .anuncio-modal-frame {
+
+    position: relative;
+
+    /* Tamaño objetivo desktop: 1080x1920 (vertical) con límites de viewport */
+
+    width: min(1080px, 90vw);
+
+    /* Mantener relación 1080/1920 = 0.5625 */
+
+    aspect-ratio: 1080 / 1920;
+
+    max-height: 90vh;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    background: #000;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+
+  }
+
+
+
+  /* IMAGEN: que se vea completa */
+
+  .anuncio-modal-frame picture,
+
+  .anuncio-modal-frame img {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    /* si querés que recorte, cambiá a cover */
+
+    background: #000;
+
+  }
+
+
+
+  /* BOTÓN CERRAR (cruz) */
+
+  .anuncio-close {
+
+    position: absolute;
+
+    top: 8px;
+
+    right: 8px;
+
+    width: 36px;
+
+    height: 36px;
+
+    border-radius: 999px;
+
+    display: grid;
+
+    place-items: center;
+
+    border: 0;
+
+    cursor: pointer;
+
+    background: rgba(0, 0, 0, .55);
+
+    color: #fff;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    z-index: 50;
+
+    /* Asegurar que esté por encima de todo */
+
+  }
+
+
+
+  .anuncio-close:hover {
+
+    background: rgba(0, 0, 0, .75);
+
+  }
+
+
+
+  /* CTA opcional debajo de la imagen */
+
+  .anuncio-cta {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff5500; /* Naranja chillón */
+    color: #000; /* Texto negro para contraste máximo */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 30px;
+    z-index: 40;
+    box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4);
+    transition: background 0.2s, transform 0.1s;
+  }
+  .anuncio-cta:hover {
+    background: #ff6611;
+    transform: translateX(-50%) scale(1.05);
+    color: #000;
+  }
+
+
+
+  /* Móvil: que use el alto y ancho de la pantalla */
+
+  @media (max-width: 768px) {
+
+    .anuncio-modal-frame {
+
+      width: 100%;
+
+      max-width: 100%;
+
+      height: auto;
+
+      max-height: 90vh;
+
+      aspect-ratio: auto;
+
+      /* dejamos que fluya */
+
+    }
+
+  }
+</style>
+
+
+
+{% if anuncio_activo.texto_promocional %}
+
+<div class="anuncio-marquee" role="region" aria-live="polite">
+
+  <button id="anuncioAbrirDesdeTexto" title="Ver promoción">
+
+    {{ anuncio_activo.texto_promocional }}
+
+  </button>
+
+</div>
+
+{% endif %}
+
+
+
+<div id="anuncioBackdrop" class="anuncio-modal-backdrop" aria-hidden="true">
+
+  <div class="anuncio-modal-frame" role="dialog" aria-modal="true" aria-label="Anuncio">
+
+    <button id="anuncioCerrar" class="anuncio-close" aria-label="Cerrar">&times;</button>
+
+
+
+    {% with link_final=anuncio_activo.whatsapp_link|default:anuncio_activo.url_destino %}
+
+    {% if link_final %}
+
+    <a id="anuncioImagenLink" href="#" onclick="event.preventDefault(); irWhatsAppAnuncio('{{ link_final }}')"
+      style="display:block; width:100%; height:100%; cursor: pointer;" aria-label="Abrir Promoción">
+
+      <picture>
+
+        {% if anuncio_activo.imagen_movil %}
+
+        <source media="(max-width: 768px)" srcset="{{ anuncio_activo.imagen_movil.url }}">
+
+        {% endif %}
+
+        <img src="{{ anuncio_activo.imagen_desktop.url }}" alt="{{ anuncio_activo.titulo }}">
+
+      </picture>
+
+    </a>
+
+
+
+    <a class="anuncio-cta" href="#" onclick="event.preventDefault(); irWhatsAppAnuncio('{{ link_final }}')"
+      rel="noopener">
+
+      Ver promoción
+
+    </a>
+
+
+
+    {% else %}
+
+    <div style="display:block; width:100%; height:100%; cursor: default;">
+
+      <picture>
+
+        {% if anuncio_activo.imagen_movil %}
+
+        <source media="(max-width: 768px)" srcset="{{ anuncio_activo.imagen_movil.url }}">
+
+        {% endif %}
+
+        <img src="{{ anuncio_activo.imagen_desktop.url }}" alt="{{ anuncio_activo.titulo }}">
+
+      </picture>
+
+    </div>
+
+    {% endif %}
+
+    {% endwith %}
+
+
+
+  </div>
+
+</div>
+
+
+
+
+
+<script>
+  console.log("Anuncio empezado")
+
+    (function () {
+
+      const anuncioId = "{{ anuncio_activo.id }}";
+
+      const unaVez = {{ anuncio_activo.mostrar_una_vez_por_dia|yesno:"true,false" }};
+
+
+
+  // Agregamos un sufijo 'v2' para invalidar la cache anterior
+
+  const key = "anuncio_visto_" + anuncioId + "_v2";
+
+  const hoy = new Date().toISOString().slice(0, 10);
+
+
+
+  // URLs al backend para registrar impresiones / clicks
+
+  const urlImp = "{% url 'anuncios:anuncio_impresion' anuncio_activo.id %}";
+
+  const urlClk = "{% url 'anuncios:anuncio_click' anuncio_activo.id %}";
+
+
+
+  const $backdrop = document.getElementById("anuncioBackdrop");
+
+  const $cerrar = document.getElementById("anuncioCerrar");
+
+  const $abrirTexto = document.getElementById("anuncioAbrirDesdeTexto");
+
+
+
+  function enviarBeacon(url) {
+
+    try {
+
+      if (navigator.sendBeacon) {
+
+        const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
+
+        navigator.sendBeacon(url, blob);
+
+      } else {
+
+        fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => { });
+
+      }
+
+    } catch (e) { }
+
+  }
+
+
+
+  function abrir() {
+
+    $backdrop.style.display = "flex";
+
+    $backdrop.setAttribute("aria-hidden", "false");
+
+    enviarBeacon(urlImp);
+
+  }
+
+
+
+  function cerrar() {
+
+    $backdrop.style.display = "none";
+
+    $backdrop.setAttribute("aria-hidden", "true");
+
+  }
+
+
+
+  // Mostrar una vez al ingresar (según config)
+
+  try {
+
+    const valor = localStorage.getItem(key);
+
+    if (!unaVez || valor !== hoy) {
+
+      abrir();
+
+      if (unaVez) localStorage.setItem(key, hoy);
+
+    }
+
+  } catch (e) { abrir(); } // si falla localStorage, mostrar igual
+
+
+
+  // Cerrar
+
+  if ($cerrar) $cerrar.addEventListener("click", cerrar);
+
+  if ($backdrop) $backdrop.addEventListener("click", (ev) => { if (ev.target === $backdrop) cerrar(); });
+
+
+
+  // Al hacer clic en el texto de la franja: reabrir modal
+
+  // Solo agregamos el evento si el elemento existe (por si el texto era None y no se renderizó)
+
+  if ($abrirTexto) {
+
+    $abrirTexto.addEventListener("click", (e) => {
+
+      e.preventDefault();
+
+      abrir();
+
+    });
+
+  }
+
+
+
+  // Función global para registrar click y redirigir a WhatsApp / destino
+
+  window.irWhatsAppAnuncio = function (waUrl) {
+
+    // Seguridad: Si no hay URL, no hacer nada
+
+    if (!waUrl || waUrl === 'None' || waUrl === '') return;
+
+
+
+    try {
+
+      if (navigator.sendBeacon) {
+
+        const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
+
+        navigator.sendBeacon(urlClk, blob);
+
+        window.open(waUrl, '_blank');
+
+      } else {
+
+        fetch(urlClk, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+
+          .finally(() => { window.open(waUrl, '_blank'); });
+
+      }
+
+    } catch (e) {
+
+      window.open(waUrl, '_blank');
+
+    }
+
+  };
+
+  }) ();
+
+</script>
+
+
+
+{% else %}
+
+<script>
+
+  console.log('❌ NO HAY ANUNCIO ACTIVO');
+
+  console.log('  El context_processor no encontró ningún anuncio vigente.');
+
+  console.log('  Verifica que el anuncio tenga:');
+
+  console.log('    - activo = True');
+
+  console.log('    - fecha_inicio <= ahora');
+
+  console.log('    - fecha_fin > ahora (o vacía)');
+
+</script>
+
+{% endif %}

@@ -1,0 +1,35 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">{{ clase.nombre }}</h1>
+    <p><strong>Descripción:</strong> {{ clase.descripcion }}</p>
+    <p><strong>Fecha:</strong> {{ clase.fecha }}</p>
+    <p><strong>Curso:</strong> {{ clase.curso.nombre }}</p>
+
+    <h3 class="mt-4">Asistencias</h3>
+    <div class="card">
+        <div class="card-body">
+            {% if asistencias %}
+                <ul class="list-group">
+                    {% for asistencia in asistencias %}
+                    <li class="list-group-item">
+                        {{ asistencia.estudiante.first_name }} {{ asistencia.estudiante.last_name }} - {{ asistencia.estado }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No hay asistencias registradas.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'crear_asistencia' clase.id %}" class="btn btn-success">Crear/Cargar Asistencia</a>
+        <a href="{% url 'editar_asistencia' clase.id %}" class="btn btn-success">editar</a>
+        <a href="{% url 'escritorio_instructores'%}" class="btn btn-success">Volver a perfil</a>
+        
+    </div>
+</div>
+{% endblock %}

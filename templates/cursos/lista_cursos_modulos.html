@@ -1,0 +1,148 @@
+{% extends 'cuentas/base.html' %}
+{% load static %}
+{% block slider%}
+{% endblock slider%}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8 flex items-center justify-between">
+        <a href="{% url 'escritorio_instructores' %}"
+            class="px-4 py-2 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 transition-colors font-bold text-sm">
+            <i class="fas fa-arrow-left mr-2"></i> Volver al Escritorio
+        </a>
+        <h1 class="text-3xl font-bold text-slate-800 text-center flex-1 pr-32">Mapa Conceptual de Cursos y Módulos</h1>
+    </div>
+
+    <div class="space-y-12">
+        {% for curso in cursos %}
+        <div
+            class="bg-white rounded-xl shadow-lg p-6 relative border-l-4 {% if curso.modulos.all|length == 0 %}border-red-500 bg-red-50{% else %}border-blue-500{% endif %}">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-700">{{ curso.nombre }}</h2>
+                <div class="flex gap-2">
+
+                    <button onclick="eliminarCurso({{ curso.id }}, '{{ curso.nombre|escapejs }}')"
+                        class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold hover:bg-red-200 transition-colors">
+                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+
+            {% if curso.modulos.all %}
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 pl-4 border-l-2 border-slate-200 ml-2">
+                {% for modulo in curso.modulos.all %}
+                <div id="modulo-{{ modulo.id }}"
+                    class="bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative group">
+                    <!-- Conector visual simple -->
+                    <div class="absolute top-1/2 -left-6 w-6 h-0.5 bg-slate-200 hidden md:block"></div>
+
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-semibold text-slate-700 text-sm">{{ modulo.nombre }}</h3>
+                        <button onclick="eliminarModulo({{ modulo.id }}, '{{ modulo.nombre|escapejs }}')"
+                            class="text-slate-400 hover:text-red-500 transition-colors" title="Eliminar Módulo">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ modulo.descripcion }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-4 bg-red-100 text-red-600 rounded-lg mt-4 text-center text-sm font-bold">
+                <i class="fas fa-exclamation-triangle mr-2"></i> Este curso no tiene módulos asignados.
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Módulos Huérfanos -->
+    {% if modulos_sin_curso %}
+    <div class="mt-16 bg-amber-50 rounded-xl shadow-lg p-8 border-2 border-dashed border-amber-300">
+        <h2 class="text-2xl font-bold text-amber-700 mb-6 flex items-center">
+            <i class="fas fa-unlink mr-3"></i> Módulos Sin Asignar (Huérfanos)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for modulo in modulos_sin_curso %}
+            <div id="modulo-{{ modulo.id }}"
+                class="bg-white p-6 rounded-xl border border-amber-200 shadow-sm hover:shadow-md transition-all">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded-full">Sin
+                        Curso</span>
+                    <button onclick="eliminarModulo({{ modulo.id }}, '{{ modulo.nombre|escapejs }}')"
+                        class="text-amber-400 hover:text-red-500 transition-colors" title="Eliminar Módulo">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+                <h3 class="font-bold text-slate-800">{{ modulo.nombre }}</h3>
+                <p class="text-xs text-slate-500 mt-2">{{ modulo.descripcion|default:"Sin descripción" }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function eliminarModulo(id, nombre) {
+        if (!confirm(`¿Estás seguro de que deseas eliminar el módulo "${nombre}"? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        fetch(`/cursos/modulos/eliminar/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Hubo un error al eliminar el módulo.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function eliminarCurso(id, nombre) {
+        if (!confirm(`¿Estás seguro de que deseas eliminar el curso "${nombre}"? Se eliminarán también todas sus clases y asistencias. Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        fetch(`/cursos/curso/${id}/eliminar/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => {
+                if (response.ok || response.redirected) {
+                    // Si la respuesta es exitosa (o redirección), recargamos para ver cambios
+                    location.reload();
+                } else {
+                    alert('Hubo un error al eliminar el curso.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+</script>
+{% endblock %}

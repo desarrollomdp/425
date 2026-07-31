@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Mensaje</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .message-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .message-box p {
+            margin: 0;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .from {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📬 Nuevo Mensaje</h1>
+        </div>
+        <div class="content">
+            <p>Hola <strong>{{ destinatario.get_full_name }}</strong>,</p>
+            <p style="margin-top: 16px;">Has recibido un nuevo mensaje:</p>
+
+            <div class="message-box">
+                <span class="from">De: {{ remitente.get_full_name }}</span>
+                <p>{{ extracto }}{% if contenido_largo %}...{% endif %}</p>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="{{ enlace_conversacion }}" class="button">
+                    Ver Mensaje Completo
+                </a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>CFP 425 - Centro de Formación Profesional</p>
+            <p>Este es un mensaje automático, por favor no responder.</p>
+        </div>
+    </div>
+</body>
+
+</html>

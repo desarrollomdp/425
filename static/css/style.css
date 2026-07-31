@@ -1,0 +1,862 @@
+/* Estilos Generales */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #F2F2F2; /* Fondo claro para un contraste suave */
+  color: #333; /* Color de texto oscuro para legibilidad */
+  overflow-x: hidden; /* Evitar el desplazamiento horizontal */
+}
+/* Ajuste del texto en el pie de página */
+
+
+/* Barra de Navegación */
+.barra_navegacion {
+  background-color: #149aec; /* Color principal de fondo */
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.barra_navegacion  {
+  font-weight: bold;
+  font-size: 4.5rem;
+  white-space: nowrap; /* Evitar que el título se divida en varias líneas */
+  overflow: hidden; /* Evitar que el texto sobresalga */
+  text-overflow: ellipsis; /* Agregar "..." si el texto es demasiado largo */
+}
+
+.barra_navegacion .logo_empresa {
+  width: 40px;
+  height: auto;
+}
+
+.enlace_navegacion {
+  color: white;
+  text-decoration: none;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Carrusel */
+.carrusel .imagen_carrusel {
+  height: 70vh;
+  object-fit: cover;
+}
+
+.carrusel .texto_carrusel h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #F2F2F2; /* Texto claro sobre fondo oscuro */
+}
+
+.carrusel .boton_carrusel {
+  background-color: #F2B90C; /* Botón destacado con color brillante */
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.carrusel .boton_carrusel:hover {
+  background-color: #F2A516; /* Hover con color ligeramente más oscuro */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Pie de Página */
+.pie_pagina {
+  background-color: #419BBF; /* Fondo del pie de página en color más suave */
+  color: #F2F2F2;
+  padding: 20px;
+  text-align: center;
+}
+
+.pie_pagina .enlace_icono {
+  font-size: 1.5rem;
+  color: #F2F2F2; /* Color claro para los iconos */
+  transition: color 0.3s;
+}
+
+.pie_pagina .enlace_icono:hover {
+  color: #F2B90C; /* Iconos resaltados con un color cálido */
+}
+
+/* Mapa de Google */
+.contacto-item.mapa iframe {
+  width: 100%; /* Hacer que el mapa ocupe el 90% del ancho */
+  height: 300px; /* Mantener la altura del mapa */
+  border: 0;
+  margin: 0 auto; /* Centrar el mapa */
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+
+
+  .barra_navegacion .titulo {
+      font-size: 0.9rem;
+      word-wrap: break-word;
+  }
+
+  .barra_navegacion .logo_empresa img {
+      max-width: 10px; /* Ajusta según el tamaño de tu logo */
+  }
+
+  /* Resto de los estilos responsivos */
+  .carrusel .texto_carrusel h1 {
+      font-size: 1.8rem;
+  }
+
+  .carrusel .boton_carrusel {
+      font-size: 0.9rem;
+  }
+  .carrusel .imagen_carrusel {
+    height: 80vh;
+    object-fit: cover;
+  }
+
+  .pie_pagina .iconos_redes {
+      flex-direction: row;
+      justify-content: center;
+      gap: 1rem;
+  }
+
+  .pie_pagina .enlace_icono {
+      font-size: 2rem;
+  }
+
+  .contacto-item.mapa iframe {
+      width: 100%;
+      height: 300px;
+      border: 0;
+      margin: 0 auto;
+      display: block;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* FORMULARIO*/
+
+
+/* Estilos Generales para el Formulario de Contacto */
+#contenedor_principal_formulario {
+  background-color: #F2F2F2; /* Fondo claro para que el formulario resalte */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.bg-white {
+  background-color: #ffffff; /* Fondo blanco para el formulario */
+  border-radius: 8px; /* Bordes redondeados para suavizar el diseño */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave para darle profundidad */
+  padding: 40px;
+  width: 100%;
+  max-width: 500px; /* Máximo tamaño para que no se estire demasiado */
+}
+
+h2 {
+  color: #3B8DBF; /* Color azul para el título */
+  font-size: 1.875rem; /* Tamaño del título */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #F9F9F9;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: #3B8DBF; /* Resalta el borde cuando está enfocado */
+  outline: none;
+}
+
+button[type="submit"] {
+  background-color: #3B8DBF; /* Azul principal para el botón */
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #F2A516; /* Amarillo para el hover */
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-red-600 {
+  color: #E53E3E; /* Rojo intenso para los errores */
+  font-size: 0.875rem;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .bg-white {
+    padding: 20px;
+    width: 100%;
+    max-width: 90%; /* Reduce el tamaño del formulario en pantallas pequeñas */
+  }
+
+  h2 {
+    font-size: 1.5rem; /* Ajusta el tamaño del título en móviles */
+  }
+
+  button[type="submit"] {
+    font-size: 0.9rem; /* Ajusta el tamaño del botón en móviles */
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Inicio de sesion*/
+
+
+/* Estilos Generales */
+#container-login {
+    max-width: 500px;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave para darle profundidad */
+}
+
+#heading-login h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3B8DBF; /* Azul principal para el título */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#card-login {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#text-register {
+    font-size: 1rem;
+    color: #333;
+}
+
+#link-register {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(to right, #00154c, #23487f);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#link-register:hover {
+  background: linear-gradient(to right, #23487f, #00154c);
+  text-decoration: none; /* Evita subrayado en el hover */
+}
+
+
+#button-register {
+    margin-top: 20px;
+}
+
+#btn-signup {
+    background: linear-gradient(to right, #00154c, #23487f);
+    border: none;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#btn-signup:hover {
+    background: linear-gradient(to right, #23487f, #00154c);
+}
+
+#hr-login-options, #hr-social-login {
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+#social-login-options {
+    margin-top: 20px;
+}
+
+#btn-passkey-login, #btn-login-code {
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#btn-passkey-login:hover, #btn-login-code:hover {
+    background-color: #f8f9fa;
+}
+
+#google-login {
+    margin-top: 20px;
+}
+
+#text-other-ways {
+    font-size: 1rem;
+    color: #333;
+}
+
+#btn-google-login {
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#btn-google-login:hover {
+    background-color: #f8f9fa;
+}
+
+#google-icon {
+    width: 20px;
+    margin-right: 10px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    #container-login {
+        max-width: 90%; /* Ajusta el ancho del contenedor en pantallas pequeñas */
+    }
+
+    #heading-login h1 {
+        font-size: 1.5rem; /* Ajusta el tamaño del título en móviles */
+    }
+
+    #btn-signup, #btn-passkey-login, #btn-login-code, #btn-google-login {
+        font-size: 0.9rem; /* Ajusta el tamaño de los botones en móviles */
+    }
+
+    #google-icon {
+        width: 18px; /* Ajusta el tamaño del ícono en móviles */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Registro */
+
+#signup-container {
+  max-width: 500px;
+}
+
+#heading-signup h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+#text-login {
+  font-size: 1rem;
+}
+
+#link-login {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(to right, #00154c, #23487f);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#link-login:hover {
+  background: linear-gradient(to right, #23487f, #00154c);
+  text-decoration: none; /* Evita subrayado en el hover */
+}
+
+#passkey-signup {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+  color: #000;
+}
+
+#passkey-signup:hover {
+  background-color: #e2e6ea;
+}
+
+#social-signup-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+#google-signup {
+  color: #000;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+#google-signup:hover {
+  background-color: #f8f9fa;
+}
+
+
+
+/* confirmacion de ingreso */
+#signin-container {
+  background-color: #007bff; /* Fondo azul */
+}
+
+#signin-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#signin-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+#signin-description {
+  font-size: 1.125rem;
+  color: #4a5568;
+  margin-bottom: 1.5rem;
+}
+
+#signin-form {
+  width: 100%;
+}
+
+#continue-button {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 20px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+#continue-button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*  DETALLES DE MODULO */
+
+/* Estilos generales */
+.detalles-modulo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+}
+
+.detalles-modulo-titulo {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.detalles-modulo-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.detalles-modulo-info p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.detalles-curso-asociado {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detalles-curso-titulo {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.detalles-cursos-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.detalles-curso-item {
+  margin-bottom: 10px;
+}
+
+.detalles-btn-curso {
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.detalles-btn-curso:hover {
+  background-color: #0056b3;
+}
+
+.detalles-volver-modulo {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.detalles-btn-volver {
+  background-color: #28a745;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.detalles-btn-volver:hover {
+  background-color: #218838;
+}
+
+/* Diseño Asimétrico */
+.detalles-modulo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.detalles-modulo-info {
+  width: 65%;
+  margin-right: 20px;
+}
+
+.detalles-curso-asociado {
+  width: 30%;
+  margin-left: 20px;
+  background-color: #e9ecef;
+}
+
+.detalles-cursos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .detalles-modulo-container {
+      padding: 20px;
+  }
+
+  .detalles-modulo-info {
+      width: 100%;
+  }
+
+  .detalles-curso-asociado {
+      width: 100%;
+  }
+
+  .detalles-cursos-lista {
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .detalles-btn-curso {
+      font-size: 0.9rem;
+      padding: 8px 16px;
+  }
+
+  .detalles-btn-volver {
+      padding: 10px 20px;
+      font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .detalles-modulo-container {
+      padding: 15px;
+  }
+
+  .detalles-modulo-titulo {
+      font-size: 2rem;
+  }
+
+  .detalles-modulo-info p {
+      font-size: 1rem;
+  }
+
+  .detalles-btn-curso {
+      font-size: 0.9rem;
+      padding: 8px 16px;
+  }
+
+  .detalles-btn-volver {
+      padding: 8px 18px;
+      font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .detalles-modulo-container {
+      padding: 10px;
+  }
+
+  .detalles-modulo-titulo {
+      font-size: 1.8rem;
+  }
+
+  .detalles-modulo-info {
+      width: 100%;
+      padding: 15px;
+  }
+
+  .detalles-curso-asociado {
+      width: 100%;
+      padding: 15px;
+  }
+
+  .detalles-btn-curso {
+      font-size: 0.85rem;
+      padding: 6px 14px;
+  }
+
+  .detalles-btn-volver {
+      padding: 6px 14px;
+      font-size: 0.9rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Estilos para el slider vertical */
+#slider-vertical {
+  height: 300px; /* Ajusta la altura según necesites */
+  overflow-y: auto;
+}
+
+/* Estilos para el contenido dinámico */
+.contenido-activo {
+  display: block;
+}
+
+.contenido-oculto {
+  display: none;
+}
+
+
+@media (max-width: 361px) {
+  
+  #titulo-principal{
+    font-size: 150px!important;
+  }
+}
+
+
+
+
+
+
+
+
+

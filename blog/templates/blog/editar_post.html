@@ -1,0 +1,112 @@
+{% extends "cuentas/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="edit-post-card">
+        <h2>Editar Publicación</h2>
+        <form method="post" enctype="multipart/form-data" class="edit-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="button-group">
+                <button type="submit" class="btn-guardar">Guardar cambios</button>
+                <a href="{% url 'muro' %}" class="btn-cancelar">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .edit-post-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 24px;
+    }
+
+    .edit-form p {
+        margin-bottom: 20px;
+    }
+
+    .edit-form label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .edit-form input[type="text"],
+    .edit-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #333;
+        transition: border-color 0.3s ease;
+    }
+
+    .edit-form input[type="text"]:focus,
+    .edit-form textarea:focus {
+        outline: none;
+        border-color: #0069d9;
+    }
+
+    .edit-form textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    .btn-guardar {
+        background: #0069d9;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-guardar:hover {
+        background: #004a9f;
+    }
+
+    .btn-cancelar {
+        background: #e1e5eb;
+        color: #333;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-cancelar:hover {
+        background: #d0d4da;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends './base.html' %}
+
+{% block title %}Perfil de {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header del perfil -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-3 text-center mb-4 mb-md-0">
+            <div class="position-relative">
+                <div class="rounded-circle bg-light p-4 shadow">
+                    <i class="bi bi-person-fill text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <span class="position-absolute bottom-0 end-0 badge bg-warning text-dark rounded-pill fs-6">
+                    {{ profile.rol|title }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="col-md-9 text-center text-md-start">
+            <h1 class="display-5 fw-bold mb-3">{{ user.username }}</h1>
+            <p class="lead text-primary">
+                <i class="bi bi-envelope-fill me-2"></i>{{ user.email }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+        {{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <!-- Sección principal -->
+    <div class="row g-4 mb-5">
+        <!-- Información de la cuenta -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Detalles de la cuenta
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-6 text-muted">Miembro desde</dt>
+                        <dd class="col-6">{{ user.date_joined|date:"d M Y" }}</dd>
+                        
+                        <dt class="col-6 text-muted">Último acceso</dt>
+                        <dd class="col-6">{{ user.last_login|date:"d M Y H:i" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acceso rápido -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-lightning-charge me-2"></i>Acceso rápido
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'ver_notas' %}" class="btn btn-outline-primary text-start d-flex align-items-center">
+                            <i class="bi bi-journal-text me-3 fs-4"></i>
+                            <span class="flex-grow-1">Ver mis notas</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido específico por rol -->
+    {% if profile.rol == 'instructor' or profile.rol == 'directivo' %}
+    <div class="d-grid mb-5">
+        <a href="{% url 'escritorio_instructores' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-speedometer2 me-2"></i>Escritorio Instructor
+        </a>
+    </div>
+
+    {% elif profile.rol == 'alumno' %}
+    <!-- Sección Cursos -->
+    <div class="row g-4">
+        <!-- Cursos Inscritos -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-book me-2"></i>Mis Cursos
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if user.cursos_inscriptos.all %}
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        {% for curso in user.cursos_inscriptos.all %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h3 class="h5 mb-1">{{ curso.nombre }}</h3>
+                                            <small class="text-muted">ID: {{ curso.id }}</small>
+                                        </div>
+                                        <span class="badge bg-warning text-dark">Inscrito</span>
+                                        <a href="{% url 'mis_inscripciones' %}">Mis Inscripciones</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-3">No tienes cursos activos</p>
+                        <a href="{% url 'lista_cursos' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-search me-2"></i>Explorar cursos
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cursos Aprobados -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-award me-2"></i>Cursos Completados
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% if cursos_aprobados %}
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        {% for curso in cursos_aprobados %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-success">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                        <div>
+                                            <h3 class="h5 mb-1">{{ curso.nombre }}</h3>
+                                            <small class="text-muted">ID: {{ curso.id }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">¡Comienza tu formación para ver tus logros aquí!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif profile.rol == 'adminpen' %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <a href="{% url 'crear_estudiante_pen' %}" class="btn btn-primary me-md-2">
+                <i class="bi bi-plus-circle me-2"></i>Crear Estudiante
+            </a>
+            <a href="{% url 'ver_estudiantes_pen' %}" class="btn btn-secondary">
+                <i class="bi bi-eye me-2"></i>Ver Estudiantes
+            </a>
+        </div>
+    {% endif %}
+    <!-- Agregar enlace al panel administrativo si el usuario es staff -->
+    {% if profile.rol == 'directivo' %}
+    <div class="mt-4">
+        <a href="{% url 'escritorio_directivo' %}" class="btn btn-dark">Panel Administrativo</a>
+    </div>
+    {% endif %}
+    
+</div>
+
+
+
+</div>
+{% endblock %}

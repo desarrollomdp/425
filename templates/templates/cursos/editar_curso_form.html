@@ -1,0 +1,138 @@
+{% load widget_tweaks %}
+
+<form method="post" id="editarCursoForm">
+    {% csrf_token %}
+
+    <!-- Campos principales del curso -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.nombre.label_tag }}
+                {{ form.nombre|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.descripcion.label_tag }}
+                {{ form.descripcion|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.fecha_inicio.label_tag }}
+                {{ form.fecha_inicio|add_class:"form-control" }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.fecha_fin.label_tag }}
+                {{ form.fecha_fin|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.max_estudiantes.label_tag }}
+                {{ form.max_estudiantes|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.grupo_familia.label_tag }}
+                {{ form.grupo_familia|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.lugar.label_tag }}
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-geo-alt"></i>
+                    </span>
+                    {{ form.lugar|add_class:"form-select" }}
+                </div>
+                <small class="form-text text-muted">Seleccione la ubicación física del curso</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Días de la Semana -->
+    <div class="mb-4">
+        <h5 class="mb-3">Días de la semana</h5>
+        <div class="border p-3 rounded">
+            {{ form.dias.label_tag }}
+            <div class="row">
+                {% for checkbox in form.dias %}
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            {{ checkbox.tag }}
+                            <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                                {{ checkbox.choice_label }}
+                            </label>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Horarios -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.horario_inicio.label_tag }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                    {{ form.horario_inicio|add_class:"form-control" }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.horario_fin.label_tag }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                    {{ form.horario_fin|add_class:"form-control" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Módulos -->
+    <div class="mb-4">
+        <h5 class="mb-3">Módulos asociados</h5>
+        <div class="border p-3 rounded">
+            {{ form.modulos.label_tag }}
+            <div class="scrollable-modulos">
+                {% for checkbox in form.modulos %}
+                    <div class="form-check" style="margin:3px">
+                        {{ checkbox.tag }}
+                        <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                            {{ checkbox.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Opción Inscripción Abierta -->
+    <div class="mb-3">
+        <div class="form-check">
+            {{ form.inscripcion_abierta }}
+            {{ form.inscripcion_abierta.label_tag }}
+        </div>
+        <small class="form-text text-muted">
+            Marque la casilla para indicar que las inscripciones están abiertas (desmarque para cerrarlas).
+        </small>
+    </div>
+
+    <!-- Opción Curso en Curso -->
+    <div class="mb-3">
+        <div class="form-check">
+            {{ form.cursando }}
+            {{ form.cursando.label_tag }}
+        </div>
+        <small class="form-text text-muted">
+            Marque la casilla para indicar si el curso ya comenzó.
+        </small>
+    </div>
+
+    <button type="submit" id="guardarCambiosCurso" class="btn btn-primary">Guardar Cambios</button>
+
+</form>

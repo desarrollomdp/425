@@ -1,0 +1,52 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Editar Inscripción</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Mostrar el curso de forma legible -->
+        <div class="mb-3">
+            <label class="form-label">Curso</label>
+            <input type="text" class="form-control" value="{{ form.instance.curso.nombre }}" readonly>
+        </div>
+        
+        {{ form.as_p }}
+        
+        <!-- Miniaturas de archivos multimedia -->
+        <div class="mb-3">
+            <label class="form-label">Archivos Cargados</label>
+            <div class="d-flex flex-wrap gap-3">
+                {% if form.instance.analitico_primaria %}
+                    <div class="text-center">
+                        <p class="mb-1">Analítico Primaria</p>
+                        <img src="{{ form.instance.analitico_primaria.url }}" alt="Analítico Primaria" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+                {% if form.instance.dni_frente %}
+                    <div class="text-center">
+                        <p class="mb-1">DNI Frente</p>
+                        <img src="{{ form.instance.dni_frente.url }}" alt="DNI Frente" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+                {% if form.instance.dni_reverso %}
+                    <div class="text-center">
+                        <p class="mb-1">DNI Reverso</p>
+                        <img src="{{ form.instance.dni_reverso.url }}" alt="DNI Reverso" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+                {% if form.instance.constancia_cuil %}
+                    <div class="text-center">
+                        <p class="mb-1">Constancia CUIL</p>
+                        <img src="{{ form.instance.constancia_cuil.url }}" alt="Constancia CUIL" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'user_profile' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

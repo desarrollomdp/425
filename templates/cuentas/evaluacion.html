@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Evaluación Reparación de Celulares</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .question {
+      margin-bottom: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .question p {
+      margin-bottom: 10px;
+    }
+    button {
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <h1>Como venimos?</h1>
+  <h2>Curso de Reparación de Celulares (Clases 1 a 7)</h2>
+
+  <form id="quizForm"method="post">
+  {% csrf_token %}
+  <div class="question">
+  <p><strong>Nombre:</strong></p>
+  <input type="text" name="nombre" required>
+</div>
+<div class="question">
+  <p><strong>Apellido:</strong></p>
+  <input type="text" name="apellido" required>
+</div>
+<div class="question">
+  <p><strong>DNI:</strong></p>
+  <input type="text" name="dni" required>
+</div>
+
+    <!-- Opción múltiple -->
+    <div class="question">
+      <p>1. ¿Cuál es la función principal de la placa base?</p>
+      <label><input type="radio" name="q1" value="0"> A) Alimentar directamente la batería</label><br>
+      <label><input type="radio" name="q1" value="1"> B) Coordinar y conectar todos los componentes del celular</label><br>
+      <label><input type="radio" name="q1" value="0"> C) Controlar exclusivamente la pantalla</label><br>
+      <label><input type="radio" name="q1" value="0"> D) Reproducir sonido y video</label>
+    </div>
+    <div class="question">
+      <p>2. ¿Qué indica un valor de voltaje menor a 3.7V en una batería de litio?</p>
+      <label><input type="radio" name="q2" value="0"> A) Está completamente cargada</label><br>
+      <label><input type="radio" name="q2" value="1"> B) No tiene suficiente voltaje para encender</label><br>
+      <label><input type="radio" name="q2" value="0"> C) Está calibrada</label><br>
+      <label><input type="radio" name="q2" value="0"> D) El dispositivo está encendido</label>
+    </div>
+    <div class="question">
+      <p>3. ¿Cuál de estas pantallas ofrece negros verdaderos?</p>
+      <label><input type="radio" name="q3" value="0"> A) IPS-LCD</label><br>
+      <label><input type="radio" name="q3" value="1"> B) OLED/AMOLED</label><br>
+      <label><input type="radio" name="q3" value="0"> C) TFT</label><br>
+      <label><input type="radio" name="q3" value="0"> D) Incell</label>
+    </div>
+    <div class="question">
+      <p>4. ¿Cuál herramienta es ideal para separar la tapa trasera sin daños?</p>
+      <label><input type="radio" name="q4" value="0"> A) Cutter</label><br>
+      <label><input type="radio" name="q4" value="0"> B) Espátula metálica</label><br>
+      <label><input type="radio" name="q4" value="1"> C) Espátula plástica (spudger)</label><br>
+      <label><input type="radio" name="q4" value="0"> D) Destornillador plano</label>
+    </div>
+    <div class="question">
+      <p>5. El pin de carga está soldado a:</p>
+      <label><input type="radio" name="q5" value="0"> A) La pantalla</label><br>
+      <label><input type="radio" name="q5" value="0"> B) La batería</label><br>
+      <label><input type="radio" name="q5" value="0"> C) La placa madre</label><br>
+      <label><input type="radio" name="q5" value="1"> D) La placa de carga</label>
+    </div>
+
+    <!-- Verdadero o falso -->
+    <div class="question">
+      <p>6. Las pantallas OLED consumen más energía que las LCD con imágenes oscuras.</p>
+      <label><input type="radio" name="q6" value="1"> Falso</label><br>
+      <label><input type="radio" name="q6" value="0"> Verdadero</label>
+    </div>
+    <div class="question">
+      <p>7. El proceso de “shock” puede ayudar a subir el voltaje de una batería muy descargada.</p>
+      <label><input type="radio" name="q7" value="1"> Verdadero</label><br>
+      <label><input type="radio" name="q7" value="0"> Falso</label>
+    </div>
+    <div class="question">
+      <p>8. El flux se usa para evitar que la batería se descargue.</p>
+      <label><input type="radio" name="q8" value="0"> Verdadero</label><br>
+      <label><input type="radio" name="q8" value="1"> Falso</label>
+    </div>
+    <div class="question">
+      <p>9. Las pantallas P-OLED son más flexibles que las LCD.</p>
+      <label><input type="radio" name="q9" value="1"> Verdadero</label><br>
+      <label><input type="radio" name="q9" value="0"> Falso</label>
+    </div>
+    <div class="question">
+      <p>10. El multímetro permite medir continuidad, voltaje y resistencia.</p>
+      <label><input type="radio" name="q10" value="1"> Verdadero</label><br>
+      <label><input type="radio" name="q10" value="0"> Falso</label>
+    </div>
+
+    <!-- Preguntas abiertas -->
+    <div class="question">
+      <p>11. Mencioná 3 herramientas esenciales para el desarme de un celular y su función:</p>
+      <textarea name="q11" rows="4"></textarea>
+    </div>
+    <div class="question">
+      <p>12. Explicá cómo medir el voltaje de una batería con el multímetro:</p>
+      <textarea name="q12" rows="4"></textarea>
+    </div>
+    <div class="question">
+      <p>13. Describí 2 fallas comunes del pin de carga y cómo verificarlas:</p>
+      <textarea name="q13" rows="4"></textarea>
+    </div>
+    <div class="question">
+      <p>14. ¿Cómo diferenciar visualmente una pantalla OLED de una LCD apagada?</p>
+      <textarea name="q14" rows="4"></textarea>
+    </div>
+    <div class="question">
+      <p>15. ¿Por qué es importante proteger los componentes cercanos al pin de carga durante el cambio?</p>
+      <textarea name="q15" rows="4"></textarea>
+    </div>
+
+    <!-- Caso práctico -->
+    <div class="question">
+      <p>16. Un cliente trae un celular que no enciende ni carga. ¿Cuáles serían tus primeros tres pasos de diagnóstico?</p>
+      <textarea name="q16" rows="5"></textarea>
+    </div>
+
+    <div class="question">
+      <button type="submit">Enviar evaluación</button>
+    </div>
+      <div class="result" id="resultado"></div>
+    </div>
+  </form>
+
+  <script>
+    function calcularResultado() {
+      const form = document.getElementById('quizForm');
+      const formData = new FormData(form);
+      let puntaje = 0;
+
+      for (let i = 1; i <= 10; i++) {
+        puntaje += parseInt(formData.get(`q${i}`) || 0);
+      }
+
+      let mensaje = `Obtuviste ${puntaje} de 10 puntos en la parte objetiva.\n`;
+
+      if (puntaje === 10) mensaje += "\u2728 Excelente trabajo.\n";
+      else if (puntaje >= 7) mensaje += "\u2705 Buen desempeño, pero hay puntos por revisar.\n";
+      else mensaje += "\u26A0\ufe0f Sería bueno repasar algunos conceptos.\n";
+
+      mensaje += "\nLas preguntas abiertas serán revisadas por el docente.";
+
+      document.getElementById('resultado').innerText = mensaje;
+    }
+  </script>
+</body>
+</html>

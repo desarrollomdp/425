@@ -1,0 +1,124 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Asistencia: {{ clase.nombre }}</h2>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-light text-primary me-2">{{ form.get_estudiantes_count }} estudiantes</span>
+                    <span class="badge bg-light text-primary">{{ clase.fecha|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <form method="post" id="asistenciaForm">
+                {% csrf_token %}
+                {{ form.fecha }}  <!-- Campo oculto con la fecha -->
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Por favor corrija los errores indicados.
+                </div>
+                {% endif %}
+
+                <div class="mb-4">
+                    <div class="form-check">
+                        {{ form.seleccionar_todos }}
+                        <label class="form-check-label" for="{{ form.seleccionar_todos.id_for_label }}">
+                            {{ form.seleccionar_todos.label }}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Estudiante</th>
+                                <th class="text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field in form %}
+                                {% if field.name != 'fecha' and field.name != 'seleccionar_todos' %}
+                                <tr>
+                                    <td>{{ field.label }}</td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            {% for radio in field %}
+                                            <label class="btn btn-outline-primary {% if radio.data.value == 'presente' %}presente{% else %}ausente{% endif %}">
+                                                {{ radio.tag }}
+                                                {{ radio.choice_label }}
+                                            </label>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'detalle_clase' clase.id %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Asistencia
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .btn-group .btn {
+        min-width: 100px;
+    }
+    
+    .btn-group .btn.presente.active {
+        background-color: #198754;
+        border-color: #198754;
+        color: white;
+    }
+    
+    .btn-group .btn.ausente.active {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.querySelector('.select-all-checkbox');
+    const radioButtons = document.querySelectorAll('.attendance-radio');
+
+    selectAllCheckbox.addEventListener('change', function() {
+        radioButtons.forEach(radio => {
+            if (radio.value === 'presente') {
+                radio.checked = this.checked;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

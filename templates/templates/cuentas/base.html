@@ -1,0 +1,178 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Fuente de iconos Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Mi Proyecto{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet"> <!-- Estilos personalizados -->
+  <script src="{% static 'js/Scripts.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <!-- Barra de Navegación -->
+  <nav class="barra_navegacion navbar navbar-expand-lg navbar-light p-4">
+    <div class="contenedor_barra container-fluid">
+      <a class="titulo navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+        <img src="{% static 'images/logo.jpg' %}" alt="Logo" class="logo_empresa h-12 me-2">
+        CFP 425 Nuestra Señora de Luján
+      </a>
+      <button class="boton_toggle navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu_navegacion" aria-controls="menu_navegacion" aria-expanded="false" aria-label="Alternar navegación">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="menu_navegacion collapse navbar-collapse" id="menu_navegacion">
+        <ul class="lista_navegacion navbar-nav ms-auto">
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'inicio' %}">Inicio</a>
+          </li>
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'contacto'  %}">Contacto</a>
+          </li>
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="#">Sobre Nosotros</a>
+          </li>
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'lista_cursos' %}">Cursos</a>
+          </li>
+          
+          {% if user.is_authenticated %}
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'user_profile' %}">Perfil</a>
+          </li>
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+          </li>
+          {% else %}
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'account_login' %}">Iniciar Sesión</a>
+          </li>
+          <li class="item_navegacion nav-item">
+            <a class="enlace_navegacion nav-link" href="{% url 'account_signup' %}">Registrarse</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenedor Toast -->
+  <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+{% block slider %}
+  <!-- Carrusel de Imágenes -->
+  <div id="carrusel" class="carrusel carousel slide mb-6" data-bs-ride="carousel">
+    <div class="indicadores_carrusel carousel-indicators">
+      <button type="button" data-bs-target="#carrusel" data-bs-slide-to="0" class="activo active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carrusel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carrusel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="contenido_carrusel carousel-inner">
+      <!-- Slide 1 -->
+      <div class="item_carrusel carousel-item active">
+        <!-- Imagen para escritorio -->
+        <img src="{% static 'images/slider1.png' %}" class="imagen_carrusel d-none d-md-block w-100" alt="Slide 1">
+        <!-- Imagen para móviles -->
+        <img src="{% static 'images/slider1_mobile.png' %}" class="imagen_carrusel d-md-none w-100" alt="Slide 1">
+        <div class="contenedor_captions container">
+          <div class="texto_carrusel carousel-caption text-start">
+            <h1>Bienvenido a nuestro sitio</h1>
+            <br><strong><p class="descripcion_carrusel opacity-75">Explora nuestros cursos y empieza a aprender hoy mismo.</p></strong>
+            <p><a class="boton_carrusel btn btn-lg btn-primary" href="{% url 'lista_cursos'%}">Explorar Cursos</a></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Slide 2 -->
+      <div class="item_carrusel carousel-item">
+        <!-- Imagen para escritorio -->
+        <img src="{% static 'images/slider2.png' %}" class="imagen_carrusel d-none d-md-block w-100" alt="Slide 2">
+        <!-- Imagen para móviles -->
+        <img src="{% static 'images/slider2_mobile.png' %}" class="imagen_carrusel d-md-none w-100" alt="Slide 2">
+        <div class="contenedor_captions container">
+          <div class="texto_carrusel carousel-caption">
+            <h1 class="bg-dark">Termina El secundario</h1>
+            <p class="bg-dark">Este 2025 termina el secundario con el programa FINES.</p>
+            <p><a class="boton_carrusel btn btn-lg btn-primary" href="#">Ver Más</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="item_carrusel carousel-item">
+        <!-- Imagen para escritorio -->
+        <img src="{% static 'images/slider3.png' %}" class="imagen_carrusel d-none d-md-block w-100" alt="Slide 3">
+        <!-- Imagen para móviles -->
+        <img src="{% static 'images/slider3_mobile.png' %}" class="imagen_carrusel d-md-none w-100" alt="Slide 3">
+        <div class="contenedor_captions container">
+          <div class="texto_carrusel carousel-caption text-end">
+            <!--<h1>Certificados nacionales</h1>
+            <p>Aprende de los mejores profesionales y llevate un certificado oficial validado por la secretaria de educación y trabajo</p>
+            <p><a class="boton_carrusel btn btn-lg btn-primary" href="#">Inscribirse</a></p>-->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles del Carrusel -->
+    <button class="control_anterior carousel-control-prev" type="button" data-bs-target="#carrusel" data-bs-slide="prev">
+      <span class="icono_control carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="texto_oculto visually-hidden">Anterior</span>
+    </button>
+    <button class="control_siguiente carousel-control-next" type="button" data-bs-target="#carrusel" data-bs-slide="next">
+      <span class="icono_control carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="texto_oculto visually-hidden">Siguiente</span>
+    </button>
+  </div>
+{% endblock slider %}
+  <!-- Contenido Principal -->
+  <main class="contenido_principal">
+      {% block content %}
+      <!-- Aquí se mostrará el contenido específico de cada página -->
+      {% endblock %}
+  </main>
+
+  <!-- Pie de Página -->
+  <footer class="pie_pagina bg-light text-center text-lg-start mt-auto py-3 border-top">
+    <div class="contenedor_pie container">
+        <div class="fila_pie row">
+            <!-- Columna de información de la empresa -->
+            <div class="columna_empresa col-12 col-md-6">
+                <span class="texto_muted text-muted">© 2025 Centro de Formación Profesional 425 <strong>Nuestra Señora de Luján</strong>. Todos los derechos reservados.</span>
+            </div>
+            <!-- Columna de iconos y redes sociales -->
+            <div class="columna_redes col-12 col-md-6">
+                <div class="iconos_redes d-flex justify-content-center align-items-center gap-4">
+                    <!-- Icono del centro -->
+                    <a href="#ubicacion" class="enlace_icono text-dark">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </a>
+                    <!-- Iconos de redes sociales -->
+                    <a href="https://facebook.com" class="enlace_icono text-dark" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://instagram.com" class="enlace_icono text-dark" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://twitter.com" class="enlace_icono text-dark" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <!-- Desarrollador -->
+                    <span class="texto_muted text-muted">Desarrollado por <strong>Ezequiel</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

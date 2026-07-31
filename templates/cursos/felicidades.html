@@ -1,0 +1,48 @@
+{% extends '../cuentas/base.html' %}
+
+{% block title %}¡Gracias por tu Pre-inscripción!{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Cartel rojo con instrucciones importantes -->
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> ¡Atención!
+        </h4>
+        <p>
+            Revisa el <strong>correo electrónico</strong> que te llegará para conocer los detalles de la reunión.
+            Es imprescindible que descargues el archivo de inscripción y lo lleves impreso a la reunión establecida.
+        </p>
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">¡Gracias por tu pre-inscripción!</h4>
+        <p>
+            Has completado tu pre-inscripción al curso <strong>{{ curso.nombre }}</strong> con éxito.
+        </p>
+        <hr>
+        <p class="mb-0">
+            <strong>¿Qué sigue ahora?</strong><br>
+            Tu pre-inscripción ha sido registrada.
+            Nos comunicaremos contigo a través del Email que proporcionaste
+            (correo electrónico) para confirmar tu inscripción y proporcionarte más detalles.
+            LEER TODO EL CORREO!!!
+        </p>
+        <hr>
+    </div>
+    
+    <!-- Botón para descargar la planilla y encuesta -->
+    <div class="text-center mt-4">
+        <a href="https://cfp425.site/media/documentos/planilla_de_inscripci%C3%B3n_mas_encuesta1.pdf" 
+           class="btn btn-success btn-sm" download>
+            <i class="bi bi-download me-2"></i>Descargar Planilla e Encuesta
+        </a>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'inicio' %}" class="btn btn-primary">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

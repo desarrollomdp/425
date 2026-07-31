@@ -1,0 +1,9 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container text-center">
+    <h2>Error de inscripción</h2>
+    <p>No puedes inscribirte en más de un curso.</p>
+    <a href="{% url 'lista_cursos' %}" class="btn btn-primary">Volver a la lista de cursos</a>
+</div>
+{% endblock %}

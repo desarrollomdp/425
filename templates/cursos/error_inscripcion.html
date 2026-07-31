@@ -1,0 +1,57 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-[80vh] flex flex-col items-center justify-center p-6 text-center">
+    <!-- Icono decorativo -->
+    <div class="mb-8 transform hover:scale-110 transition-transform duration-500">
+        <div class="relative inline-block">
+            <div class="absolute -inset-4 bg-red-100 rounded-full animate-pulse opacity-50"></div>
+            <i class="fas fa-user-lock text-7xl text-red-500 relative z-10"></i>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Error -->
+    <div
+        class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-slate-100 max-w-lg w-full relative z-10 mx-auto">
+        <h2 class="text-3xl font-black text-slate-800 mb-4 tracking-tight">¡No se pudo inscribir!</h2>
+
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-r-xl">
+            <p class="text-slate-700 font-medium leading-relaxed text-left">
+                El curso está <span class="font-bold text-red-600">lleno</span> o hay un <span
+                    class="font-bold text-red-600">conflicto de horarios</span> con tus cursos actuales.
+            </p>
+        </div>
+
+        <p class="text-slate-500 mb-10 font-medium italic">
+            Por favor, revisa tus inscripciones previas o intenta con otro curso.
+        </p>
+
+        <!-- Acciones -->
+        <div class="flex flex-col gap-3">
+            <a href="{% url 'lista_cursos' %}"
+                class="px-8 py-4 rounded-2xl bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:bg-blue-700 hover:shadow-primary/50 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i class="fas fa-search"></i>
+                Ver otros cursos
+            </a>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{% url 'user_profile' %}"
+                    class="flex-1 px-6 py-3.5 rounded-2xl border-2 border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-slate-900 hover:border-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-id-card"></i>
+                    Ver mi perfil
+                </a>
+                <button onclick="history.back()"
+                    class="flex-1 px-6 py-3.5 rounded-2xl border-2 border-slate-100 text-slate-600 font-bold hover:bg-slate-50 hover:text-slate-900 hover:border-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver atrás
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decoración de fondo suave -->
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl -z-10"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+
+{% block title %}Registro Manual{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-6 py-12">
+    <div class="w-full max-w-2xl">
+        <div
+            class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden animate-fade-in-up">
+            <!-- Header -->
+            <div class="bg-slate-800 p-10 md:p-12 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+                <h2 class="text-3xl font-black tracking-tight relative z-10">Registro Manual</h2>
+                <p class="text-slate-400 text-xs font-black uppercase tracking-widest mt-2 relative z-10">Panel de
+                    Administración de Usuarios</p>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" class="p-10 md:p-14 space-y-8">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {% for field in form %}
+                    <div
+                        class="{% if field.name == 'bio' or field.name == 'direccion' %}md:col-span-2{% endif %} space-y-2">
+                        <label for="{{ field.id_for_label }}"
+                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
+                            {{ field.label }}
+                        </label>
+                        {% render_field field class="w-full bg-slate-50 border-2 border-transparent focus:border-primary
+                        focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none
+                        shadow-inner" %}
+                        {% if field.errors %}
+                        <p class="text-[9px] font-black text-rose-500 mt-1 ml-2 uppercase tracking-wide">{{
+                            field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-8 flex flex-col sm:flex-row gap-4">
+                    <button type="submit"
+                        class="flex-1 py-5 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-3 text-lg">
+                        <i class="fas fa-user-plus text-lg"></i> Registrar Usuario
+                    </button>
+                    <a href="{% url 'inicio' %}"
+                        class="px-10 py-5 bg-slate-100 text-slate-400 font-black rounded-2xl hover:bg-slate-200 hover:text-slate-600 transition-all active:scale-95 flex items-center justify-center">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+</style>
+{% endblock %}

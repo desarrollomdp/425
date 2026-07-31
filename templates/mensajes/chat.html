@@ -1,0 +1,157 @@
+{% extends '../cuentas/base.html' %}
+{% block slider %}{% endblock slider %}
+{% block content %}
+<div class="chat-container"
+    style="max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; font-family: sans-serif;">
+    <div class="chat-header" style="background: #007bff; color: white; padding: 15px; text-align: center;">
+        <strong>Chateando con: {{ receptor.username }}</strong>
+    </div>
+
+    <div id="chat-box"
+        style="height: 400px; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column;">
+        {% for m in mensajes %}
+        <div class="msg-wrapper"
+            style="display: flex; width: 100%; margin-bottom: 10px; 
+        {% if m.emisor_id == request.user.id %} justify-content: flex-end; {% else %} justify-content: flex-start; {% endif %}">
+
+            <div style="padding: 10px 15px; border-radius: 18px; max-width: 75%; 
+            {% if m.emisor_id == request.user.id %} 
+                background-color: #007bff; color: white; border-bottom-right-radius: 2px;
+            {% else %} 
+                background-color: #e9ecef; color: black; border-bottom-left-radius: 2px;
+            {% endif %}">
+
+                {% if m.archivo %}
+                {% if m.es_imagen %}
+                <img src="{{ m.archivo.url }}" style="max-width: 200px; border-radius: 10px; cursor: pointer;"
+                    onclick="window.open('{{ m.archivo.url }}')">
+                {% else %}
+                <a href="{{ m.archivo.url }}" target="_blank"
+                    style="color: {% if m.emisor_id == request.user.id %}white{% else %}#007bff{% endif %}; text-decoration: underline;">
+                    <i class="bi bi-file-earmark-arrow-down"></i> Ver Documento
+                </a>
+                {% endif %}
+                {% else %}
+                {{ m.contenido }}
+                {% endif %}
+                <div style="font-size: 0.75em; text-align: right; opacity: 0.8; margin-top: 5px;">
+                    {{ m.fecha|date:"d/m/Y H:i" }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="chat-input-area" style="padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 10px;">
+        <input type="file" id="file-input" style="display: none;" accept="image/*, .pdf, .doc, .docx">
+        <button onclick="document.getElementById('file-input').click()" class="btn btn-light rounded-circle">
+            <i class="bi bi-paperclip"></i>
+        </button>
+        <input id="input-mensaje" type="text" placeholder="Escribe un mensaje..."
+            style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none;">
+        <button id="btn-enviar"
+            style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Enviar</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('file-input').onchange = function (e) {
+        const file = e.target.files[0];
+        if (file.size > 10 * 1024 * 1024) {
+            alert("¡Error! El archivo supera los 10MB permitidos.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('archivo', file);
+        formData.append('receptor_id', receptorId);
+
+        fetch("{% url 'subir_archivo_chat' %}", {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Notificamos al socket que hay un nuevo archivo
+                    socket.send(JSON.stringify({
+                        'message': '',
+                        'file_url': data.url,
+                        'es_imagen': data.es_imagen
+                    }));
+                } else {
+                    alert(data.error);
+                }
+            });
+    };
+    const receptorId = "{{ receptor.id }}";
+    const usuarioActualId = "{{ request.user.id }}";
+
+    // Configuración del Socket
+    const loc = window.location;
+    let wsStart = 'ws://';
+    if (loc.protocol === 'https:') { wsStart = 'wss://'; }
+
+    const endpoint = wsStart + loc.host + '/ws/chat/' + receptorId + '/';
+    const socket = new WebSocket(endpoint);
+
+    const chatBox = document.querySelector('#chat-box');
+    const inputMensaje = document.querySelector('#input-mensaje');
+    const btnEnviar = document.querySelector('#btn-enviar');
+
+    // Función para scroll automático al final
+    const scrollToBottom = () => { chatBox.scrollTop = chatBox.scrollHeight; };
+    scrollToBottom();
+
+    // Escuchar mensajes entrantes
+    // mensajes/templates/mensajes/chat.html
+
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const esMio = Number(data.sender_id) === Number(usuarioActualId);
+
+        let contenidoHTML = '';
+
+        // Lógica de renderizado inteligente
+        if (data.file_url) {
+            if (data.es_imagen) {
+                // Si es imagen optimizada (WebP), mostramos miniatura
+                contenidoHTML = `<img src="${data.file_url}" style="max-width: 250px; border-radius: 10px; cursor: pointer;" onclick="window.open('${data.file_url}')">`;
+            } else {
+                // Si es PDF o documento, mostramos icono y nombre
+                contenidoHTML = `<a href="${data.file_url}" target="_blank" style="color: ${esMio ? 'white' : '#007bff'}; text-decoration: underline;">
+                                <i class="bi bi-file-earmark-arrow-down"></i> Ver Documento
+                             </a>`;
+            }
+        } else {
+            contenidoHTML = data.message || data.contenido || '';
+        }
+        // Si por alguna razón el contenido está vacío (ej. un ping del servidor), no agregamos nada visual
+        if (contenidoHTML === '') return;
+
+        const nuevoMensaje = `
+        <div class="msg-wrapper" style="display: flex; width: 100%; margin-bottom: 10px; justify-content: ${esMio ? 'flex-end' : 'flex-start'};">
+            <div style="padding: 10px 15px; border-radius: 18px; max-width: 75%; background-color: ${esMio ? '#007bff' : '#e9ecef'}; color: ${esMio ? 'white' : 'black'};">
+                ${contenidoHTML}
+                <div style="font-size: 0.75em; text-align: right; opacity: 0.8; margin-top: 5px;">${data.timestamp}</div>
+            </div>
+        </div>`;
+
+        chatBox.innerHTML += nuevoMensaje;
+        scrollToBottom();
+    };
+
+    // Enviar mensaje al presionar el botón
+    btnEnviar.onclick = function () {
+        const mensaje = inputMensaje.value;
+        if (mensaje.trim() !== "") {
+            socket.send(JSON.stringify({ 'message': mensaje }));
+            inputMensaje.value = '';
+        }
+    };
+
+    // Enviar con tecla Enter
+    inputMensaje.onkeyup = function (e) {
+        if (e.keyCode === 13) { btnEnviar.click(); }
+    };
+</script>
+{% endblock %}

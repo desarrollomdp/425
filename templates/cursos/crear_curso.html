@@ -1,0 +1,263 @@
+{% extends '../cuentas/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Nuevo Curso - CFP 425{% endblock %}
+
+{% block slider %}{% endblock slider %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 pb-20 pt-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="mb-10 animate-fade-in">
+      <a href="{% url 'user_profile' %}"
+        class="inline-flex items-center gap-2 text-slate-400 hover:text-primary transition-colors mb-6 group">
+        <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+        <span class="text-xs font-black uppercase tracking-widest">Volver al Perfil</span>
+      </a>
+      <h1 class="text-3xl lg:text-4xl font-black text-slate-800 tracking-tight">Configuración de Nuevo Curso</h1>
+      <p class="text-slate-500 font-bold mt-2">Completa los detalles para dar de alta una nueva propuesta educativa.</p>
+    </div>
+
+    <form method="post" class="space-y-8 animate-fade-in-up">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="bg-rose-50 border border-rose-100 rounded-[2rem] p-6 mb-8 text-rose-600">
+        {% for error in form.non_field_errors %}
+        <p class="flex items-center gap-3 font-bold text-sm">
+          <i class="fas fa-exclamation-circle"></i> {{ error }}
+        </p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Sección: Información General -->
+      <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+        <div class="p-8 lg:p-12">
+          <h5 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
+            <span class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-primary shadow-sm">
+              <i class="fas fa-info-circle"></i>
+            </span>
+            Información General
+          </h5>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="md:col-span-2">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Nombre del
+                Curso</label>
+              {% render_field form.nombre class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-slate-300" placeholder="Ej: Mecánica Dental Avanzada" %}
+              {% if form.nombre.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.nombre.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div class="md:col-span-2">
+              <label
+                class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Descripción</label>
+              {% render_field form.descripcion class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-slate-300" rows="4" placeholder="Describe los objetivos y contenidos del curso..." %}
+              {% if form.descripcion.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.descripcion.errors.0 }}</p>
+              {% endif %}
+            </div>
+            
+            <div class="md:col-span-2">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Mensaje de Bienvenida / Envío Automático por Email</label>
+              {% render_field form.mensaje_inscripcion class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-slate-300" rows="4" placeholder="Escribe el mensaje personalizado que se enviará automáticamente al email del alumno cuando se pre-inscriba en este curso..." %}
+              {% if form.mensaje_inscripcion.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.mensaje_inscripcion.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Grupo /
+                Familia</label>
+              {% render_field form.grupo_familia class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-primary focus:outline-none transition-all appearance-none cursor-pointer" %}
+              {% if form.grupo_familia.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.grupo_familia.errors.0 }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Cupo
+                Máximo</label>
+              {% render_field form.max_estudiantes class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-primary focus:outline-none transition-all placeholder:text-slate-300" placeholder="Cantidad de alumnos" %}
+              {% if form.max_estudiantes.errors %}
+              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.max_estudiantes.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Calendario y Lugar -->
+      <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+        <div class="p-8 lg:p-12">
+          <h5 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
+            <span
+              class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm">
+              <i class="fas fa-calendar-check"></i>
+            </span>
+            Cronograma y Ubicación
+          </h5>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+            <div>
+              <label
+                class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-2 text-center">Fecha
+                Inicio</label>
+              {% render_field form.fecha_inicio class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl px-4 py-4 font-bold text-slate-700 text-center focus:bg-white focus:border-emerald-500 focus:outline-none transition-all" type="date" %}
+              {% if form.fecha_inicio.errors %}
+              <p class="text-rose-500 text-[10px] font-bold mt-2 text-center italic">{{ form.fecha_inicio.errors.0 }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-2 text-center">Fecha
+                Fin</label>
+              {% render_field form.fecha_fin class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl px-4 py-4 font-bold text-slate-700 text-center focus:bg-white focus:border-emerald-500 focus:outline-none transition-all" type="date" %}
+              {% if form.fecha_fin.errors %}
+              <p class="text-rose-500 text-[10px] font-bold mt-2 text-center italic">{{ form.fecha_fin.errors.0 }}</p>
+              {% endif %}
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-2 text-center">Hora
+                Inicio</label>
+              {% render_field form.horario_inicio class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl px-4 py-4 font-bold text-slate-700 text-center focus:bg-white focus:border-emerald-500 focus:outline-none transition-all" type="time" %}
+              {% if form.horario_inicio.errors %}
+              <p class="text-rose-500 text-[10px] font-bold mt-2 text-center italic">{{ form.horario_inicio.errors.0 }}
+              </p>
+              {% endif %}
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-2 text-center">Hora
+                Fin</label>
+              {% render_field form.horario_fin class="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl px-4 py-4 font-bold text-slate-700 text-center focus:bg-white focus:border-emerald-500 focus:outline-none transition-all" type="time" %}
+              {% if form.horario_fin.errors %}
+              <p class="text-rose-500 text-[10px] font-bold mt-2 text-center italic">{{ form.horario_fin.errors.0 }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-10">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Lugar / Sede
+              de Cursada</label>
+            <div class="relative">
+              {% render_field form.lugar class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-emerald-500 focus:outline-none transition-all appearance-none cursor-pointer" %}
+              <i
+                class="fas fa-chevron-down absolute right-8 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none"></i>
+            </div>
+            {% if form.lugar.errors %}
+            <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.lugar.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6 ml-4">Días de
+              Cursada</label>
+            <div class="flex flex-wrap gap-4 px-2">
+              {% for checkbox in form.dias %}
+              <label class="relative cursor-pointer group">
+                {{ checkbox.tag }}
+                <div
+                  class="px-6 py-3 bg-slate-50 rounded-2xl text-slate-500 font-black text-xs uppercase tracking-widest border-2 border-slate-50 transition-all peer-checked:bg-emerald-50 peer-checked:border-emerald-500 peer-checked:text-emerald-700 group-hover:bg-slate-100 peer-checked:group-hover:bg-emerald-50 ripple">
+                  {{ checkbox.choice_label }}
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+            {% if form.dias.errors %}
+            <p class="text-rose-500 text-xs font-bold mt-4 ml-6 italic">{{ form.dias.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Módulos -->
+      <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
+        <div class="p-8 lg:p-12">
+          <h5 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-4">
+            <span class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 shadow-sm">
+              <i class="fas fa-cubes"></i>
+            </span>
+            Módulos Relacionados
+          </h5>
+          <p class="text-slate-400 font-bold text-sm mb-10 ml-16">Selecciona los módulos que componen la currícula de
+            este curso.</p>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-4 no-scrollbar border-y border-slate-50 py-8">
+            {% for checkbox in form.modulos %}
+            <label class="relative cursor-pointer group">
+              {{ checkbox.tag }}
+              <div
+                class="p-6 bg-slate-50 rounded-[2rem] border-2 border-slate-50 transition-all peer-checked:bg-amber-50 peer-checked:border-amber-400 group-hover:bg-slate-100 flex items-center gap-4">
+                <div
+                  class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-300 peer-checked:text-amber-500 transition-colors shadow-sm">
+                  <i
+                    class="fas fa-check-circle opacity-0 peer-checked:opacity-100 transform scale-50 peer-checked:scale-100 transition-all"></i>
+                  <i class="fas fa-cube peer-checked:hidden"></i>
+                </div>
+                <span class="font-black text-sm text-slate-600 peer-checked:text-amber-900">
+                  {{ checkbox.choice_label }}</span>
+              </div>
+            </label>
+            {% endfor %}
+          </div>
+          {% if form.modulos.errors %}
+          <p class="text-rose-500 text-xs font-bold mt-4 ml-6 italic">{{ form.modulos.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-4 pt-10">
+        <a href="{% url 'user_profile' %}"
+          class="flex-1 py-5 rounded-[2rem] bg-slate-100 text-slate-500 font-black text-xs uppercase tracking-widest text-center hover:bg-slate-200 transition-all active:scale-95">
+          Cancelar
+        </a>
+        <button type="submit"
+          class="flex-[2] py-5 rounded-[2rem] bg-primary text-white font-black text-xs uppercase tracking-widest text-center shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95">
+          <i class="fas fa-plus-circle mr-2"></i> Crear Nuevo Curso
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+</style>
+{% endblock %}

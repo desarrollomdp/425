@@ -1,0 +1,35 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">Asistencias para {{ clase.nombre }}</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Estado</th>
+                    <th>Curso</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asistencia in asistencias %}
+                <tr>
+                    <td>{{ asistencia.estudiante.username }}</td>
+                    <td class="text-capitalize">{{ asistencia.estado }}</td>
+                    <td>{{ asistencia.curso }}</td>
+                    <td>{{ asistencia.fecha }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'ver_clases' curso.id %}" class="btn btn-secondary">Volver a clases</a>
+    </div>
+</div>
+{% endblock %}

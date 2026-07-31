@@ -1,0 +1,297 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+{% block slider %}
+    {# Bloque sobrescrito para no mostrar el slider #}
+{% endblock slider %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'css/estilo_escritorio.css' %}">
+    <style>
+        .sidebar-container {
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .sidebar-container .btn {
+            border-radius: 0.25rem;
+        }
+        .sidebar-container .list-group-item {
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .sidebar-container .list-group-item:last-child {
+            border-bottom: none;
+        }
+        .main-content {
+            background-color: #ffffff;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .main-content .card {
+            border: none;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .main-content .card-header {
+            border-bottom: 1px solid #dee2e6;
+        }
+        .main-content .table {
+            margin-bottom: 0;
+        }
+        .main-content .table th, .main-content .table td {
+            vertical-align: middle;
+        }
+    </style>
+{% endblock head %}
+
+{% block content %}
+<div class="container-fluid min-vh-100">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-lg-3 col-md-4 sidebar-container">
+            <div class="d-flex flex-column h-100">
+                <!-- Botones de creación -->
+                <div class="p-3 border-bottom bg-white">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'crear_curso' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nuevo Curso
+                        </a>
+                        <a href="{% url 'crear_modulo' %}" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-2"></i>Nuevo Módulo
+                        </a>
+                        <a href="{% url 'crear_entrega' %}" class="btn">Crear Entrega</a>
+                        <a href="{% url 'ver_entregas_usuario' %}" class="btn btn-info">
+                            <i class="bi bi-eye me-2"></i>Ver Mis Entregas
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Listados Scrollables -->
+                <div class="flex-grow-1 overflow-auto">
+                    <!-- Lista de Cursos -->
+                    <div class="mb-3">
+                        <h5 class="p-3 bg-primary text-white mb-0">Cursos Disponibles</h5>
+                        <ul id="lista-cursos" class="list-group list-group-flush rounded-0">
+                            <!-- AJAX Content -->
+                        </ul>
+                    </div>
+                    <!-- Sección Módulos -->
+                    <div id="seccion-modulos" class="d-none">
+                        <h5 class="p-3 bg-secondary text-white mb-0">Módulos del Curso</h5>
+                        <ul id="lista-modulos" class="list-group list-group-flush rounded-0">
+                            <!-- AJAX Content -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Opciones Fijas Inferiores -->
+                <div class="mt-auto border-top">
+                    <!-- En las opciones del curso -->
+                    <div id="opciones-curso" class="p-3 d-none">
+                        <div class="d-grid gap-2">
+                            <button data-action="ver-estudiantes" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-people me-2"></i>Ver Estudiantes
+                            </button>
+                            <button data-action="editar-curso" class="btn btn-warning">Editar Curso</button>
+                            <button data-action="detalles-curso" class="btn btn-info">
+                                <i class="bi bi-info-circle me-2"></i>Detalles del Curso
+                            </button>
+                            <button data-action="ver-inscripciones" class="btn btn-outline-secondary">
+                                <i class="bi bi-clipboard-data me-2"></i>Ver Inscripciones
+                            </button>
+                            
+                            <!-- New buttons for classes -->
+                            <a href="#" data-action="crear-clase" class="btn btn-info" id="btn-crear-clase">
+                                <i class="bi bi-plus-circle me-2"></i> Nueva Clase
+                            </a>
+                            <button data-action="ver-clases" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-calendar-event me-2"></i>Ver Clases
+                            </button>
+                            
+                            <!-- Additional button for viewing notes -->
+                            <button data-action="ver-notas" class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-journal-text me-2"></i>Ver Notas
+                            </button>
+                            <!-- En tu template (ej: detalle_modulo.html) -->
+                            <button 
+                                class="btn btn-outline-info btn-sm btn-gestionar-notas" 
+                                data-modulo-id="{{ modulo.id }}">
+                                <i class="bi bi-journal-text me-2"></i>Gestionar Notas
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Botón para abrir el modal -->
+                    <button class="btn btn-danger eliminar-curso" data-id="{{ curso.id }}" data-nombre="{{ curso.nombre }}" data-bs-toggle="modal" data-bs-target="#confirmarEliminar">
+                        Eliminar
+                    </button>
+
+                    <!-- Modal de confirmación -->
+                    <div class="modal fade" id="confirmarEliminar" tabindex="-1" aria-labelledby="confirmarEliminarLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmarEliminarLabel">Confirmar Eliminación</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ¿Estás seguro de que deseas eliminar el curso <strong id="cursoNombre"></strong>? Esta acción no se puede deshacer.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form id="eliminarCursoForm" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- En donde se muestra el ID del curso -->
+                    <div data-course-id class="badge bg-secondary">{{ curso.id }}</div>
+
+                    <!-- En el sidebar, modificar opciones-modulo -->
+                    <div id="opciones-modulo" class="p-3 d-none">
+                        <div class="d-grid gap-2">
+                            <button data-action="editar-modulo" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil me-2"></i>Editar Módulo
+                            </button>
+                            <button data-action="eliminar-modulo" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-2"></i>Eliminar Módulo
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Agregar modal para edición de módulo -->
+                    <div class="modal fade" id="editarModuloModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar Módulo</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body" id="editarModuloContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="col-lg-9 col-md-8 main-content p-4">
+            <!-- Mensajes del Sistema -->
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Contenido Dinámico -->
+            <div id="contenido-dinamico">
+                <div id="datos-curso" class="mt-4"></div>
+                <!-- Mensaje Inicial 
+                <div class="alert alert-info d-flex align-items-center">
+                    <i class="bi bi-info-circle me-3 fs-4"></i>
+                    <div>
+                        <h5 class="alert-heading mb-2">Bienvenido al Panel de Control</h5>
+                        Selecciona un curso y una acción para comenzar
+                    </div>
+                </div> -->
+
+                <!-- Sección de Datos -->
+                <div id="datos-curso" class="d-none">
+                    <!-- Contenido cargado dinámicamente -->
+                </div>
+
+                <!-- Modales -->
+                <div class="modal fade" id="verClasesModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content" id="verClasesModalContent"></div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="crearClaseModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content" id="crearClaseModalContent"></div>
+                    </div>
+                </div>
+
+                <div id="editarCursoModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- En tu archivo HTML (ej: cursos.html) -->
+<div id="notas-content" class="mt-4"></div>
+                <!-- Listados -->
+                <div id="lista-estudiantes" class="d-none">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Estudiantes Inscriptos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Email</th>
+                                            <th>Teléfono</th>
+                                            <th>Último Acceso</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cuerpo-tabla-estudiantes"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lista-clases" class="d-none">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Clases Programadas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cuerpo-tabla-clases"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agregar enlace al panel administrativo si el usuario es staff -->
+                {% if user.is_staff %}
+                <div class="mt-4">
+                    <a href="{% url 'escritorio_directivo' %}" class="btn btn-dark">Panel Administrativo</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Agrega esto en tu HTML si no tienes SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{% static 'js/cursos.js' %}"></script>
+<!-- Al final del <body> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+{% endblock %}

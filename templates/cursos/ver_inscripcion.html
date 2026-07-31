@@ -1,0 +1,272 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Inscripción - CFP 425{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 py-12 lg:py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="mb-12 animate-fade-in">
+            <a href="{% url 'mis_inscripciones' %}"
+                class="inline-flex items-center gap-2 text-slate-400 hover:text-primary transition-colors mb-6 group">
+                <i class="fas fa-arrow-left text-sm group-hover:-translate-x-1 transition-transform"></i>
+                <span class="text-xs font-black uppercase tracking-widest">Volver al listado</span>
+            </a>
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight mb-2">
+                        Inscripción <span class="text-primary italic">#{{ inscripcion.id }}</span>
+                    </h1>
+                    <p class="text-lg text-slate-500 font-medium">
+                        Curso: <span class="text-slate-900 font-black">{{ inscripcion.curso.nombre }}</span>
+                    </p>
+                </div>
+
+                <a href="{% url 'editar_inscripcion' inscripcion.id %}" 
+                   class="hidden md:inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 active:scale-95">
+                    <i class="fas fa-edit"></i> Editar Datos
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-up">
+            
+            <div class="space-y-8">
+                <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden h-full">
+                    <div class="p-8 lg:p-12">
+                        <h5 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
+                            <span class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 shadow-sm">
+                                <i class="fas fa-id-card"></i>
+                            </span>
+                            Datos del Estudiante
+                        </h5>
+
+                        <div class="space-y-8">
+                            <div class="group">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Nombre Completo</label>
+                                <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                    {{ inscripcion.nombre }} {{ inscripcion.apellido }}
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="group">
+                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">DNI</label>
+                                    <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                        {{ inscripcion.dni_numero }}
+                                    </div>
+                                </div>
+                                <div class="group">
+                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Fecha Nacimiento</label>
+                                    <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                        {{ inscripcion.fecha_nacimiento|date:"d/m/Y" }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="group">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Email</label>
+                                <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors break-words">
+                                    {{ inscripcion.email }}
+                                </div>
+                            </div>
+
+                            <div class="group">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Teléfono</label>
+                                <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                    {{ inscripcion.telefono }}
+                                </div>
+                            </div>
+
+                            <div class="group">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Dirección</label>
+                                <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                    {{ inscripcion.direccion }}
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="group">
+                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Partido</label>
+                                    <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                        {{ inscripcion.get_partido_display|default:inscripcion.partido }}
+                                    </div>
+                                </div>
+                                <div class="group">
+                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Localidad</label>
+                                    <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                        {{ inscripcion.get_localidad_display|default:inscripcion.localidad }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="group">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 ml-2">Estudios Máximos</label>
+                                <div class="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold text-slate-700 border-2 border-transparent group-hover:border-indigo-100 transition-colors">
+                                    {{ inscripcion.get_estudios_maximos_display }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-white rounded-[3rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden h-full">
+                    <div class="p-8 lg:p-12">
+                        <h5 class="text-xl font-black text-slate-800 mb-10 flex items-center gap-4">
+                            <span class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm">
+                                <i class="fas fa-folder-open"></i>
+                            </span>
+                            Documentación Adjunta
+                        </h5>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">DNI Frente</p>
+                                {% if inscripcion.dni_frente %}
+                                <a href="{{ inscripcion.dni_frente.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.dni_frente.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                        <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300"></i>
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-300">
+                                    <i class="fas fa-times-circle text-2xl mb-2"></i>
+                                    <span class="text-[10px] font-bold uppercase">No subido</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">DNI Dorso</p>
+                                {% if inscripcion.dni_dorso %}
+                                <a href="{{ inscripcion.dni_dorso.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.dni_dorso.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                        <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300"></i>
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-300">
+                                    <i class="fas fa-times-circle text-2xl mb-2"></i>
+                                    <span class="text-[10px] font-bold uppercase">No subido</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Constancia CUIL</p>
+                                {% if inscripcion.constancia_cuil %}
+                                <a href="{{ inscripcion.constancia_cuil.url }}" target="_blank" class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border-2 border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group">
+                                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-file-alt text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-slate-700 text-sm">Ver Constancia</p>
+                                        <p class="text-xs text-slate-400 font-bold uppercase">Clic para abrir</p>
+                                    </div>
+                                    <i class="fas fa-external-link-alt text-slate-300 group-hover:text-emerald-500 transition-colors"></i>
+                                </a>
+                                {% else %}
+                                <div class="p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 text-center text-slate-400 font-bold text-xs">
+                                    No se adjuntó constancia
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-2 mt-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="h-px bg-slate-100 flex-1"></div>
+                                    <span class="text-xs font-black uppercase tracking-widest text-slate-400">Analítico</span>
+                                    <div class="h-px bg-slate-100 flex-1"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Página 1</p>
+                                {% if inscripcion.analitico_1 %}
+                                <a href="{{ inscripcion.analitico_1.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.analitico_1.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-300">
+                                    <i class="fas fa-minus-circle text-2xl mb-2"></i>
+                                    <span class="text-[10px] font-bold uppercase">Faltante</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Página 2</p>
+                                {% if inscripcion.analitico_2 %}
+                                <a href="{{ inscripcion.analitico_2.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.analitico_2.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-200">
+                                    <i class="fas fa-minus text-xl"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Página 3</p>
+                                {% if inscripcion.analitico_3 %}
+                                <a href="{{ inscripcion.analitico_3.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.analitico_3.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-200">
+                                    <i class="fas fa-minus text-xl"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-span-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Página 4</p>
+                                {% if inscripcion.analitico_4 %}
+                                <a href="{{ inscripcion.analitico_4.url }}" target="_blank" class="block group relative rounded-[2rem] overflow-hidden aspect-square border-2 border-slate-100 shadow-sm cursor-zoom-in">
+                                    <img src="{{ inscripcion.analitico_4.url }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </a>
+                                {% else %}
+                                <div class="aspect-square rounded-[2rem] bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-200">
+                                    <i class="fas fa-minus text-xl"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-8 md:hidden animate-fade-in">
+            <a href="{% url 'editar_inscripcion' inscripcion.id %}" class="block w-full py-5 bg-primary text-white font-black text-center rounded-[2rem] shadow-xl shadow-primary/30 uppercase tracking-widest text-xs active:scale-95 transition-all">
+                <i class="fas fa-edit mr-2"></i> Editar Inscripción
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+    .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+</style>
+{% endblock %}

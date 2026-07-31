@@ -1,0 +1,131 @@
+:root {
+    --primary: #3f51b5;
+    --secondary: #6c757d;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --sidebar-width: 240px;
+  }
+  
+  /* Layout mejorado */
+  .dashboard-wrapper {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    min-height: 100vh;
+    background: #0d4ccc;
+  }
+  
+  .sidebar {
+    background: var(--dark);
+    color: rgb(179, 7, 7);
+    padding: 1rem;
+    position: fixed;
+    width: var(--sidebar-width);
+    height: 100vh;
+    transition: transform 0.3s;
+    z-index: 1000;
+  }
+  
+  .main-content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    transition: margin 0.3s;
+  }
+  
+  /* Tarjetas de estadísticas mejoradas */
+  .stats-card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+  }
+  
+  .stats-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+  }
+  
+  /* Tablas mejoradas */
+  .data-table {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  
+  .data-table th {
+    background: var(--primary);
+    color: white;
+    border: none;
+  }
+  
+  .data-table td {
+    vertical-align: middle;
+  }
+  
+  /* Modal mejorado */
+  .modal-curso {
+    max-width: 1000px;
+  }
+  
+  .modal-curso .nav-tabs .nav-link {
+    border: none;
+    color: var(--secondary);
+  }
+  
+  .modal-curso .nav-tabs .nav-link.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .dashboard-wrapper {
+      grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    
+    .main-content {
+      margin-left: 0;
+    }
+    
+    .sidebar.active {
+      transform: translateX(0);
+    }
+  }
+
+  /* Agrega esto en tu archivo CSS (estilo_escritorio.css) */
+.card-sidebar {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card-sidebar:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15)!important;
+  background-color: #f8f9fa;
+}
+
+
+.titulo{
+  color: blue;
+}

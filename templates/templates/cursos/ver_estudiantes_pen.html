@@ -1,0 +1,27 @@
+{% extends '../cuentas/base.html' %}
+
+{% block title %}Ver Estudiantes (Pen){% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Listado de Estudiantes (Pen)</h1>
+    <ul class="list-group">
+        {% for estudiante in estudiantes %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                {{ estudiante.nombre }} - {{ estudiante.email }}
+            </div>
+            <div>
+                <!-- Enlace a la vista de inscripción: se envía el id del estudiante -->
+                <a href="{% url 'inscribir_curso_pen' estudiante.id %}" class="btn btn-success btn-sm">
+                    Anotar
+                </a>
+            </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No hay estudiantes registrados.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+

@@ -1,0 +1,837 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{# Sobrescribir el bloque para que NO cargue el anuncio normal #}
+{% block anuncio_global %}
+<style>
+    @keyframes pulse-warning {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .animate-pulse-warning {
+        animation: pulse-warning 2s infinite;
+    }
+</style>
+
+<div id="warningBackdrop" class="fixed inset-0 bg-black/85 hidden z-[99999] items-center justify-center p-4 overflow-y-auto">
+    <div
+        class="relative w-full max-w-2xl max-h-[90vh] bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-red-600 flex flex-col overflow-hidden">
+        
+        <!-- Contenido con scroll independiente si se supera el alto de pantalla -->
+        <div class="flex-1 overflow-y-auto pr-2 md:pr-4 custom-scrollbar">
+            <div
+                class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-red-600 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-warning shadow-lg shadow-red-500/50">
+                <i class="fas fa-exclamation-triangle text-3xl md:text-4xl text-white"></i>
+            </div>
+            
+            <h2 class="text-xl md:text-3xl font-black text-red-900 text-center mb-4 leading-tight">
+                ⚠️ IMPORTANTE: UNA CUENTA = UNA PERSONA
+            </h2>
+            
+            <div class="space-y-3">
+                <p class="text-sm md:text-lg text-orange-900 font-semibold leading-relaxed">
+                    Las inscripciones son <strong class="font-black">estrictamente personales e intransferibles</strong>.
+                </p>
+                <p class="text-sm md:text-lg text-orange-900 font-semibold leading-relaxed">
+                    <strong class="font-black">No uses la cuenta de un familiar</strong> (hijo, pareja, etc.) para
+                    inscribirte.
+                </p>
+                <p class="text-sm md:text-lg text-orange-900 font-semibold leading-relaxed">
+                    Cada estudiante debe tener su <strong class="font-black">propio usuario y email registrado</strong>.
+                </p>
+                <div class="bg-red-50 border-l-4 border-red-600 p-3 md:p-4 rounded-lg my-4">
+                    <p class="text-sm md:text-lg text-orange-900 font-semibold leading-relaxed">
+                        ⛔ <strong class="font-black">Si compartes cuenta, se anulará tu inscripción</strong>, ya que el
+                        sistema usa tu usuario para tomar asistencia, registrar calificaciones y gestionar tu título
+                        oficial.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botón siempre visible abajo del todo -->
+        <button id="warningClose"
+            class="w-full mt-4 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-black text-sm md:text-lg py-3.5 md:py-4 px-6 md:px-8 rounded-2xl shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/40 transition-all active:scale-95 flex-shrink-0">
+            ✓ ENTENDIDO, CONTINUAR CON MI INSCRIPCIÓN
+        </button>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const backdrop = document.getElementById('warningBackdrop');
+        const closeBtn = document.getElementById('warningClose');
+
+        function mostrarAdvertencia() {
+            if (backdrop) {
+                backdrop.classList.remove('hidden');
+                backdrop.classList.add('flex');
+            }
+        }
+        function cerrarAdvertencia() {
+            if (backdrop) {
+                backdrop.classList.add('hidden');
+                backdrop.classList.remove('flex');
+            }
+        }
+        setTimeout(mostrarAdvertencia, 500);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', cerrarAdvertencia);
+        }
+    })();
+</script>
+{% endblock anuncio_global %}
+
+{% block slider%}
+{% endblock slider %}
+{% block title %}{% if es_edicion %}Editar{% else %}Nueva{% endif %} Inscripción{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 py-12 lg:py-24 px-6">
+    <div class="max-w-4xl mx-auto">
+
+        <div class="text-center mb-16 animate-fade-in">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
+                Ficha de <span class="text-primary italic">Inscripción</span>
+            </h1>
+            <p class="text-lg text-slate-500 font-medium leading-relaxed mb-6">
+                Estás solicitando una vacante en: <span class="text-slate-900 font-black">{{ curso.nombre }}</span>
+            </p>
+            <div
+                class="inline-flex items-center gap-4 bg-white px-6 py-3 rounded-2xl shadow-sm border border-slate-100 text-xs font-black uppercase tracking-widest text-slate-500">
+                <span class="flex items-center gap-2"><i class="fas fa-clock text-primary"></i> 
+                    {{ curso.horario_formateado }}</span>
+                <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                <span class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-primary"></i> 
+                    {{ curso.get_lugar_display }}</span>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="mb-8 space-y-4">
+            {% for message in messages %}
+            <div
+                class="flex items-center gap-4 p-5 bg-blue-50 border border-blue-100 rounded-2xl text-blue-700 shadow-sm animate-fade-in">
+                <i class="fas fa-info-circle text-xl"></i>
+                <p class="font-bold">{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+        <div class="mb-8 p-6 bg-red-50 border border-red-100 rounded-[2rem] text-red-700 shadow-sm animate-fade-in">
+            <h5 class="font-black flex items-center gap-3 mb-3">
+                <i class="fas fa-exclamation-triangle"></i> Revisá los siguientes puntos:
+            </h5>
+            <ul class="list-disc list-inside font-bold space-y-1 ml-2">
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if not user.profile.dni %}
+        <div class="mb-8 space-y-4">
+            <div
+                class="flex items-center gap-4 p-5 bg-red-50 border border-red-100 rounded-2xl text-red-700 shadow-sm animate-fade-in">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+                <p class="font-bold">No tienes un DNI cargado en tu perfil. Por favor, actualiza tu información antes de
+                    continuar.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if form.errors %}
+        <div class="mb-8 space-y-4">
+            {% for field, errors in form.errors.items %}
+            <div
+                class="flex items-center gap-4 p-5 bg-red-50 border border-red-100 rounded-2xl text-red-700 shadow-sm animate-fade-in">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+                <p class="font-bold">
+                    {{ field|capfirst }}:
+                    {% for error in errors %}
+                    {{ error }}
+                    {% if not forloop.last %},
+                    {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="space-y-12 needs-validation" novalidate>
+            {% csrf_token %}
+
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="p-8 lg:p-12">
+                    <h5 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-4">
+                        <span
+                            class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary shadow-sm"><i
+                                class="fas fa-user"></i></span>
+                        Datos del Estudiante
+                    </h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Nombre
+                                Completo *</label>
+                            {% render_field form.nombre class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ingresá tu nombre..." %}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Apellido
+                                *</label>
+                            {% render_field form.apellido class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ingresá tu apellido..." %}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Número
+                                de DNI *</label>
+                            {% render_field form.dni_numero class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ej: 30123456" %}
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Fecha de
+                                Nacimiento *</label>
+                            {% render_field form.fecha_nacimiento class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" type="date" %}
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Email de
+                                la Cuenta (No editable)</label>
+                            <div class="relative group">
+                                <i class="fas fa-lock absolute left-6 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                                {% render_field form.email class="w-full bg-slate-100 border-2 border-transparent rounded-2xl py-4 pl-14 pr-6 font-bold text-slate-400 cursor-not-allowed outline-none" readonly="readonly" %}
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 italic ml-2 mt-2">Viculado a tu sesión
+                                actual.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="p-8 lg:p-12">
+                    <h5 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-4">
+                        <span
+                            class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-indigo-500 shadow-sm"><i
+                                class="fas fa-map-marked-alt"></i></span>
+                        Contacto y Residencia
+                    </h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Teléfono
+                                de contacto *</label>
+                            {% render_field form.telefono class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ej: 11 1234 5678" %}
+                        </div>
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Dirección
+                                *</label>
+                            {% render_field form.direccion class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Calle y número..." %}
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Partido
+                                *</label>
+                            {% render_field form.partido class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none appearance-none" id="id_partido" %}
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Localidad
+                                *</label>
+                            <select name="localidad" id="id_localidad"
+                                class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none appearance-none">
+                                <option value="">Seleccione un partido primero</option>
+                                {% for x, y in form.fields.localidad.choices %}
+                                <option value="{{ x }}" {% if form.localidad.value|stringformat:"s" == x|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4">
+                        <label
+                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Frente
+                            de DNI *</label>
+                        <div
+                            class="bg-slate-50 rounded-[2rem] p-6 border-2 border-dashed border-slate-200 hover:border-primary transition-colors text-center group cursor-pointer relative overflow-hidden h-48 flex flex-col justify-center items-center">
+                            {% if es_edicion and inscripcion.dni_frente %}
+                            <img src="{{ inscripcion.dni_frente.url }}"
+                                class="absolute inset-0 w-full h-full object-cover z-0">
+                            {% endif %}
+                            <div
+                                class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                <i class="fas fa-id-card text-2xl"></i>
+                            </div>
+                            <div
+                                class="relative overflow-hidden inline-block px-4 py-2 bg-white text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-xl shadow-sm border border-slate-100 cursor-pointer z-10">
+                                <span>Elegir Foto</span>
+                            </div>
+                            {% render_field form.dni_frente class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                        </div>
+                        {% if form.dni_frente.errors %}
+                        <p class="text-[10px] font-black text-red-500 uppercase tracking-widest ml-2">
+                            {% for error in form.dni_frente.errors %}{{ error }}{% endfor %}</p>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-4">
+                        <label
+                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Dorso
+                            de DNI *</label>
+                        <div
+                            class="bg-slate-50 rounded-[2rem] p-6 border-2 border-dashed border-slate-200 hover:border-primary transition-colors text-center group cursor-pointer relative overflow-hidden h-48 flex flex-col justify-center items-center">
+                            {% if es_edicion and inscripcion.dni_dorso %}
+                            <img src="{{ inscripcion.dni_dorso.url }}"
+                                class="absolute inset-0 w-full h-full object-cover z-0">
+                            {% endif %}
+                            <div
+                                class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                <i class="fas fa-id-card text-2xl"></i>
+                            </div>
+                            <div
+                                class="relative overflow-hidden inline-block px-4 py-2 bg-white text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-xl shadow-sm border border-slate-100 cursor-pointer z-10">
+                                <span>Elegir Foto</span>
+                            </div>
+                            {% render_field form.dni_dorso class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                        </div>
+                        {% if form.dni_dorso.errors %}
+                        <p class="text-[10px] font-black text-red-500 uppercase tracking-widest ml-2">
+                            {% for error in form.dni_dorso.errors %}{{ error }}{% endfor %}</p>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-4">
+                        <label
+                            class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Constancia
+                            CUIL *</label>
+                        <div
+                            class="bg-slate-50 rounded-[2rem] p-6 border-2 border-dashed border-slate-200 hover:border-primary transition-colors text-center group cursor-pointer relative overflow-hidden h-48 flex flex-col justify-center items-center">
+                            {% if es_edicion and inscripcion.constancia_cuil %}
+                            <img src="{{ inscripcion.constancia_cuil.url }}"
+                                class="absolute inset-0 w-full h-full object-cover z-0">
+                            {% endif %}
+                            <div
+                                class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                <i class="fas fa-file-contract text-2xl"></i>
+                            </div>
+                            <div
+                                class="relative overflow-hidden inline-block px-4 py-2 bg-white text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-xl shadow-sm border border-slate-100 cursor-pointer z-10">
+                                <span>Elegir Foto</span>
+                            </div>
+                            {% render_field form.constancia_cuil class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                        </div>
+                        {% if form.constancia_cuil.errors %}
+                        <p class="text-[10px] font-black text-red-500 uppercase tracking-widest ml-2">
+                            {% for error in form.constancia_cuil.errors %}{{ error }}{% endfor %}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="p-8 lg:p-12">
+                    <h5 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-4">
+                        <span
+                            class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-cyan-500 shadow-sm"><i
+                                class="fas fa-graduation-cap"></i></span>
+                        Estudios y Analítico
+                    </h5>
+                    <div class="mb-10 max-w-md">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Nivel Máximo
+                            Alcanzado *</label>
+                        {% render_field form.estudios_maximos class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none appearance-none" %}
+                    </div>
+                    <div class="space-y-6">
+                        <p class="text-sm font-bold text-slate-400 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-primary"></i>
+                            Puedes subir hasta 4 fotos del analítico (frente, dorso y sellos).
+                        </p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Analítico 1 -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Foto
+                                    1 (Oblig.)</label>
+                                <div
+                                    class="relative bg-slate-50 rounded-2xl p-2 border-2 border-dashed border-slate-200 h-32 flex items-center justify-center group overflow-hidden">
+                                    {% if es_edicion and inscripcion.analitico_1 %}
+                                    <img src="{{ inscripcion.analitico_1.url }}"
+                                        class="absolute inset-0 w-full h-full object-cover z-0">
+                                    {% endif %}
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    {% render_field form.analitico_1 class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                                </div>
+                            </div>
+                            <!-- Analítico 2 -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Foto
+                                    2 (Opc.)</label>
+                                <div
+                                    class="relative bg-slate-50 rounded-2xl p-2 border-2 border-dashed border-slate-200 h-32 flex items-center justify-center group overflow-hidden">
+                                    {% if es_edicion and inscripcion.analitico_2 %}
+                                    <img src="{{ inscripcion.analitico_2.url }}"
+                                        class="absolute inset-0 w-full h-full object-cover z-0">
+                                    {% endif %}
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    {% render_field form.analitico_2 class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                                </div>
+                            </div>
+                            <!-- Analítico 3 -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Foto
+                                    3 (Opc.)</label>
+                                <div
+                                    class="relative bg-slate-50 rounded-2xl p-2 border-2 border-dashed border-slate-200 h-32 flex items-center justify-center group overflow-hidden">
+                                    {% if es_edicion and inscripcion.analitico_3 %}
+                                    <img src="{{ inscripcion.analitico_3.url }}"
+                                        class="absolute inset-0 w-full h-full object-cover z-0">
+                                    {% endif %}
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    {% render_field form.analitico_3 class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                                </div>
+                            </div>
+                            <!-- Analítico 4 -->
+                            <div class="space-y-3">
+                                <label
+                                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2 block text-center">Foto
+                                    4 (Opc.)</label>
+                                <div
+                                    class="relative bg-slate-50 rounded-2xl p-2 border-2 border-dashed border-slate-200 h-32 flex items-center justify-center group overflow-hidden">
+                                    {% if es_edicion and inscripcion.analitico_4 %}
+                                    <img src="{{ inscripcion.analitico_4.url }}"
+                                        class="absolute inset-0 w-full h-full object-cover z-0">
+                                    {% endif %}
+                                    <div
+                                        class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors shadow-sm relative z-10">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                    {% render_field form.analitico_4 class="absolute inset-0 opacity-0 cursor-pointer z-20 w-full h-full" onchange="previewImage(this)" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div class="p-8 lg:p-12">
+                    <h5 class="text-2xl font-black text-slate-800 mb-8 flex items-center gap-4">
+                        <span
+                            class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-purple-500 shadow-sm"><i
+                                class="fas fa-briefcase"></i></span>
+                        Situación Actual
+                    </h5>
+                    <div class="space-y-8">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
+                                {% render_field form.trabaja class="w-5 h-5 text-primary rounded focus:ring-primary" %}
+                                <label for="id_trabaja" class="text-sm font-bold text-slate-700 cursor-pointer">
+                                    ¿Estás trabajando actualmente?
+                                </label>
+                            </div>
+                            <div id="div_horario_trabajo" style="display: none;" class="pl-4">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
+                                    Días y horarios de trabajo *
+                                </label>
+                                {% render_field form.horario_trabajo class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ej: Lunes a Viernes de 9 a 17hs" %}
+                            </div>
+                        </div>
+                        <hr class="border-slate-200">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
+                                {% render_field form.estudia_otro_lado class="w-5 h-5 text-primary rounded focus:ring-primary" %}
+                                <label for="id_estudia_otro_lado"
+                                    class="text-sm font-bold text-slate-700 cursor-pointer">
+                                    ¿Estás estudiando en otro lugar?
+                                </label>
+                            </div>
+                            <div id="div_horario_estudio" style="display: none;" class="pl-4">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">
+                                    Días y horarios de estudio *
+                                </label>
+                                {% render_field form.horario_estudio class="w-full bg-slate-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl py-4 px-6 font-bold text-slate-700 transition-all outline-none" placeholder="Ej: Martes y Jueves de 18 a 21hs" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col md:flex-row gap-6 items-center justify-between bg-slate-100/50 p-8 rounded-[3rem] border border-slate-200/50">
+                <a href="{% url 'lista_cursos' %}"
+                    class="flex items-center gap-3 px-10 py-4 bg-white text-slate-500 font-black rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all active:scale-95 shadow-sm">
+                    <i class="fas fa-arrow-left opacity-50"></i> Cancelar
+                </a>
+                <button type="submit"
+                    class="w-full md:w-auto flex items-center justify-center gap-4 px-16 py-5 bg-primary text-white font-black rounded-[2rem] shadow-2xl shadow-primary/30 hover:bg-blue-700 transition-all active:scale-95 text-lg">
+                    <i class="fas fa-check-circle"></i>
+                    {% if es_edicion %}Actualizar Inscripción{% else %}Confirmar Inscripción{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="ocrToast"
+    class="fixed bottom-5 right-5 z-[100] hidden transform transition-all duration-300 translate-y-20 opacity-0">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm border-l-8 border-indigo-500 flex flex-col gap-3">
+        <div class="flex items-start justify-between">
+            <h4 class="font-black text-slate-800 text-lg flex items-center gap-2">
+                <i class="fas fa-robot text-indigo-500"></i> Análisis IA
+            </h4>
+            <button onclick="ocultarToast()" class="text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div id="ocrLoading" class="hidden py-2">
+            <div class="flex items-center gap-3 text-slate-600 font-bold animate-pulse">
+                <i class="fas fa-spinner fa-spin text-indigo-500"></i> Leyendo documento...
+            </div>
+        </div>
+
+        <div id="ocrResult" class="hidden space-y-2">
+            <p class="text-sm text-slate-600 font-medium">Hemos detectado el siguiente número en tu imagen:</p>
+
+            <div class="bg-slate-100 rounded-xl p-3 text-center">
+                <span id="dniDetectadoDisplay" class="text-2xl font-black text-slate-800 tracking-widest">---</span>
+            </div>
+
+            <div id="msgCoincide"
+                class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 p-2 rounded-lg flex items-center gap-2">
+                <i class="fas fa-check-circle"></i> ¡Coincide con tu perfil!
+            </div>
+
+            <div id="msgNoCoincide"
+                class="hidden text-xs font-bold text-red-600 bg-red-50 p-2 rounded-lg flex items-center gap-2">
+                <i class="fas fa-exclamation-circle"></i> No coincide con tu perfil (<span
+                    id="dniPerfilDisplay"></span>). Verifica la imagen.
+            </div>
+        </div>
+
+        <div id="ocrError" class="hidden text-sm font-bold text-orange-600 bg-orange-50 p-3 rounded-lg">
+            <i class="fas fa-eye-slash"></i> <span id="ocrErrorMsg">No se pudo leer el DNI.</span>
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .was-validated input:invalid,
+    .was-validated select:invalid {
+        border-color: #ef4444 !important;
+        background-color: #fef2f2 !important;
+    }
+
+    .was-validated input:valid,
+    .was-validated select:valid {
+        border-color: #10b981 !important;
+    }
+</style>
+{{ localidades_por_partido|json_script:"localidades-data" }}
+
+<script>
+    // ==========================================
+    // 1. CONFIGURACIÓN GLOBAL Y UTILIDADES
+    // ==========================================
+
+    // Helper para obtener cookies (necesario para AJAX POST en Django)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ==========================================
+    // 2. LÓGICA DE PREVISUALIZACIÓN Y OCR
+    // ==========================================
+
+    // Definimos la función en window para asegurar que el HTML (onclick/onchange) la encuentre
+    window.previewImage = function (input) {
+        console.log("--> EVENTO DETECTADO: Cambio en input", input.name);
+
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            // A. Previsualización de la imagen
+            reader.onload = function (e) {
+                const container = input.closest('div.relative');
+                const existingImg = container.querySelector('img');
+                const iconDiv = container.querySelector('div.bg-white'); // Icono del centro
+                const textSpan = container.querySelector('span'); // Texto "Elegir Foto"
+
+                if (existingImg) {
+                    existingImg.src = e.target.result;
+                    existingImg.classList.remove('hidden');
+                } else {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'h-32 mx-auto rounded-xl shadow-sm mb-4 object-cover absolute inset-0 w-full h-full z-0';
+                    container.insertBefore(img, container.firstChild);
+
+                    // Ocultar elementos visuales de "vacío"
+                    if (iconDiv) iconDiv.style.opacity = '0';
+                    if (textSpan && textSpan.parentElement) textSpan.parentElement.style.opacity = '0';
+                }
+
+                // Cambiar borde a éxito (Verde)
+                container.classList.remove('border-dashed', 'border-slate-200');
+                container.classList.add('border-solid', 'border-emerald-500');
+            };
+            reader.readAsDataURL(file);
+
+            // B. Llamada a OCR (Solo si es el frente del DNI)
+            if (input.name === 'dni_frente') {
+                console.log("--> Iniciando análisis OCR...");
+                analizarDNI(file);
+            }
+        }
+    };
+
+    // Función AJAX para OCR (Ahora simulada y rápida)
+    function analizarDNI(archivo) {
+        const toast = document.getElementById('ocrToast');
+        if (!toast) return;
+
+        // UI References
+        const loadingDiv = document.getElementById('ocrLoading');
+        const resultDiv = document.getElementById('ocrResult');
+        const errorDiv = document.getElementById('ocrError');
+        const msgMatch = document.getElementById('msgCoincide');
+        const msgNoMatch = document.getElementById('msgNoCoincide');
+        const dniPerfilDisplay = document.getElementById('dniPerfilDisplay');
+        const errorMsg = document.getElementById('ocrErrorMsg');
+
+        // Cambiar título del Toast
+        const tituloToast = toast.querySelector('h4');
+        if (tituloToast) tituloToast.innerHTML = '<i class="fas fa-id-card text-indigo-500"></i> Verificación de Identidad';
+
+        // Reset UI
+        mostrarToast();
+        loadingDiv.classList.add('hidden'); // Ya no mostramos "Cargando..." explícitamente
+        resultDiv.classList.add('hidden');
+        errorDiv.classList.add('hidden');
+        msgMatch.classList.add('hidden');
+        msgNoMatch.classList.add('hidden');
+
+        // Prepare Data
+        const formData = new FormData();
+        formData.append('imagen', archivo);
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Fetch
+        fetch('{% url "api_ocr_check" %}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRFToken': csrftoken }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultDiv.classList.remove('hidden');
+
+                    // Ocultamos el div del número detectado porque ya no es relevante mostrarlo así
+                    const dniDisplayDiv = document.getElementById('dniDetectadoDisplay').parentElement;
+                    if (dniDisplayDiv) dniDisplayDiv.classList.add('hidden');
+
+                    // Cambiamos el texto introductorio
+                    const introText = resultDiv.querySelector('p');
+                    if (introText) introText.textContent = 'Validando DNI de perfil...';
+
+                    // Usamos el input del formulario como fuente de verdad para la comparación visual
+                    const inputDniNumero = document.getElementById('id_dni_numero');
+                    const dniIngresado = inputDniNumero ? inputDniNumero.value.trim() : '';
+                    const dniPerfil = data.dni_perfil;
+
+                    // Comparación: DNI Perfil vs DNI Input (Si el input tiene valor)
+                    // OJO: La respuesta del backend 'coincide' ahora es siempre True porque compara con el mismo perfil.
+                    // Aquí haremos la comparación útil para el usuario:
+
+                    let coincide = true;
+                    if (dniIngresado && dniIngresado !== dniPerfil) {
+                        coincide = false;
+                    }
+
+                    if (coincide) {
+                        msgMatch.classList.remove('hidden');
+                        msgMatch.innerHTML = '<i class="fas fa-check-circle"></i> Tu DNI está verificado correctamente.';
+                        toast.classList.remove('border-indigo-500', 'border-red-500', 'border-orange-500');
+                        toast.classList.add('border-emerald-500');
+
+                        // Si el input estaba vacío, lo llenamos para ayudar
+                        if (inputDniNumero && !inputDniNumero.value) {
+                            inputDniNumero.value = dniPerfil;
+                        }
+
+                    } else {
+                        msgNoMatch.classList.remove('hidden');
+                        msgNoMatch.innerHTML = `<i class="fas fa-exclamation-triangle"></i> El DNI que escribiste (${dniIngresado}) no coincide con tu perfil (${dniPerfil}).`;
+                        dniPerfilDisplay.textContent = dniPerfil;
+                        toast.classList.remove('border-indigo-500', 'border-emerald-500');
+                        toast.classList.add('border-red-500');
+                    }
+                } else {
+                    errorDiv.classList.remove('hidden');
+                    errorMsg.textContent = data.mensaje;
+                    toast.classList.remove('border-indigo-500');
+                    toast.classList.add('border-orange-500');
+                }
+            })
+            .catch(error => {
+                console.error('Error Check:', error);
+                errorDiv.classList.remove('hidden');
+                errorMsg.textContent = "Error de conexión.";
+            });
+    }
+
+    // Funciones visuales del Toast
+    window.mostrarToast = function () {
+        const t = document.getElementById('ocrToast');
+        if (t) {
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.remove('translate-y-20', 'opacity-0'), 10);
+        }
+    }
+
+    window.ocultarToast = function () {
+        const t = document.getElementById('ocrToast');
+        if (t) {
+            t.classList.add('translate-y-20', 'opacity-0');
+            setTimeout(() => t.classList.add('hidden'), 300);
+        }
+    }
+
+    // ==========================================
+    // 3. LOGICA DE LOCALIDADES Y TOGGLES (DOM LOADED)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // --- A. SISTEMA DE LOCALIDADES ---
+        const dataScript = document.getElementById('localidades-data');
+        const selectPartido = document.getElementById('id_partido');
+        const selectLocalidad = document.getElementById('id_localidad');
+
+        if (dataScript && selectPartido && selectLocalidad) {
+            let DATOS = {};
+            try {
+                DATOS = JSON.parse(dataScript.textContent);
+            } catch (e) {
+                console.error("Error parseando JSON de localidades", e);
+            }
+
+            function actualizarLocalidades() {
+                const partido = selectPartido.value;
+                selectLocalidad.innerHTML = ''; // Limpiar
+
+                if (!partido) {
+                    selectLocalidad.add(new Option("Seleccione un partido primero", ""));
+                    return;
+                }
+
+                const localidades = DATOS[partido];
+                if (localidades) {
+                    localidades.forEach(tupla => {
+                        selectLocalidad.add(new Option(tupla[1], tupla[0]));
+                    });
+                } else {
+                    selectLocalidad.add(new Option("Sin localidades cargadas", ""));
+                }
+            }
+
+            selectPartido.addEventListener('change', actualizarLocalidades);
+
+            // Carga inicial (Edición)
+            if (selectPartido.value) {
+                const valorPrevio = "{{ form.localidad.value|default_if_none:'' }}";
+                actualizarLocalidades();
+                if (valorPrevio) {
+                    setTimeout(() => selectLocalidad.value = valorPrevio, 50);
+                }
+            }
+        }
+
+        // --- B. TOGGLES TRABAJO/ESTUDIO ---
+        const toggles = [
+            { check: 'id_trabaja', div: 'div_horario_trabajo' },
+            { check: 'id_estudia_otro_lado', div: 'div_horario_estudio' }
+        ];
+
+        toggles.forEach(t => {
+            const chk = document.getElementById(t.check);
+            const div = document.getElementById(t.div);
+            if (chk && div) {
+                const fn = () => div.style.display = chk.checked ? 'block' : 'none';
+                chk.addEventListener('change', fn);
+                fn(); // Estado inicial
+            }
+        });
+
+        // --- C. VALIDACIÓN VISUAL FORMS ---
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+</script>
+{% endblock %}

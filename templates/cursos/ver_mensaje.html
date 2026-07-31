@@ -1,0 +1,21 @@
+<div class="card">
+    <div class="card-header">
+        <h5>Mensaje de: {{ mensaje.nombre }}</h5>
+        <p><strong>Email:</strong> {{ mensaje.email }}</p>
+        <p><strong>Fecha:</strong> {{ mensaje.fecha|date:"d/m/Y H:i" }}</p>
+    </div>
+    <div class="card-body">
+        <p><strong>Mensaje:</strong></p>
+        <p>{{ mensaje.mensaje }}</p>
+    </div>
+    <div class="card-footer">
+        <form method="POST" action="{% url 'responder_mensaje' mensaje.id %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="respuesta" class="form-label"><strong>Responder:</strong></label>
+                <textarea name="respuesta" id="respuesta" class="form-control" rows="4" placeholder="Escribe tu respuesta aquí...">{{ mensaje.respuesta }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
+        </form>
+    </div>
+</div>

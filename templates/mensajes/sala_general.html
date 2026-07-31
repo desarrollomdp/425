@@ -1,0 +1,319 @@
+{% extends '../cuentas/base.html' %}
+{% load static %}
+{% block slider %}{% endblock slider %}
+{% block content %}
+
+<!-- Carga de estilos de chat unificado -->
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+
+<div class="container mx-auto px-4 py-6">
+    <div class="chat-layout" id="chat-layout-wrapper">
+        
+        <!-- Panel Izquierdo: Lista de Instructores y Directivos -->
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <h2>Centro de Atención</h2>
+                <p class="text-xs text-gray-500 mt-1">Selecciona un instructor o directivo</p>
+            </div>
+            
+            <div class="chat-users-list">
+                {% for persona in personal %}
+                    {% if persona.username != 'lean425' %}
+                    <div class="user-chat-item" data-user-id="{{ persona.id }}" onclick="cargarConversacion({{ persona.id }}, '{{ persona.first_name }} {{ persona.last_name }}')">
+                        <div class="user-avatar-container">
+                            {% if persona.profile.avatar and "default.webp" not in persona.profile.avatar.name %}
+                                <img src="{{ persona.profile.avatar.url }}" alt="{{ persona.username }}" class="user-avatar-img">
+                            {% else %}
+                                <div class="user-avatar-placeholder">
+                                    {{ persona.first_name|slice:":1" }}{{ persona.last_name|slice:":1" }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="user-item-info">
+                            <div class="user-item-name">{{ persona.first_name }} {{ persona.last_name }}</div>
+                            <span class="user-item-role {% if persona.profile.rol == 'directivo' %}directivo{% else %}instructor{% endif %}">
+                                {{ persona.profile.get_rol_display }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% empty %}
+                    <p class="text-center text-gray-500 py-10 text-sm">No hay personal disponible en este momento.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Conversación o Pantalla de Bienvenida -->
+        <div class="chat-main" id="chat-main-container">
+            <!-- Pantalla de Bienvenida por defecto -->
+            <div class="chat-welcome-screen" id="chat-welcome-screen">
+                <i class="bi bi-chat-text"></i>
+                <h3 class="text-lg font-semibold text-gray-700">Tus Mensajes</h3>
+                <p class="text-sm text-gray-500 mt-1">Selecciona un contacto de la lista para empezar a chatear.</p>
+            </div>
+
+            <!-- Contenedor dinámico de la conversación (oculto al inicio) -->
+            <div id="chat-active-session" style="display: none; flex-direction: column; height: 100%;">
+                <!-- Cabecera del chat activo -->
+                <div class="chat-active-header">
+                    <div class="chat-header-user-info">
+                        <button class="chat-header-btn-back" onclick="volverAListado()">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                        <div class="user-avatar-container" style="width: 40px; height: 40px; margin-right: 10px;" id="header-avatar-container">
+                            <!-- Inyectado por JS -->
+                        </div>
+                        <div>
+                            <div class="font-semibold text-sm text-gray-800" id="header-user-name">Nombre Instructor</div>
+                            <div class="text-xs text-gray-500" id="header-user-role">Rol</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caja de mensajes -->
+                <div class="chat-messages-box" id="messages-log">
+                    <!-- Mensajes inyectados dinámicamente -->
+                </div>
+
+                <!-- Barra de entrada de texto y adjuntos -->
+                <div class="chat-input-container">
+                    <input type="file" id="chat-file-input" style="display: none;" accept="image/*, .pdf, .doc, .docx">
+                    
+                    <!-- Botón Enviar Foto -->
+                    <button onclick="abrirSubidaArchivo('image/*')" class="chat-btn-action btn-file" title="Enviar Foto">
+                        <i class="bi bi-camera"></i>
+                    </button>
+
+                    <!-- Botón Enviar Archivo -->
+                    <button onclick="abrirSubidaArchivo('.pdf, .doc, .docx')" class="chat-btn-action btn-file" title="Enviar Archivo">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+                    </button>
+
+                    <input id="chat-message-input" type="text" placeholder="Escribe un mensaje..." class="chat-input-field">
+                    
+                    <button id="chat-message-submit" class="chat-btn-action btn-send">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let activeSocket = null;
+    let activeReceptorId = null;
+    const usuarioActualId = "{{ request.user.id }}";
+
+    // Manejo de eventos táctiles para Swiping en móviles
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const layoutWrapper = document.getElementById('chat-layout-wrapper');
+
+    layoutWrapper.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    layoutWrapper.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        // Si desliza de izquierda a derecha (Swipe Right) lo suficiente, vuelve al listado en móviles
+        if (touchEndX - touchStartX > 100) {
+            volverAListado();
+        }
+    }
+
+    function volverAListado() {
+        const wrapper = document.getElementById('chat-layout-wrapper');
+        wrapper.classList.remove('chat-active-session');
+    }
+
+    function abrirSubidaArchivo(acceptType) {
+        const fileInput = document.getElementById('chat-file-input');
+        fileInput.accept = acceptType;
+        fileInput.click();
+    }
+
+    // Configuración del manejador de subida de archivos
+    document.getElementById('chat-file-input').onchange = function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            alert("¡Error! El archivo supera los 10MB permitidos.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('archivo', file);
+        formData.append('receptor_id', activeReceptorId);
+
+        fetch("{% url 'subir_archivo_chat' %}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (activeSocket && activeSocket.readyState === WebSocket.OPEN) {
+                    activeSocket.send(JSON.stringify({
+                        'message': '',
+                        'file_url': data.url,
+                        'es_imagen': data.es_imagen
+                    }));
+                }
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(err => console.error("Error al subir archivo:", err));
+    };
+
+    function cargarConversacion(receptorId, receptorNombre) {
+        activeReceptorId = receptorId;
+        
+        // Actualizar UI del listado (clase activa)
+        document.querySelectorAll('.user-chat-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('data-user-id') == receptorId) {
+                item.classList.add('active');
+            }
+        });
+
+        // Ocultar pantalla de bienvenida y mostrar chat activo
+        document.getElementById('chat-welcome-screen').style.display = 'none';
+        document.getElementById('chat-active-session').style.display = 'flex';
+
+        // Modificar layout para móviles
+        const wrapper = document.getElementById('chat-layout-wrapper');
+        wrapper.classList.add('chat-active-session');
+
+        // Actualizar cabecera del chat activo
+        document.getElementById('header-user-name').innerText = receptorNombre;
+        
+        // Copiar avatar y rol del item seleccionado a la cabecera del chat
+        const selectedItem = document.querySelector(`.user-chat-item[data-user-id="${receptorId}"]`);
+        const avatarHTML = selectedItem.querySelector('.user-avatar-container').innerHTML;
+        const roleText = selectedItem.querySelector('.user-item-role').innerText;
+        
+        document.getElementById('header-avatar-container').innerHTML = avatarHTML;
+        document.getElementById('header-user-role').innerText = roleText;
+
+        // Limpiar chat anterior
+        const messagesLog = document.getElementById('messages-log');
+        messagesLog.innerHTML = '<p class="text-center text-gray-400 py-4 text-xs">Cargando conversación...</p>';
+
+        // 1. Cerrar Socket anterior si existía
+        if (activeSocket) {
+            activeSocket.close();
+        }
+
+        // 2. Cargar historial de la sala mediante AJAX (usando el endpoint embed de la sala de chat)
+        fetch(`/mensajes/chat/${receptorId}/?embed=true`)
+        .then(res => res.text())
+        .then(html => {
+            // Creamos un elemento temporal para parsear el HTML recibido
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Extraemos los mensajes del chat embed y los inyectamos en nuestra caja
+            const chatBoxContent = tempDiv.querySelector('#chat-box');
+            if (chatBoxContent) {
+                messagesLog.innerHTML = chatBoxContent.innerHTML;
+            } else {
+                messagesLog.innerHTML = '<p class="text-center text-gray-400 py-4 text-xs">No hay mensajes previos.</p>';
+            }
+            scrollToBottom();
+
+            // 3. Inicializar nuevo WebSocket para esta sala
+            inicializarWebSocket(receptorId);
+        })
+        .catch(err => {
+            console.error("Error al cargar historial:", err);
+            messagesLog.innerHTML = '<p class="text-center text-red-500 py-4 text-xs">Error al cargar historial.</p>';
+        });
+    }
+
+    function inicializarWebSocket(receptorId) {
+        const loc = window.location;
+        let wsStart = 'ws://';
+        if (loc.protocol === 'https:') { wsStart = 'wss://'; }
+
+        const endpoint = wsStart + loc.host + '/ws/chat/' + receptorId + '/';
+        activeSocket = new WebSocket(endpoint);
+
+        activeSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            if (!data.sender_id) return; // Filtramos pings
+
+            const esMio = Number(data.sender_id) === Number(usuarioActualId);
+            let contenidoHTML = '';
+
+            if (data.file_url) {
+                if (data.es_imagen) {
+                    contenidoHTML = `<img src="${data.file_url}" style="max-width: 200px; border-radius: 10px; cursor: pointer;" onclick="window.open('${data.file_url}')">`;
+                } else {
+                    contenidoHTML = `<a href="${data.file_url}" target="_blank" style="color: ${esMio ? 'white' : '#007bff'}; text-decoration: underline;">
+                                        <i class="bi bi-file-earmark-arrow-down"></i> Ver Documento
+                                     </a>`;
+                }
+            } else {
+                contenidoHTML = data.message || data.contenido || '';
+            }
+
+            if (contenidoHTML === '') return;
+
+            const nuevoMensaje = `
+            <div class="message-row ${esMio ? 'sent' : 'received'}">
+                <div class="message-bubble">
+                    <div class="message-text">${contenidoHTML}</div>
+                    <div class="message-meta">${data.timestamp}</div>
+                </div>
+            </div>`;
+
+            const messagesLog = document.getElementById('messages-log');
+            
+            // Quitamos mensaje de "no hay mensajes" si existiera
+            const noMsgInfo = messagesLog.querySelector('.text-gray-400');
+            if (noMsgInfo) noMsgInfo.remove();
+
+            messagesLog.innerHTML += nuevoMensaje;
+            scrollToBottom();
+        };
+
+        activeSocket.onclose = function (e) {
+            console.log("Conexión de chat cerrada:", e);
+        };
+
+        activeSocket.onerror = function (e) {
+            console.error("Error en conexión de chat:", e);
+        };
+    }
+
+    function scrollToBottom() {
+        const chatBox = document.getElementById('messages-log');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Manejo de envío
+    const inputMensaje = document.getElementById('chat-message-input');
+    const btnEnviar = document.getElementById('chat-message-submit');
+
+    btnEnviar.onclick = function () {
+        const mensaje = inputMensaje.value;
+        if (mensaje.trim() !== "" && activeSocket && activeSocket.readyState === WebSocket.OPEN) {
+            activeSocket.send(JSON.stringify({ 'message': mensaje }));
+            inputMensaje.value = '';
+        }
+    };
+
+    inputMensaje.onkeyup = function (e) {
+        if (e.keyCode === 13) { btnEnviar.click(); }
+    };
+</script>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Estudiantes del Curso: {{ curso.nombre }}</h1>
+
+    <!-- Sección de estudiantes inscritos -->
+    <section class="estudiantes-curso">
+        <h2 class="h4 mb-3">Estudiantes Inscritos</h2>
+        {% if estudiantes %}
+            <ul class="list-group">
+                {% for estudiante in estudiantes %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ estudiante.get_full_name }}</strong><br>
+                            <small>{{ estudiante.email }}</small>
+                        </div>
+
+                        <!-- Botón para eliminar estudiante -->
+                        {% if request.user.is_staff or request.user == curso.instructor %}
+                            <a href="{% url 'eliminar_estudiante' curso.id estudiante.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar a este estudiante del curso?')">Eliminar</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay estudiantes inscritos en este curso.</p>
+        {% endif %}
+    </section>
+
+    <!-- Acciones -->
+    <section class="acciones-curso mt-4">
+        <a href="{% url 'detalle_curso' curso.id %}" class="btn btn-secondary">Volver al curso</a>
+    </section>
+</div>
+{% endblock %}

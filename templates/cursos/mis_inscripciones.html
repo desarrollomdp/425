@@ -1,0 +1,83 @@
+{% extends '../cuentas/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">
+                <i class="fas fa-clipboard-list me-2"></i>
+                Mis Inscripciones
+            </h2>
+        </div>
+        
+        <div class="card-body">
+            {% if inscripciones %}
+            <div class="row g-4">
+                {% for inscripcion in inscripciones %}
+                <div class="col-12">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 class="h5 mb-1">
+                                        <i class="fas fa-book-open me-2 text-primary"></i>
+                                        {{ inscripcion.curso.nombre }}
+                                    </h3>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fas fa-calendar-alt me-2"></i>
+                                        Inscrito el: {{ inscripcion.fecha_inscripcion|date:"d/m/Y" }}
+                                    </p>
+                                </div>
+                                
+                                <div class="col-md-4 mt-3 mt-md-0">
+                                    <div class="d-flex justify-content-md-end gap-2">
+                                        <a href="{% url 'ver_inscripcion' inscripcion.id %}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-2"></i>
+                                            Ver
+                                        </a>
+                                        <a href="{% url 'editar_inscripcion' inscripcion.id %}" 
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit me-2"></i>
+                                            Editar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-4">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-exclamation-circle fa-2x"></i>
+                    <div>
+                        <h4 class="alert-heading mb-1">No hay inscripciones</h4>
+                        <p class="mb-0">Aún no te has inscrito en ningún curso.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hover-shadow {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-shadow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15)!important;
+    }
+    
+    .alert-warning {
+        border-left: 4px solid #ffc107;
+    }
+</style>
+{% endblock %}

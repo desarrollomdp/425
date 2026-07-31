@@ -1,0 +1,56 @@
+{% extends "../cuentas/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load allauth account %}
+{% load socialaccount %}
+
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+
+{% block content %}
+<div class="container mt-5" id="container-login">
+    <div class="heading text-center mb-4" id="heading-login">
+        <h1 style="font-size:35px" id="title-login">{% trans "Sign In" %}</h1>
+    </div>
+
+    <div class="card shadow p-4" id="card-login">
+        {% if not SOCIALACCOUNT_ONLY %}
+            <p class="text-center" id="text-register">
+
+                {% trans "Si aún no ha creado una cuenta, por favor" %}
+                    <a href="{{ signup_url }}" class="text-primary" id="link-register">{% trans "Registrate" %}</a>
+                
+            </p>
+            
+
+        
+            
+        {% endif %}
+
+        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
+            <hr id="hr-login-options">
+            <div class="social-account-container text-center mt-3" id="social-login-options">
+                {% if PASSKEY_LOGIN_ENABLED %}
+                    <button class="btn btn-outline-secondary w-100 mb-2" id="btn-passkey-login">{% trans "Sign in with a passkey" %}</button>
+                {% endif %}
+                {% if LOGIN_BY_CODE_ENABLED %}
+                    <a href="{{ request_login_code_url }}" class="btn btn-outline-secondary w-100" id="btn-login-code">{% trans "Mail me a sign-in code" %}</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if SOCIALACCOUNT_ENABLED %}
+            <hr id="hr-social-login">
+            <div class="text-center mt-3" id="google-login">
+                <p id="text-other-ways">{% trans "Otras Formas de entrar" %}</p>
+                <a href="{% provider_login_url 'google' %}" class="btn btn-light border d-flex align-items-center justify-content-center w-100" id="btn-google-login">
+                    <img src="{% static 'images/google.ico' %}" alt="Google Icon" class="me-2" style="width: 20px;" id="google-icon">
+                    {% trans "Entrar con Google" %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

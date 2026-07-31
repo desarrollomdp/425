@@ -1,0 +1,204 @@
+{% extends "cuentas/base.html" %}
+{% load static %}
+
+{% block slider %}{% endblock slider %}
+{% block content %}
+<h2>Muro de publicaciones</h2>
+
+<div class="posts-grid">
+    {% for post in publicaciones %}
+      <div class="post-card">
+        <div class="post-header">
+          <span class="post-autor">{{ post.autor.username }}</span>
+          <span class="post-fecha">{{ post.fecha_publicacion|date:"d M Y H:i" }}</span>
+        </div>
+  
+        <div class="post-contenido">
+          <p>{{ post.texto|urlize|linebreaks }}</p>
+  
+          {% if post.imagenes %}
+            <div class="post-imagenes">
+              {% for img in post.imagenes %}
+                <img src="{{ img.url }}">
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Botón para editar post -->
+        {% if user.is_authenticated and user == post.autor %}
+          <a href="{% url 'editar_post' post.id %}" class="btn btn-primary">Editar</a>
+        {% endif %}
+  
+        <!-- Comentarios -->
+        <div class="comentarios">
+          <strong>Comentarios:</strong>
+          {% for comentario in post.comentarios.all %}
+            <div class="comentario">
+              <strong>{{ comentario.autor.username }}</strong>: {{ comentario.texto }}
+              <small>{{ comentario.fecha_creacion|date:"d M Y H:i" }}</small>
+            </div>
+          {% empty %}
+            <p>No hay comentarios aún.</p>
+          {% endfor %}
+  
+          <!-- Botón para mostrar formulario -->
+          <button class="toggle-form-btn" onclick="toggleForm({{ post.id }})">Agregar comentario</button>
+  
+          <!-- Formulario -->
+          <form method="POST" class="comentario-form" id="form-{{ post.id }}" style="display: none;">
+            {% csrf_token %}
+            {{ form.texto }}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <button type="submit">Comentar</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+<!-- Estilos -->
+<style>
+  body {
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  h2 {
+    text-align: center;
+    margin: 30px 0;
+    color: #333;
+  }
+
+  .post-card {
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    background: white;
+    border-radius: 12px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .post-autor {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+  }
+
+  .post-fecha {
+    font-size: 0.9em;
+    color: #777;
+  }
+
+  .post-contenido p {
+    font-size: 1.1em;
+    color: #444;
+    margin-bottom: 15px;
+  }
+
+  .post-imagenes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .post-imagenes img {
+    width: calc(50% - 7.5px);
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+
+  .comentarios {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  .comentarios > strong {
+    font-size: 1.05em;
+    color: #555;
+  }
+
+  .comentario {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .comentario strong {
+    color: #333;
+    font-size: 0.95em;
+  }
+
+  .comentario small {
+    display: block;
+    color: #aaa;
+    font-size: 0.8em;
+    margin-top: 2px;
+  }
+
+  .comentario-form {
+    margin-top: 15px;
+  }
+
+  .comentario-form textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    resize: vertical;
+    font-size: 1em;
+  }
+
+  .comentario-form button {
+    margin-top: 8px;
+    background: #0069d9;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .comentario-form button:hover {
+    background: #004a9f;
+  }
+
+  .toggle-form-btn {
+    margin-top: 12px;
+    background: #e1e5eb;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-form-btn:hover {
+    background: #d0d4da;
+  }
+</style>
+
+<!-- Script -->
+<script>
+  function toggleForm(postId) {
+    const form = document.getElementById('form-' + postId);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Clase Creada</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .class-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 24px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .class-box h2 {
+            margin: 0 0 12px 0;
+            color: #059669;
+            font-size: 22px;
+        }
+
+        .detail {
+            margin: 12px 0;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .detail strong {
+            color: #1f2937;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Nueva Clase Creada</h1>
+        </div>
+        <div class="content">
+            <p>Hola <strong>{{ alumno.get_full_name }}</strong>,</p>
+            <p style="margin-top: 16px;">Se ha creado una nueva clase en tu curso:</p>
+
+            <div class="class-box">
+                <h2>{{ clase.nombre }}</h2>
+                <div class="detail">
+                    <strong>👨‍🏫 Instructor:</strong> {{ instructor.get_full_name }}
+                </div>
+                <div class="detail">
+                    <strong>📚 Curso:</strong> {{ curso.nombre }}
+                </div>
+                <div class="detail">
+                    <strong>📅 Fecha:</strong> {{ clase.fecha|date:"d/m/Y" }}
+                </div>
+                {% if clase.descripcion %}
+                <div class="detail">
+                    <strong>📝 Descripción:</strong> {{ clase.descripcion }}
+                </div>
+                {% endif %}
+                <div class="detail">
+                    <span class="status-badge">Consulta tu estado en tu perfil</span>
+                </div>
+            </div>
+
+            <p style="margin-top: 20px; color: #6b7280;">
+                Consulta tu asistencia y el detalle de la clase en tu perfil:
+            </p>
+
+            <div style="text-align: center;">
+                <a href="{{ enlace_perfil }}" class="button">
+                    Ver Mi Perfil
+                </a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>CFP 425 - Centro de Formación Profesional</p>
+            <p>Este es un mensaje automático, por favor no responder.</p>
+        </div>
+    </div>
+</body>
+
+</html>

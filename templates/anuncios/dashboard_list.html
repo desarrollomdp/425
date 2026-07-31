@@ -1,0 +1,56 @@
+{% extends '../cuentas/base.html' %}
+{% block content %}
+<div class="container py-4">
+  <h1>Dashboard de Anuncios</h1>
+  <p class="text-muted">Período: {{ desde|date:"Y-m-d H:i" }} → {{ hasta|date:"Y-m-d H:i" }}</p>
+
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-auto"><input type="date" name="desde" class="form-control" value="{{ desde|date:'Y-m-d' }}"></div>
+    <div class="col-auto"><input type="date" name="hasta" class="form-control" value="{{ hasta|date:'Y-m-d' }}"></div>
+    <div class="col-auto"><button class="btn btn-primary">Filtrar</button></div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Anuncio</th>
+          <th class="text-center">UV</th>
+          <th class="text-center">IMP</th>
+          <th class="text-center">AVG</th>
+          <th class="text-center">CLK</th>
+          <th class="text-center">UCLK</th>
+          <th class="text-center">CTR/IMP</th>
+          <th class="text-center">CTR/UV</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fila in filas %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              {% if fila.anuncio.imagen_desktop %}
+                <img src="{{ fila.anuncio.imagen_desktop.url }}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;">
+              {% endif %}
+              <div>
+                <div class="fw-semibold">{{ fila.anuncio.titulo }}</div>
+                <div class="text-muted small">ID: {{ fila.anuncio.id }}{% if not fila.anuncio.activo %} · Inactivo{% endif %}</div>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">{{ fila.UV }}</td>
+          <td class="text-center">{{ fila.IMP }}</td>
+          <td class="text-center">{{ fila.AVG|floatformat:2 }}</td>
+          <td class="text-center">{{ fila.CLK }}</td>
+          <td class="text-center">{{ fila.UCLK }}</td>
+          <td class="text-center">{{ fila.CTR_IMP|floatformat:2 }}</td>
+          <td class="text-center">{{ fila.CTR_UV|floatformat:2 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted">No hay anuncios creados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

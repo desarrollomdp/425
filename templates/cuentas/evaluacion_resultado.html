@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultados Evaluación - Reparación de Celulares</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .resultado {
+      background-color: #fff;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .resultado h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .detalle {
+      margin-bottom: 1rem;
+    }
+
+    .detalle strong {
+      display: inline-block;
+      width: 160px;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .separador {
+      border-top: 1px solid #ccc;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Resultados de la Evaluación</h1>
+
+  {% for resultado in resultados %}
+    <div class="resultado">
+      <h3>{{ resultado.apellido }}, {{ resultado.nombre }} - DNI: {{ resultado.dni }}</h3>
+
+      <div class="detalle"><strong>Fecha:</strong> {{ resultado.fecha|date:"d/m/Y H:i" }}</div>
+      <div class="detalle"><strong>Puntaje Objetivo:</strong> {{ resultado.puntaje_objetivo }} / 10</div>
+
+      <div class="separador"></div>
+      <h4>Respuestas Abiertas:</h4>
+      <ul>
+        {% for key, value in resultado.respuestas_abiertas.items %}
+          <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% empty %}
+    <p>No hay resultados aún.</p>
+  {% endfor %}
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% block content %}
+<div class="min-h-screen bg-slate-50/50 py-12 lg:py-24 px-6">
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Page Header -->
+        <div class="mb-12">
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol
+                    class="inline-flex items-center space-x-1 md:space-x-3 text-xs font-black uppercase tracking-widest text-slate-400">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'inicio' %}" class="hover:text-primary transition-colors">Inicio</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-[10px] mx-2"></i>
+                            <a href="{% url 'lista_cursos' %}"
+                                class="hover:text-primary transition-colors">Cursaaaaaaaaaaos</a>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">Detalles del <span
+                    class="text-primary italic">Curso</span></h1>
+        </div>
+
+        <div class="space-y-8">
+
+            <!-- Main Info Card -->
+            <div
+                class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden group">
+                <div class="h-4 bg-gradient-to-r from-primary to-indigo-600"></div>
+                <div class="p-8 lg:p-12">
+                    <div class="flex flex-col lg:flex-row justify-between items-start gap-8">
+                        <div class="space-y-6 flex-1">
+                            <div>
+                                <h2 class="text-3xl font-black text-slate-800 mb-4">{{ curso.nombre }}</h2>
+                                <p class="text-lg text-slate-500 font-medium leading-relaxed">{{ curso.descripcion }}
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-primary shadow-sm">
+                                        <i class="fas fa-chalkboard-teacher text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            Instructor</p>
+                                        <p class="font-bold text-slate-700">{{ curso.instructor.get_full_name }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-primary shadow-sm">
+                                        <i class="fas fa-calendar-alt text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            Duración</p>
+                                        <p class="font-bold text-slate-700">{{ curso.fecha_inicio }} - {{
+                                            curso.fecha_fin }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modules Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <!-- Modules List -->
+                <div class="lg:col-span-2 space-y-6">
+                    <h3 class="text-2xl font-black text-slate-800 flex items-center gap-3 px-2">
+                        <span class="w-2 h-8 bg-primary rounded-full"></span>
+                        Módulos Académicos
+                    </h3>
+
+                    {% if curso.modulos.exists %}
+                    <div class="space-y-4">
+                        {% for modulo in curso.modulos.all %}
+                        <div
+                            class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-5">
+                                    <div
+                                        class="w-10 h-10 bg-slate-50 text-slate-400 font-black rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                                        {{ forloop.counter }}
+                                    </div>
+                                    <span class="font-bold text-slate-700 text-lg">{{ modulo.nombre }}</span>
+                                </div>
+                                <a href="{% url 'detalle_modulo' modulo.id %}"
+                                    class="w-12 h-12 bg-slate-50 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-2xl flex items-center justify-center transition-all active:scale-95 shadow-sm">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div
+                        class="bg-slate-100/50 border-2 border-dashed border-slate-200 rounded-[2rem] p-12 text-center">
+                        <i class="fas fa-boxes text-4xl text-slate-300 mb-4"></i>
+                        <p class="text-slate-500 font-bold">No hay módulos cargados aún.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Action Sidebar -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-black text-slate-800 px-2 leading-tight">Acciones</h3>
+                    <div
+                        class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/30 space-y-4">
+                        <a href="{% url 'ver_clases' curso_id=curso.id %}"
+                            class="flex items-center justify-center gap-3 w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-primary/20 hover:bg-blue-700 transition-all active:scale-95">
+                            <i class="fas fa-calendar-check"></i> Ver Clases
+                        </a>
+                        <a href="{% url 'crear_clase' curso_id=curso.id %}"
+                            class="flex items-center justify-center gap-3 w-full py-4 bg-emerald-500 text-white font-black rounded-2xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95">
+                            <i class="fas fa-plus-circle"></i> Crear Clase
+                        </a>
+                        <a href="{% url 'editar_curso' curso.id %}"
+                            class="flex items-center justify-center gap-3 w-full py-4 bg-yellow-400 text-white font-black rounded-2xl shadow-lg shadow-yellow-400/20 hover:bg-yellow-500 transition-all active:scale-95">
+                            <i class="fas fa-edit"></i> Editar Curso
+                        </a>
+                        <a href="{% url 'ver_estudiantes' curso.id %}"
+                            class="flex items-center justify-center gap-3 w-full py-4 bg-cyan-500 text-white font-black rounded-2xl shadow-lg shadow-cyan-500/20 hover:bg-cyan-600 transition-all active:scale-95">
+                            <i class="fas fa-users"></i> Ver Estudiantes
+                        </a>
+
+                        <div class="pt-6 mt-6 border-t border-slate-100">
+                            <a href="{% url 'user_profile' %}"
+                                class="flex items-center justify-center gap-3 w-full py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all active:scale-95">
+                                <i class="fas fa-arrow-left"></i> Volver al Perfil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

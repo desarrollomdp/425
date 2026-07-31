@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6V6DKH7G55"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-6V6DKH7G55');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS (Opcional, para estilos de botones si no funcionan los estilos custom) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos copiados y adaptados para el modo embebido */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            /* Ocupar todo el alto disponible */
+            background: #fff;
+        }
+
+        .chat-header {
+            background: #f0f2f5;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e9edef;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chat-header h6 {
+            margin: 0;
+            color: #000;
+            font-weight: 600;
+        }
+
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #ff9d00;
+            /* Color de fondo estilo WhatsApp */
+            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+            /* Trama opcional */
+            background-repeat: repeat;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-wrapper {
+            display: flex;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .msg-bubble {
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 70%;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+        }
+
+        .msg-sent {
+            background-color: #d9fdd3;
+            /* Verde WhatsApp */
+            color: #111b21;
+            border-top-right-radius: 0;
+        }
+
+        .msg-received {
+            background-color: #ffffff;
+            color: #111b21;
+            border-top-left-radius: 0;
+        }
+
+        .msg-time {
+            display: block;
+            font-size: 0.65rem;
+            color: #667781;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .chat-input-area {
+            background: #f0f2f5;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        #input-mensaje {
+            border: none;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Scrollbar */
+        #chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-box::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white me-2"
+                    style="width: 35px; height: 35px;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <h6>{{ receptor.username }}</h6>
+                    <!-- Eliminada linea de Ult. vez por error de display -->
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-box">
+            {% for m in mensajes %}
+            <div
+                class="msg-wrapper {% if m.emisor_id == request.user.id %}justify-content-end{% else %}justify-content-start{% endif %}">
+                <div
+                    class="msg-bubble {% if m.emisor_id == request.user.id %}msg-sent{% else %}msg-received{% endif %}">
+                    {% if m.archivo %}
+                    {% if m.es_imagen %}
+                    <img src="{{ m.archivo.url }}"
+                        style="max-width: 200px; border-radius: 6px; cursor: pointer; display: block; margin-bottom: 5px;"
+                        onclick="window.open('{{ m.archivo.url }}')">
+                    {% else %}
+                    <a href="{{ m.archivo.url }}" target="_blank"
+                        style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 5px;">
+                        <i class="bi bi-file-earmark-arrow-down-fill text-danger"></i>
+                        <span style="text-decoration: underline;">Ver Documento</span>
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    {{ m.contenido }}
+                    {% endif %}
+                    <span class="msg-time">{{ m.fecha|date:"H:i" }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-input-area">
+            <input type="file" id="file-input" style="display: none;" accept="image/*, .pdf, .doc, .docx">
+            <button onclick="document.getElementById('file-input').click()" class="btn btn-link text-secondary p-0">
+                <i class="bi bi-paperclip" style="font-size: 1.5rem;"></i>
+            </button>
+
+            <div style="flex-grow: 1; background: white; border-radius: 8px;">
+                <input id="input-mensaje" type="text" placeholder="Escribe un mensaje">
+            </div>
+
+            <button id="btn-enviar" class="btn btn-link p-0 text-success">
+                <i class="bi bi-send-fill" style="font-size: 1.5rem;"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para este contexto
+        (function () {
+            // Encapsulamos para no chocar con variables globales fuera del iframe o html
+            const receptorId = "{{ receptor.id }}";
+            const usuarioActualId = "{{ request.user.id }}";
+
+            // Elementos
+            const chatBox = document.querySelector('#chat-box');
+            const inputMensaje = document.querySelector('#input-mensaje');
+            const btnEnviar = document.querySelector('#btn-enviar');
+            const fileInput = document.getElementById('file-input');
+
+            // Scroll al fondo
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // WebSocket
+            const loc = window.location;
+            let wsStart = 'ws://';
+            if (loc.protocol === 'https:') { wsStart = 'wss://'; }
+            const endpoint = wsStart + loc.host + '/ws/chat/' + receptorId + '/';
+
+            console.log("Conectando WS a: " + endpoint);
+            const socket = new WebSocket(endpoint);
+
+            socket.onopen = function (e) {
+                console.log("WebSocket Abierto");
+            };
+
+            socket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                const esMio = Number(data.sender_id) === Number(usuarioActualId);
+
+                let contenidoHTML = '';
+                // Verificamos si es archivo o mensaje de texto
+                if (data.file_url) {
+                    if (data.es_imagen) {
+                        contenidoHTML = `<img src="${data.file_url}" style="max-width: 250px; border-radius: 6px; cursor: pointer;" onclick="window.open('${data.file_url}')">`;
+                    } else {
+                        contenidoHTML = `<a href="${data.file_url}" target="_blank" style="text-decoration: underline; color: inherit;">
+                                    <i class="bi bi-file-earmark-arrow-down-fill"></i> Ver Documento
+                                 </a>`;
+                    }
+                } else {
+                    // CORRECCION: Usar 'message' si 'contenido' falla, o viceversa, depende de lo que mande el backend consumer.
+                    // En el chat.html usa data.message. Si llega undefined es porque no es data.message
+                    // Vamos a probar con data.message que es lo standard en estos consumers, 
+                    // pero asegurando que no sea undefined.
+                    contenidoHTML = data.message || data.contenido || '';
+                }
+
+                // Usamos las mismas clases CSS
+                const alignClass = esMio ? 'justify-content-end' : 'justify-content-start';
+                const bubbleClass = esMio ? 'msg-sent' : 'msg-received';
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const nuevoMensaje = `
+            <div class="msg-wrapper ${alignClass}">
+                <div class="msg-bubble ${bubbleClass}">
+                    ${contenidoHTML}
+                    <span class="msg-time">${timeStr}</span>
+                </div>
+            </div>`;
+
+                chatBox.insertAdjacentHTML('beforeend', nuevoMensaje);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            socket.onclose = function (e) {
+                console.error('Chat socket cerrado inesperadamente');
+            };
+
+            // Enviar Texto
+            function sendMessage() {
+                const mensaje = inputMensaje.value;
+                if (mensaje.trim() !== "") {
+                    socket.send(JSON.stringify({ 'message': mensaje }));
+                    inputMensaje.value = '';
+                }
+            }
+
+            btnEnviar.onclick = sendMessage;
+            inputMensaje.onkeyup = function (e) {
+                if (e.keyCode === 13) { sendMessage(); }
+            };
+
+            // Subir Archivo
+            fileInput.onchange = function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 10 * 1024 * 1024) {
+                    alert("¡Error! El archivo supera los 10MB permitidos.");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('archivo', file);
+                formData.append('receptor_id', receptorId);
+
+                // Fetch upload
+                fetch("{% url 'subir_archivo_chat' %}", {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            socket.send(JSON.stringify({
+                                'message': '',
+                                'file_url': data.url,
+                                'es_imagen': data.es_imagen
+                            }));
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(err => console.error(err));
+            };
+        })();
+    </script>
+    </body>
+
+</html>

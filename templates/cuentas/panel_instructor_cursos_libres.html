@@ -1,0 +1,43 @@
+{% extends 'estudio/base_cursos_libres.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tighter">Panel de Instructores</h1>
+            <p class="text-slate-500 font-medium">Gestioná tus contenidos técnicos y evaluaciones.</p>
+        </div>
+        <a href="{% url 'estudio:crear_curso' %}"
+            class="bg-brand-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-brand-600/20 hover:scale-105 transition-transform flex items-center gap-2">
+            <i class="bi bi-plus-circle-fill"></i> NUEVO CURSO
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+        {% for curso in cursos %}
+        <div
+            class="bg-white p-6 rounded-[2.5rem] border border-slate-200 flex items-center justify-between group hover:border-brand-600 transition-all">
+            <div class="flex items-center gap-6">
+                <div class="w-20 h-20 rounded-3xl bg-slate-100 overflow-hidden">
+                    <img src="{{ curso.portada.url }}" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">{{ curso.titulo }}</h3>
+                    <p class="text-slate-400 text-sm font-bold">{{ curso.lecciones.count }} Lecciones cargadas</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <a href="#"
+                    class="p-4 bg-slate-50 text-slate-600 rounded-2xl hover:bg-brand-50 hover:text-brand-600 transition">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="{% url 'estudio:aula_virtual' curso.slug curso.lecciones.first.id %}"
+                    class="p-4 bg-slate-50 text-slate-600 rounded-2xl hover:bg-emerald-50 hover:text-emerald-600 transition">
+                    <i class="bi bi-eye-fill"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

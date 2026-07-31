@@ -1,0 +1,211 @@
+{% extends "../cuentas/base.html" %}
+{% load static %}
+
+{% block head_title %}
+    Lista de Cursos - CFP 425
+{% endblock head_title %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Encabezado principal -->
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary mb-3">Nuestras Sedes Educativas</h1>
+        <p class="lead text-muted">Selecciona una ubicación para ver los cursos disponibles</p>
+    </header>
+
+    <!-- Tarjetas de ubicaciones -->
+    <div class="row row-cols-1 row-cols-lg-3 g-4 mb-5">
+        {% for key, ubicacion in ubicaciones.items %}
+        <div class="col">
+            <div class="card h-100 shadow-lg-hover border-0 location-card {% if sede_activa == key %}active-location{% endif %}" 
+                 onclick="filterCourses('{{ key }}')"
+                 data-sede="{{ key }}">
+                <img src="{% static ubicacion.imagen %}"  
+                     class="card-img-top location-image" 
+                     alt="{{ ubicacion.nombre }}"
+                     style="height: 200px; object-fit: cover;">
+                <div class="card-body text-center pb-4">
+                    <h3 class="card-title mb-3 text-primary">{{ ubicacion.nombre }}</h3>
+                    <div class="d-flex align-items-center justify-content-center text-secondary">
+                        <i class="bi bi-geo-alt-fill me-2"></i>
+                        <p class="card-text mb-0">{{ ubicacion.direccion }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Sección de cursos -->
+    <section class="mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 text-primary">
+                {% if sede_activa %}
+                    Cursos en {{ ubicaciones.sede_activa.nombre }}
+                {% else %}
+                    Todos los Cursos Disponibles
+                {% endif %}
+            </h2>
+            <button class="btn btn-outline-primary" onclick="clearFilter()">
+                <i class="bi bi-x-circle me-2"></i>Limpiar Filtro
+            </button>
+        </div>
+
+        <!-- Listado de cursos -->
+        {% if cursos %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+            {% for curso in cursos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm course-card">
+                    <div class="card-header bg-primary text-white">
+                        <span class="badge bg-light text-primary">{{ curso.get_lugar_display }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="h5 card-title">{{ curso.nombre }}</h3>
+                        
+                        <div class="course-meta mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person-fill me-2 text-secondary"></i>
+                                <span class="small">{{ curso.instructor.get_full_name }}</span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-event me-2 text-secondary"></i>
+                                <span class="small">
+                                    {{ curso.fecha_inicio|date:"d/m/Y" }} - {{ curso.fecha_fin|date:"d/m/Y" }}
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-people-fill me-2 text-secondary"></i>
+                                <span class="small">
+                                    {{ curso.alumnos_inscriptos.count }}/{{ curso.max_estudiantes }} alumnos
+                                </span>
+                            </div>
+                            
+                            <!-- Reemplaza el bloque de días con esto -->
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-week me-2 text-secondary"></i>
+                                <span class="small">
+                                    Días: 
+                                    {% if curso.dias %}
+                                        {% for dia in curso.dias_cursada %}
+                                            <span class="badge bg-primary me-1">{{ dia }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <em class="text-muted">Sin días asignados</em>
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <!-- Añade este bloque después de los días -->
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-clock me-2 text-secondary"></i>
+                                <span class="small">
+                                    {{ curso.horario_formateado }}
+                                </span>
+                            </div>
+                        </div>
+                            
+
+                        <p class="card-text text-muted small">{{ curso.descripcion}}</p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-grid">
+                            {% if curso.inscripcion_abierta %}
+                                <a href="{% url 'inscribirse_curso' %}?curso_id={{ curso.id }}" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square me-2"></i>Pre-inscribirse
+                                </a>
+                            
+                            {% else %}
+                                <button class="btn btn-danger btn-sm" disabled>
+                                    <i class="bi bi-pencil-square me-2"></i>Inscripciones CERRADAS
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            No hay cursos disponibles en esta ubicación
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- Estilos personalizados -->
+<style>
+.location-card {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 115, 230, 0.1);
+}
+
+.active-location {
+    border: 2px solid #004080;
+    box-shadow: 0 0 20px rgba(0, 115, 230, 0.2);
+}
+
+.course-card {
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
+}
+
+.course-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.location-image {
+    border-bottom: 3px solid rgba(0, 115, 230, 0.1);
+}
+
+.text-primary {
+    color: #004080 !important;
+}
+
+.btn-outline-primary {
+    border-color: #004080;
+    color: #004080;
+}
+
+.btn-outline-primary:hover {
+    background-color: #004080;
+    color: white;
+}
+</style>
+
+<!-- Scripts -->
+<script>
+function filterCourses(sede) {
+    window.location.href = "{% url 'lista_cursos' %}?sede=" + sede;
+}
+
+function clearFilter() {
+    window.location.href = "{% url 'lista_cursos' %}";
+}
+
+// Resaltar tarjeta activa al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    const sedeParam = new URLSearchParams(window.location.search).get('sede');
+    if (sedeParam) {
+        document.querySelectorAll('.location-card').forEach(card => {
+            if (card.dataset.sede === sedeParam) {
+                card.classList.add('active-location');
+            }
+        });
+    }
+});
+</script>
+{% endblock content %}
