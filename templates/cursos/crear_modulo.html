@@ -39,7 +39,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="md:col-span-2">
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Nombre del Módulo</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Nombre del Módulo</label>
               {% render_field form.nombre class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none transition-all placeholder:text-slate-300" placeholder="Ej: Introducción a la Mecánica" %}
               {% if form.nombre.errors %}
               <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.nombre.errors.0 }}</p>
@@ -47,7 +47,7 @@
             </div>
 
             <div class="md:col-span-2">
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Descripción / Objetivos</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Descripción / Objetivos</label>
               {% render_field form.descripcion class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none transition-all placeholder:text-slate-300" rows="3" %}
               {% if form.descripcion.errors %}
               <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.descripcion.errors.0 }}</p>
@@ -55,20 +55,14 @@
             </div>
 
             <div>
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Carga Horaria (Horas)</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Carga Horaria (Horas)</label>
               {% render_field form.carga_horaria class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none transition-all" placeholder="Ej: 40" %}
               {% if form.carga_horaria.errors %}
               <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.carga_horaria.errors.0 }}</p>
               {% endif %}
             </div>
 
-            <div>
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Día de cursada preferente</label>
-              {% render_field form.dias class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-indigo-500 focus:outline-none transition-all appearance-none cursor-pointer" %}
-              {% if form.dias.errors %}
-              <p class="text-rose-500 text-xs font-bold mt-2 ml-6 italic">{{ form.dias.errors.0 }}</p>
-              {% endif %}
-            </div>
+            
           </div>
         </div>
       </div>
@@ -85,7 +79,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Fecha Inicio Estimada</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Fecha Inicio Estimada</label>
               {% render_field form.fecha_inicio_modulo class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-rose-500 focus:outline-none transition-all" type="date" %}
               {% if form.fecha_inicio_modulo.errors %}
               <p class="text-rose-500 text-[10px] font-bold mt-2 ml-6 italic">{{ form.fecha_inicio_modulo.errors.0 }}
@@ -94,7 +88,7 @@
             </div>
 
             <div>
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Fecha Fin Estimada</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Fecha Fin Estimada</label>
               {% render_field form.fecha_fin_modulo class="w-full bg-slate-50 border-2 border-slate-50 rounded-[2rem] px-8 py-5 font-bold text-slate-700 focus:bg-white focus:border-rose-500 focus:outline-none transition-all" type="date" %}
               {% if form.fecha_fin_modulo.errors %}
               <p class="text-rose-500 text-[10px] font-bold mt-2 ml-6 italic">{{ form.fecha_fin_modulo.errors.0 }}</p>
@@ -102,7 +96,7 @@
             </div>
 
             <div class="md:col-span-2">
-              <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-4">Material de Estudio (PDF)</label>
+              <label class="block text-xs font-black uppercase tracking-wider text-black mb-3 ml-4">Material de Estudio (PDF)</label>
               <div class="relative group">
                 {% render_field form.recursos class="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] px-8 py-10 font-bold text-slate-400 focus:bg-white focus:border-rose-500focus:border-solid focus:outline-none transition-all cursor-pointer file:hidden" %}
                 <div
